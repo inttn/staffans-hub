@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Staffans Hub</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg:#0a0e14; --panel:#11161f; --panel2:#1a2130; --border:#222a3a;
+    --text:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warn:#f0883e;
+    --good:#3fb950; --bad:#f85149; --swim:#58a6ff; --bike:#bc8cff; --run:#3fb950;
+    --strength:#f0883e; --gold:#ffd700; --train:#bc8cff; --net:#ffa657;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    font-size:14px; line-height:1.45; }
+  .wrap { max-width:1500px; margin:0 auto; padding:20px; }
+
+  /* Header */
+  header { display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+  h1 { font-size:22px; margin:0; font-weight:700; }
+  h1 .mute { color:var(--mute); font-weight:400; font-size:13px; margin-left:10px;}
+  .countdown { color:var(--warn); font-size:13px; font-weight:600; }
+
+  /* Tabs */
+  .tabs { display:flex; gap:0; margin-bottom:20px; border-bottom:2px solid var(--border); }
+  .tab { padding:10px 24px; cursor:pointer; color:var(--mute); font-weight:600;
+    font-size:13px; text-transform:uppercase; letter-spacing:.8px; border-bottom:2px solid transparent;
+    margin-bottom:-2px; transition:all .2s; }
+  .tab:hover { color:var(--text); }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+
+  /* Panels */
+  .grid { display:grid; gap:16px; }
+  .g-3 { grid-template-columns: 2fr 1fr 1fr; }
+  .g-2 { grid-template-columns: 1fr 1fr; }
+  .g-top { grid-template-columns: 2fr 1fr 1fr; }
+  .g-mid { grid-template-columns: 3fr 2fr; }
+  .g-bot { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width:1100px){ .g-3,.g-top,.g-mid,.g-bot{ grid-template-columns: 1fr 1fr; } }
+  @media (max-width:720px){ .g-3,.g-2,.g-top,.g-mid,.g-bot{ grid-template-columns: 1fr; } }
+  .panel { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px; }
+  .panel h2 { font-size:11px; text-transform:uppercase; letter-spacing:1px;
+    color:var(--mute); margin:0 0 14px 0; font-weight:700; }
+
+  /* Schedule rows */
+  .row { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--panel2); align-items:flex-start;}
+  .row:last-child { border-bottom:none; }
+  .time { color:var(--mute); min-width:90px; font-variant-numeric:tabular-nums; font-size:13px;}
+  .what { flex:1; }
+  .tag { display:inline-block; padding:2px 7px; border-radius:4px; font-size:10px;
+    font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-right:5px; }
+  .t-work { background:#1f6feb33; color:#79c0ff; }
+  .t-train { background:#bc8cff33; color:var(--train); }
+  .t-net { background:#ffa65733; color:var(--net); }
+  .t-admin { background:#8b949e33; color:var(--mute); }
+
+  /* Training boxes */
+  .train-box { background:#bc8cff11; border:1px solid #bc8cff44; border-radius:6px; padding:10px 12px; margin-bottom:10px; }
+  .train-box .lbl { color:var(--train); font-size:11px; text-transform:uppercase; letter-spacing:.6px; font-weight:600; }
+  .train-box .pass { font-size:14px; margin-top:2px; }
+  .train-box .detail { color:var(--mute); font-size:12px; margin-top:2px; }
+
+  /* Hero metrics */
+  .hero { background:linear-gradient(135deg,#1a2130 0%,#0d1320 100%);
+    border:1px solid var(--border); border-radius:10px; padding:24px;
+    display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:24px; margin-bottom:16px; }
+  .hero .metric { text-align:center; }
+  .hero .metric .num { font-size:42px; font-weight:700; letter-spacing:-1px; line-height:1; }
+  .hero .metric .lbl { color:var(--mute); font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-top:6px; }
+  .hero .metric.goal .num { color:var(--gold); }
+  .hero .metric.days .num { color:var(--accent); }
+  @media (max-width:780px){ .hero{ grid-template-columns:1fr 1fr; } }
+
+  /* Stats */
+  .stats { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+  .stat { background:var(--panel2); border-radius:6px; padding:12px; }
+  .stat .v { font-size:20px; font-weight:700; line-height:1; }
+  .stat .l { color:var(--mute); font-size:11px; text-transform:uppercase; letter-spacing:.5px; margin-top:6px; }
+
+  /* Progress bars */
+  .prog { margin-bottom:14px; }
+  .prog-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; }
+  .prog-label .name { color:var(--text); font-weight:600; }
+  .prog-label .vals { color:var(--mute); font-variant-numeric:tabular-nums; }
+  .prog-bar { height:10px; background:var(--panel2); border-radius:5px; overflow:hidden; }
+  .prog-fill { height:100%; border-radius:5px; }
+  .prog-fill.swim { background:var(--swim); }
+  .prog-fill.bike { background:var(--bike); }
+  .prog-fill.run { background:var(--run); }
+  .prog-fill.warn { background:var(--warn); }
+
+  /* Split table */
+  .split-table { width:100%; border-collapse:collapse; font-size:13px; }
+  .split-table th { text-align:left; color:var(--mute); font-weight:600;
+    padding:8px 4px; border-bottom:1px solid var(--border); font-size:11px; text-transform:uppercase; letter-spacing:.5px; }
+  .split-table td { padding:8px 4px; border-bottom:1px solid var(--panel2); }
+  .split-table .disc { font-weight:600; }
+  .split-table .swim { color:var(--swim); }
+  .split-table .bike { color:var(--bike); }
+  .split-table .run { color:var(--run); }
+  .split-table .total td { border-top:2px solid var(--border); padding-top:12px;
+    font-size:15px; font-weight:700; color:var(--gold); }
+
+  /* Chart */
+  .chart-wrap { position:relative; height:260px; }
+  .chart-wrap.tall { height:300px; }
+
+  /* Week table */
+  .week-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .week-table td { padding:6px 4px; border-bottom:1px solid var(--panel2); vertical-align:top; }
+  .week-table .day { color:var(--mute); width:55px; }
+
+  /* Zones */
+  .zones { font-size:12px; }
+  .zones table { width:100%; border-collapse:collapse; }
+  .zones td { padding:4px 6px; border-bottom:1px solid var(--panel2); }
+  .zones td:first-child { color:var(--mute); width:40px; }
+  .zones .h3 { color:var(--mute); font-size:10px; text-transform:uppercase; letter-spacing:.6px; margin:10px 0 4px 0; }
+
+  /* Note */
+  .note { background:#f088391a; border-left:3px solid var(--warn); padding:10px 12px; border-radius:4px; font-size:12px; margin-top:10px;}
+
+  /* Focus list */
+  ul { margin:6px 0 0 0; padding-left:18px; }
+  li { margin:4px 0; }
+  .warning { color:var(--warn); }
+  .good { color:var(--good); }
+
+  .foot { text-align:center; color:var(--mute); font-size:11px; margin-top:20px; }
+  .weeksum { font-size:11px; color:var(--mute); }
+  .weeksum strong { color:var(--text); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div>
+    <h1>Staffans Hub <span class="mute">Söndag 12 april 2026 · v15</span></h1>
+  </div>
+  <div class="countdown">Ironman: 125 dagar · Nordbygg: 8 dagar</div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('dag')">Min dag</div>
+  <div class="tab" onclick="switchTab('traning')">Träning</div>
+</div>
+
+<!-- ==================== MIN DAG ==================== -->
+<div id="tab-dag" class="tab-content active">
+
+<div class="grid g-3">
+
+  <!-- Dagens schema -->
+  <div class="panel">
+    <h2>Dagens schema</h2>
+    <div class="row">
+      <div class="time">05:00–06:00</div>
+      <div class="what"><span class="tag t-admin">Privat</span>Köra mamma och pappa
+      </div>
+    </div>
+    <div class="row">
+      <div class="time">Heldag</div>
+      <div class="what"><span class="tag t-admin">Privat</span>Åsa Boréns födelsedag
+      </div>
+    </div>
+    <div class="row">
+      <div class="time">FM/EM</div>
+      <div class="what"><span class="tag t-train">Träning</span><strong>Lång löpning 1:45 h</strong>
+        <div style="color:var(--mute);font-size:12px;margin-top:2px;">17–18 km Z2, HR 137–152 · Nyckelpass</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Träning idag/imorgon -->
+  <div class="panel">
+    <h2>Träning · Vecka 15</h2>
+
+    <div class="train-box">
+      <div class="lbl">Idag sön — nyckelpass</div>
+      <div class="pass">Lång löpning 1:45 h</div>
+      <div class="detail">17–18 km Z2, HR 137–152</div>
+    </div>
+
+    <div class="train-box">
+      <div class="lbl">Imorgon mån</div>
+      <div class="pass">Återhämtningscykel</div>
+      <div class="detail">Lätt, ny vecka (v16)</div>
+    </div>
+
+    <div class="train-box">
+      <div class="lbl">Tis</div>
+      <div class="pass">Löpning aerobt</div>
+      <div class="detail">Z2-pass</div>
+    </div>
+
+    <div class="weeksum" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+      Denna vecka (v15) hittills: <strong>~1.5 h</strong> (styrka + intervaller)<br>
+      Snitt 6v: <strong>5.9 h</strong> · Mål v16: <strong>7.5 h</strong>
+    </div>
+  </div>
+
+  <!-- Fokus -->
+  <div class="panel">
+    <h2>Denna vecka — viktigast</h2>
+    <ul>
+      <li><span class="warning">Nordbygg 20–24/4</span> — reducera träning v17</li>
+      <li>Fredagsritual: fakturera + Visma</li>
+      <li>Långcykel 70 km lördag</li>
+      <li>Långlöpning 17 km söndag</li>
+    </ul>
+
+    <h2 style="margin-top:18px;">Aktiva klienter</h2>
+    <ul style="font-size:13px;">
+      <li>Camfil</li>
+      <li>ADON</li>
+      <li>Link 22</li>
+      <li>Vreta Kluster</li>
+      <li>Medtechbyrån</li>
+      <li>Jullan</li>
+    </ul>
+  </div>
+
+</div>
+</div>
+
+<!-- ==================== TRÄNING ==================== -->
+<div id="tab-traning" class="tab-content">
+
+<div class="hero">
+  <div class="metric days"><div class="num">125</div><div class="lbl">Dagar kvar</div></div>
+  <div class="metric"><div class="num">18</div><div class="lbl">Veckor kvar</div></div>
+  <div class="metric goal"><div class="num">11:00</div><div class="lbl">Mål · total tid</div></div>
+  <div class="metric"><div class="num">5.9 h</div><div class="lbl">Veckosnitt (6v)</div></div>
+</div>
+
+<div class="grid g-top" style="margin-bottom:16px;">
+
+  <div class="panel">
+    <h2>Veckovolym · senaste 13 veckorna</h2>
+    <div class="chart-wrap"><canvas id="volumeChart"></canvas></div>
+    <div class="note">Referensplanen vill se ~10 h/v nu. Snitt senaste 6 v: <strong>5.9 h</strong>.</div>
+  </div>
+
+  <div class="panel">
+    <h2>Sub 11h · pace breakdown</h2>
+    <table class="split-table">
+      <tr><th>Disciplin</th><th>Tid</th><th>Pace</th></tr>
+      <tr><td class="disc swim">Sim 3.8 km</td><td>1:15:00</td><td>1:58/100m</td></tr>
+      <tr><td class="disc">T1</td><td>0:05:00</td><td>—</td></tr>
+      <tr><td class="disc bike">Cykel 180 km</td><td>5:20:00</td><td>33.8 km/h</td></tr>
+      <tr><td class="disc">T2</td><td>0:05:00</td><td>—</td></tr>
+      <tr><td class="disc run">Löp 42.2 km</td><td>4:05:00</td><td>5:48/km</td></tr>
+      <tr class="total"><td>Total</td><td>10:50:00</td><td>marginal 10 min</td></tr>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Aktuella stats</h2>
+    <div class="stats">
+      <div class="stat"><div class="v">219 W</div><div class="l">FTP cykel</div></div>
+      <div class="stat"><div class="v">172</div><div class="l">LTHR löp</div></div>
+      <div class="stat"><div class="v">193</div><div class="l">Max HR</div></div>
+      <div class="stat"><div class="v">5:26</div><div class="l">Bästa pace 8+km</div></div>
+      <div class="stat"><div class="v">16.9</div><div class="l">Längsta löp (km)</div></div>
+      <div class="stat"><div class="v">52.7</div><div class="l">Längsta cykel (km)</div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="grid g-mid" style="margin-bottom:16px;">
+
+  <div class="panel">
+    <h2>Långpass-progression mot race-distans</h2>
+    <div class="chart-wrap tall"><canvas id="longPassChart"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <h2>Avstånd till målet</h2>
+    <div class="prog"><div class="prog-label"><span class="name">Längsta cykel</span><span class="vals">52.7 / 180 km</span></div><div class="prog-bar"><div class="prog-fill bike" style="width:29%"></div></div></div>
+    <div class="prog"><div class="prog-label"><span class="name">Längsta löp</span><span class="vals">16.9 / 42.2 km</span></div><div class="prog-bar"><div class="prog-fill run" style="width:40%"></div></div></div>
+    <div class="prog"><div class="prog-label"><span class="name">Veckovolym</span><span class="vals">5.9 / 10 h</span></div><div class="prog-bar"><div class="prog-fill warn" style="width:59%"></div></div></div>
+    <div class="prog"><div class="prog-label"><span class="name">Löppace mål 5:48</span><span class="vals">5:26 bäst</span></div><div class="prog-bar"><div class="prog-fill run" style="width:85%"></div></div></div>
+    <div class="prog"><div class="prog-label"><span class="name">Cykelpower mål 185 W snitt</span><span class="vals">FTP 219 W</span></div><div class="prog-bar"><div class="prog-fill bike" style="width:70%"></div></div></div>
+  </div>
+
+</div>
+
+<div class="grid g-bot">
+
+  <div class="panel">
+    <h2>Vecka 27 (13–19 april)</h2>
+    <table class="week-table">
+      <tr><td class="day">Mån</td><td>Återhämtningscykel</td></tr>
+      <tr><td class="day">Tis</td><td>Löpning aerobt</td></tr>
+      <tr><td class="day">Ons</td><td>AM: Cykelintervall · PM: Sim · Kväll: Uteträning</td></tr>
+      <tr><td class="day">Tors</td><td>OSUP 08–10 · PM: Löp tröskel kväll</td></tr>
+      <tr><td class="day">Fre</td><td>AM: Sim · 17:00 Gruppträning (cirkelpass)</td></tr>
+      <tr><td class="day">Lör</td><td style="color:var(--gold);font-weight:600;">LÅNG CYKEL ~70 km (nyckelpass)</td></tr>
+      <tr><td class="day">Sön</td><td style="color:var(--gold);font-weight:600;">LÅNG LÖPNING 1:45 h</td></tr>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Disciplinfördelning (snitt 6v)</h2>
+    <div class="chart-wrap"><canvas id="splitChart"></canvas></div>
+  </div>
+
+  <div class="panel zones">
+    <h2>Zoner</h2>
+    <div class="h3">Löpning (LTHR 172)</div>
+    <table>
+      <tr><td>Z1</td><td>≤112</td></tr>
+      <tr><td>Z2</td><td>137–151</td></tr>
+      <tr><td>Z3</td><td>152–161</td></tr>
+      <tr><td>Z4</td><td>162–171</td></tr>
+      <tr><td>Z5</td><td>≥172</td></tr>
+    </table>
+    <div class="h3">Cykel power (FTP 219 W)</div>
+    <table>
+      <tr><td>Z2</td><td>120–163</td></tr>
+      <tr><td>Z3</td><td>164–196</td></tr>
+      <tr><td>Z4</td><td>197–229</td></tr>
+      <tr><td>Z5</td><td>230–262</td></tr>
+      <tr><td>Z6</td><td>263–328</td></tr>
+    </table>
+  </div>
+
+</div>
+</div>
+
+<div class="foot">
+  staffans-hub.html · byggd 2026-04-12 · uppdateras via Cowork scheduled task
+</div>
+
+</div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelector(`#tab-${name}`).classList.add('active');
+  event.target.classList.add('active');
+}
+
+const weekData = [{"w":"W03","tot":3.21,"run":1.09,"bike":0.0,"swim":0.0,"str":2.12,"ride":0,"runKm":11.3},{"w":"W04","tot":3.2,"run":0.51,"bike":0.87,"swim":0.0,"str":1.82,"ride":30.1,"runKm":4.4},{"w":"W05","tot":3.92,"run":1.13,"bike":0.92,"swim":0.96,"str":0.91,"ride":30.0,"runKm":6.7},{"w":"W06","tot":6.62,"run":2.56,"bike":1.71,"swim":0.0,"str":2.35,"ride":56.7,"runKm":13.1},{"w":"W07","tot":2.38,"run":0.54,"bike":0.0,"swim":0.86,"str":0.98,"ride":0,"runKm":5.7},{"w":"W08","tot":1.55,"run":0.89,"bike":0.67,"swim":0.0,"str":0.0,"ride":18.2,"runKm":9.3},{"w":"W09","tot":6.78,"run":3.11,"bike":1.22,"swim":1.56,"str":0.9,"ride":35.9,"runKm":15.1},{"w":"W10","tot":5.4,"run":1.3,"bike":1.84,"swim":0.61,"str":1.65,"ride":31.3,"runKm":12.8},{"w":"W11","tot":4.13,"run":1.63,"bike":0.84,"swim":0.54,"str":1.12,"ride":26.8,"runKm":8.7},{"w":"W12","tot":8.91,"run":3.38,"bike":2.67,"swim":1.21,"str":1.65,"ride":51.8,"runKm":14.3},{"w":"W13","tot":6.18,"run":3.44,"bike":0.95,"swim":0.59,"str":1.2,"ride":32.6,"runKm":16.5},{"w":"W14","tot":4.22,"run":1.69,"bike":1.7,"swim":0.0,"str":0.83,"ride":52.7,"runKm":16.9},{"w":"W15","tot":1.5,"run":0.78,"bike":0.0,"swim":0.0,"str":0.72,"ride":0,"runKm":0}];
+const labels = weekData.map(d=>d.w);
+const gridColor = '#222a3a';
+const tickColor = '#8b949e';
+
+new Chart(document.getElementById('volumeChart'), {
+  type:'bar',
+  data:{labels,datasets:[
+    {label:'Sim',data:weekData.map(d=>d.swim),backgroundColor:'#58a6ff'},
+    {label:'Cykel',data:weekData.map(d=>d.bike),backgroundColor:'#bc8cff'},
+    {label:'Löp',data:weekData.map(d=>d.run),backgroundColor:'#3fb950'},
+    {label:'Styrka',data:weekData.map(d=>d.str),backgroundColor:'#f0883e'}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#e6edf3',font:{size:11}}}},
+    scales:{x:{stacked:true,grid:{color:gridColor},ticks:{color:tickColor}},
+             y:{stacked:true,grid:{color:gridColor},ticks:{color:tickColor,callback:v=>v+' h'}}}}
+});
+
+new Chart(document.getElementById('longPassChart'), {
+  type:'line',
+  data:{labels,datasets:[
+    {label:'Längsta cykel (km)',data:weekData.map(d=>d.ride),borderColor:'#bc8cff',backgroundColor:'#bc8cff33',tension:.3,fill:true,pointRadius:3},
+    {label:'Längsta löp (km)',data:weekData.map(d=>d.runKm),borderColor:'#3fb950',backgroundColor:'#3fb95033',tension:.3,fill:true,pointRadius:3},
+    {label:'Ironman cykel (180)',data:Array(labels.length).fill(180),borderColor:'#bc8cff',borderDash:[6,4],borderWidth:1,pointRadius:0,fill:false},
+    {label:'Ironman löp (42.2)',data:Array(labels.length).fill(42.2),borderColor:'#3fb950',borderDash:[6,4],borderWidth:1,pointRadius:0,fill:false}
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{color:'#e6edf3',font:{size:11}}}},
+    scales:{x:{grid:{color:gridColor},ticks:{color:tickColor}},
+             y:{grid:{color:gridColor},ticks:{color:tickColor,callback:v=>v+' km'},suggestedMax:200}}}
+});
+
+const recent = weekData.slice(-6);
+const sum = k => recent.reduce((a,d)=>a+d[k],0);
+new Chart(document.getElementById('splitChart'), {
+  type:'doughnut',
+  data:{labels:['Löp','Cykel','Sim','Styrka'],datasets:[{
+    data:[sum('run'),sum('bike'),sum('swim'),sum('str')],
+    backgroundColor:['#3fb950','#bc8cff','#58a6ff','#f0883e'],
+    borderColor:'#11161f',borderWidth:2
+  }]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{color:'#e6edf3',font:{size:11},padding:10}}}}
+});
+</script>
+
+</body>
+</html>
