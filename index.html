@@ -17,22 +17,16 @@
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
     font-size:14px; line-height:1.45; }
   .wrap { max-width:1500px; margin:0 auto; padding:20px; }
-
-  header { display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+  header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
   h1 { font-size:22px; margin:0; font-weight:700; }
   h1 .mute { color:var(--mute); font-weight:400; font-size:13px; margin-left:10px;}
   .countdown { color:var(--warn); font-size:13px; font-weight:600; }
-
   .tabs { display:flex; gap:0; margin-bottom:20px; border-bottom:2px solid var(--border); }
-  .tab { padding:10px 24px; cursor:pointer; color:var(--mute); font-weight:600;
-    font-size:13px; text-transform:uppercase; letter-spacing:.8px; border-bottom:2px solid transparent;
-    margin-bottom:-2px; transition:all .2s; }
+  .tab { padding:10px 24px; cursor:pointer; color:var(--mute); font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:.8px; border-bottom:2px solid transparent; margin-bottom:-2px; transition:all .2s; }
   .tab:hover { color:var(--text); }
   .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
   .tab-content { display:none; }
   .tab-content.active { display:block; }
-
   .grid { display:grid; gap:16px; }
   .g-3 { grid-template-columns: 2fr 1fr 1fr; }
   .g-2 { grid-template-columns: 1fr 1fr; }
@@ -42,25 +36,18 @@
   @media (max-width:1100px){ .g-3,.g-top,.g-mid,.g-bot{ grid-template-columns: 1fr 1fr; } }
   @media (max-width:720px){ .g-3,.g-2,.g-top,.g-mid,.g-bot{ grid-template-columns: 1fr; } }
   .panel { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px; }
-  .panel h2 { font-size:11px; text-transform:uppercase; letter-spacing:1px;
-    color:var(--mute); margin:0 0 14px 0; font-weight:700; }
-
+  .panel h2 { font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--mute); margin:0 0 14px 0; font-weight:700; }
   .row { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--panel2); align-items:flex-start;}
   .row:last-child { border-bottom:none; }
   .time { color:var(--mute); min-width:90px; font-variant-numeric:tabular-nums; font-size:13px;}
   .what { flex:1; }
-  .tag { display:inline-block; padding:2px 7px; border-radius:4px; font-size:10px;
-    font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-right:5px; }
+  .tag { display:inline-block; padding:2px 7px; border-radius:4px; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-right:5px; }
   .t-work { background:#1f6feb33; color:#79c0ff; }
   .t-train { background:#bc8cff33; color:var(--train); }
-  .t-net { background:#ffa65733; color:var(--net); }
-  .t-admin { background:#8b949e33; color:var(--mute); }
-
   .train-box { background:#bc8cff11; border:1px solid #bc8cff44; border-radius:6px; padding:10px 12px; margin-bottom:10px; }
   .train-box .lbl { color:var(--train); font-size:11px; text-transform:uppercase; letter-spacing:.6px; font-weight:600; }
   .train-box .pass { font-size:14px; margin-top:2px; }
   .train-box .detail { color:var(--mute); font-size:12px; margin-top:2px; }
-
   .latest { background:linear-gradient(135deg,#3fb95015 0%,#11161f 100%); border:1px solid #3fb95044; border-radius:8px; padding:14px; }
   .latest .lbl { color:var(--good); font-size:11px; text-transform:uppercase; letter-spacing:.7px; font-weight:700; }
   .latest .name { font-size:16px; font-weight:600; margin-top:4px; }
@@ -69,24 +56,20 @@
   .latest .stat-mini { font-size:13px; }
   .latest .stat-mini .v { font-weight:700; color:var(--text); }
   .latest .stat-mini .l { color:var(--mute); font-size:10px; text-transform:uppercase; letter-spacing:.4px; }
-  .latest .verdict { background:var(--panel2); border-left:3px solid var(--good); padding:8px 10px; margin-top:12px; border-radius:4px; font-size:13px; line-height:1.5; }
+  .latest .verdict { background:var(--panel2); border-left:3px solid var(--good); padding:10px 12px; margin-top:12px; border-radius:4px; font-size:13px; line-height:1.55; }
   .latest .verdict strong { color:var(--good); }
-
-  .hero { background:linear-gradient(135deg,#1a2130 0%,#0d1320 100%);
-    border:1px solid var(--border); border-radius:10px; padding:24px;
-    display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:24px; margin-bottom:16px; }
+  .latest .badge { display:inline-block; background:var(--gold); color:#000; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-left:6px; }
+  .hero { background:linear-gradient(135deg,#1a2130 0%,#0d1320 100%); border:1px solid var(--border); border-radius:10px; padding:24px; display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:24px; margin-bottom:16px; }
   .hero .metric { text-align:center; }
   .hero .metric .num { font-size:42px; font-weight:700; letter-spacing:-1px; line-height:1; }
   .hero .metric .lbl { color:var(--mute); font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-top:6px; }
   .hero .metric.goal .num { color:var(--gold); }
   .hero .metric.days .num { color:var(--accent); }
   @media (max-width:780px){ .hero{ grid-template-columns:1fr 1fr; } }
-
   .stats { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
   .stat { background:var(--panel2); border-radius:6px; padding:12px; }
   .stat .v { font-size:20px; font-weight:700; line-height:1; }
   .stat .l { color:var(--mute); font-size:11px; text-transform:uppercase; letter-spacing:.5px; margin-top:6px; }
-
   .prog { margin-bottom:14px; }
   .prog-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; }
   .prog-label .name { color:var(--text); font-weight:600; }
@@ -97,38 +80,29 @@
   .prog-fill.bike { background:var(--bike); }
   .prog-fill.run { background:var(--run); }
   .prog-fill.warn { background:var(--warn); }
-
   .split-table { width:100%; border-collapse:collapse; font-size:13px; }
-  .split-table th { text-align:left; color:var(--mute); font-weight:600;
-    padding:8px 4px; border-bottom:1px solid var(--border); font-size:11px; text-transform:uppercase; letter-spacing:.5px; }
+  .split-table th { text-align:left; color:var(--mute); font-weight:600; padding:8px 4px; border-bottom:1px solid var(--border); font-size:11px; text-transform:uppercase; letter-spacing:.5px; }
   .split-table td { padding:8px 4px; border-bottom:1px solid var(--panel2); }
   .split-table .disc { font-weight:600; }
   .split-table .swim { color:var(--swim); }
   .split-table .bike { color:var(--bike); }
   .split-table .run { color:var(--run); }
-  .split-table .total td { border-top:2px solid var(--border); padding-top:12px;
-    font-size:15px; font-weight:700; color:var(--gold); }
-
+  .split-table .total td { border-top:2px solid var(--border); padding-top:12px; font-size:15px; font-weight:700; color:var(--gold); }
   .chart-wrap { position:relative; height:260px; }
   .chart-wrap.tall { height:300px; }
-
   .week-table { width:100%; border-collapse:collapse; font-size:12px; }
   .week-table td { padding:6px 4px; border-bottom:1px solid var(--panel2); vertical-align:top; }
   .week-table .day { color:var(--mute); width:55px; }
-
   .zones { font-size:12px; }
   .zones table { width:100%; border-collapse:collapse; }
   .zones td { padding:4px 6px; border-bottom:1px solid var(--panel2); }
   .zones td:first-child { color:var(--mute); width:40px; }
   .zones .h3 { color:var(--mute); font-size:10px; text-transform:uppercase; letter-spacing:.6px; margin:10px 0 4px 0; }
-
   .note { background:#f088391a; border-left:3px solid var(--warn); padding:10px 12px; border-radius:4px; font-size:12px; margin-top:10px;}
-
   ul { margin:6px 0 0 0; padding-left:18px; }
   li { margin:4px 0; }
   .warning { color:var(--warn); }
   .good { color:var(--good); }
-
   .foot { text-align:center; color:var(--mute); font-size:11px; margin-top:20px; }
   .weeksum { font-size:11px; color:var(--mute); }
   .weeksum strong { color:var(--text); }
@@ -136,44 +110,25 @@
 </head>
 <body>
 <div class="wrap">
-
 <header>
-  <div>
-    <h1>Staffans Hub <span class="mute">Lördag 25 april 2026 · v17</span></h1>
-  </div>
-  <div class="countdown">Ironman: 112 dagar · Nordbygg: klart 🎉</div>
+  <div><h1>Staffans Hub <span class="mute">Söndag 26 april 2026 · v17</span></h1></div>
+  <div class="countdown">Ironman: 111 dagar · Nordbygg: klart 🎉</div>
 </header>
-
 <div class="tabs">
   <div class="tab active" onclick="switchTab('dag')">Min dag</div>
   <div class="tab" onclick="switchTab('traning')">Träning</div>
 </div>
 
-<!-- ==================== MIN DAG ==================== -->
 <div id="tab-dag" class="tab-content active">
-
 <div class="grid g-3">
-
-  <!-- Senaste träning + utvärdering -->
   <div class="panel">
-    <h2>Senaste träning · utvärdering</h2>
-    <div class="latest">
-      <div class="lbl">Senaste pass</div>
-      <div class="name">ROUVY — Matteo's HIIT Lite</div>
-      <div class="meta">Lördag 25 april · 16:17 · virtual_ride</div>
-
-      <div class="stats-row">
-        <div class="stat-mini"><span class="v">18,5 km</span><br><span class="l">Distans</span></div>
-        <div class="stat-mini"><span class="v">41 min</span><br><span class="l">Tid</span></div>
-        <div class="stat-mini"><span class="v">134 bpm</span><br><span class="l">HR snitt (Z2)</span></div>
-        <div class="stat-mini"><span class="v">342 kcal</span><br><span class="l">Energi</span></div>
-      </div>
-
-      <div class="verdict">
-        <strong>Bedömning:</strong> Återstart efter Nordbygg-veckan. HIIT Lite-format men HR snitt landar i Z2 — kontrollerat tempo, ingen aggressiv push. Bra inramning för att komma tillbaka i rytm utan att bränna lager. Cykelvolym fortsatt prioritet inför Ironman (längsta hittills 90 km, mål 180).
-      </div>
-    </div>
-
+    <h2>Idag — söndag</h2>
+    <ul>
+      <li><span class="good">Långlöp 21,1 km klart</span> ✓ — utvärdering på Träning-fliken</li>
+      <li>Fredagsrutin (flyttad från fredag): fakturera v15-17, tidrapport, veckoplan v18</li>
+      <li>Wandt trall: kolla offert från Jonas Beijer, godkänn beställning</li>
+      <li>Processen är Kulturen: namn-förankring med Anton & Christian</li>
+    </ul>
     <h2 style="margin-top:18px;">Aktiva klienter</h2>
     <ul style="font-size:13px;">
       <li>Camfil (Nordbygg klart)</li>
@@ -186,46 +141,24 @@
       <li>Processen är Kulturen (partner)</li>
     </ul>
   </div>
-
-  <!-- Träning v17 / kommande -->
   <div class="panel">
     <h2>Träning · vecka 17</h2>
-
-    <div class="train-box">
-      <div class="lbl">Idag lör</div>
-      <div class="pass">ROUVY HIIT Lite ✓</div>
-      <div class="detail">18,5 km cykel klart 16:17</div>
-    </div>
-
-    <div class="train-box">
-      <div class="lbl">Imorgon sön</div>
-      <div class="pass">Lång cykel rekommenderat</div>
-      <div class="detail">Återhämta volym efter Nordbygg-veckan</div>
-    </div>
-
-    <div class="train-box">
-      <div class="lbl">Hela v17 hittills</div>
-      <div class="pass">23/4 morgonlöp 5 km · 25/4 cykel 18,5 km</div>
-      <div class="detail">Mässveckan slukade volymen — redo att höja igen</div>
-    </div>
-
+    <div class="train-box"><div class="lbl">Idag sön</div><div class="pass">Långlöp 21,1 km ✓</div><div class="detail">1h 46min · halvmara-tempo · se Träning-fliken</div></div>
+    <div class="train-box"><div class="lbl">Igår lör</div><div class="pass">ROUVY HIIT Lite ✓</div><div class="detail">18,5 km · 41 min</div></div>
+    <div class="train-box"><div class="lbl">Tor 23/4</div><div class="pass">Stockholm löpning 5 km ✓</div><div class="detail">Morgonpass under Nordbygg</div></div>
     <div class="weeksum" style="margin-top:10px; padding-top:10px; border-top:1px solid var(--border);">
-      Snitt 6v: <strong>5,8 h</strong> · Mål v18: <strong>9 h</strong> (lång cykel + lång löp)
+      v17 hittills: <strong>~3 h</strong> · Snitt 6v: <strong>5,8 h</strong>
     </div>
   </div>
-
-  <!-- Fokus -->
   <div class="panel">
     <h2>Denna vecka — viktigast</h2>
     <ul>
-      <li><span class="good">Söndag 26/4 kväll: fredagsrutin</span> — fakturera v15-17, tidrapport, veckoplan v18</li>
-      <li>Wandt trall: kolla offert från Jonas Beijer, godkänn beställning</li>
-      <li>Processen är Kulturen: namn-förankring med Anton & Christian</li>
+      <li><span class="good">Idag kväll: fredagsrutin</span> — admin + veckoplan v18</li>
+      <li>Wandt trall — Beijer-offert</li>
+      <li>Processen är Kulturen — namn-förankring</li>
       <li>PURE GRIT: registrera puregrit.se</li>
       <li>Garmin Developer-svar (väntar)</li>
-      <li>Söndag: lång cykel (70+ km mål)</li>
     </ul>
-
     <h2 style="margin-top:18px;">Verksamheter</h2>
     <ul style="font-size:13px;">
       <li>inttn: (moder)</li>
@@ -235,28 +168,54 @@
       <li>PURE GRIT (NY)</li>
     </ul>
   </div>
-
 </div>
 </div>
 
-<!-- ==================== TRÄNING ==================== -->
 <div id="tab-traning" class="tab-content">
 
+<div class="panel" style="margin-bottom:16px;">
+  <h2>Senaste träning · utvärdering</h2>
+  <div class="latest">
+    <div class="lbl">Senaste pass<span class="badge">Halvmara-PR</span></div>
+    <div class="name">Linköping Långlöp · 21,1 km</div>
+    <div class="meta">Söndag 26 april · 10:06 · running · 156 hm stigning</div>
+
+    <div class="stats-row">
+      <div class="stat-mini"><span class="v">21,1 km</span><br><span class="l">Distans</span></div>
+      <div class="stat-mini"><span class="v">1:46:16</span><br><span class="l">Tid</span></div>
+      <div class="stat-mini"><span class="v">5:02/km</span><br><span class="l">Snittpace</span></div>
+      <div class="stat-mini"><span class="v">165 / 188</span><br><span class="l">HR snitt / max</span></div>
+      <div class="stat-mini"><span class="v">194 spm</span><br><span class="l">Cadens</span></div>
+      <div class="stat-mini"><span class="v">VO2 49</span><br><span class="l">Värde nu</span></div>
+      <div class="stat-mini"><span class="v">TE 5,0</span><br><span class="l">Aerob (overreaching)</span></div>
+      <div class="stat-mini"><span class="v">1597 kcal</span><br><span class="l">Energi</span></div>
+    </div>
+
+    <div class="verdict">
+      <strong>Stort pass.</strong> Halvmara-distans på <strong>1:46:16</strong> = pace <strong>5:02/km</strong> — markant snabbare än Ironman-mål 5:48/km. Tidigare bästa pace över 8 km var 5:26 → ny benchmark över längre distans.
+      <br><br>
+      <strong>Belastning:</strong> HR snitt 165 (Z4 162-171). 41 min i Z4 + 32 min uppåt — högt tempo för långpass. Aerobic Training Effect 5,0 = "Overreaching" — bortom nuvarande aerobika kapacitet, ger VO2max-impuls men kräver ordentlig återhämtning.
+      <br><br>
+      <strong>Slutsats:</strong> Stark form. Pacen finns. Nu vägs det här mot Ironman-pacingen — under själva loppet ska löppasset ligga närmare Z2 (137-151), inte Z4. Bra som styrkemarkör, men signal att inte upprepa intensiteten varje långlöp. Komplettera nästa långlöp med mer Z2-volym istället för tempo.
+      <br><br>
+      <strong>Återhämtning:</strong> Ordentligt vätskeintag, sömn 8h+ ikväll. Nästa hårda pass tidigast onsdag.
+    </div>
+  </div>
+</div>
+
 <div class="hero">
-  <div class="metric days"><div class="num">112</div><div class="lbl">Dagar kvar</div></div>
+  <div class="metric days"><div class="num">111</div><div class="lbl">Dagar kvar</div></div>
   <div class="metric"><div class="num">16</div><div class="lbl">Veckor kvar</div></div>
   <div class="metric goal"><div class="num">11:00</div><div class="lbl">Mål · total tid</div></div>
   <div class="metric"><div class="num">5,8 h</div><div class="lbl">Veckosnitt (6v)</div></div>
 </div>
 
 <div class="grid g-top" style="margin-bottom:16px;">
-
   <div class="panel">
     <h2>Veckovolym · senaste 15 veckorna</h2>
     <div class="chart-wrap"><canvas id="volumeChart"></canvas></div>
-    <div class="note">Referensplanen vill se ~10 h/v nu. Snitt senaste 6 v: <strong>5,8 h</strong>. Nordbygg åt v17.</div>
+    <div class="note">Referensplanen vill se ~10 h/v. Snitt 6 v: <strong>5,8 h</strong>. Nordbygg åt v17.</div>
   </div>
-
   <div class="panel">
     <h2>Sub 11h · pace breakdown</h2>
     <table class="split-table">
@@ -269,59 +228,51 @@
       <tr class="total"><td>Total</td><td>10:50:00</td><td>marginal 10 min</td></tr>
     </table>
   </div>
-
   <div class="panel">
     <h2>Aktuella stats</h2>
     <div class="stats">
       <div class="stat"><div class="v">219 W</div><div class="l">FTP cykel</div></div>
       <div class="stat"><div class="v">172</div><div class="l">LTHR löp</div></div>
       <div class="stat"><div class="v">193</div><div class="l">Max HR</div></div>
-      <div class="stat"><div class="v">5:26</div><div class="l">Bästa pace 8+km</div></div>
+      <div class="stat"><div class="v">5:02</div><div class="l">Halvmara-pace</div></div>
       <div class="stat"><div class="v">21,1</div><div class="l">Längsta löp (km)</div></div>
       <div class="stat"><div class="v">90,3</div><div class="l">Längsta cykel (km)</div></div>
     </div>
   </div>
-
 </div>
 
 <div class="grid g-mid" style="margin-bottom:16px;">
-
   <div class="panel">
     <h2>Långpass-progression mot race-distans</h2>
     <div class="chart-wrap tall"><canvas id="longPassChart"></canvas></div>
   </div>
-
   <div class="panel">
     <h2>Avstånd till målet</h2>
     <div class="prog"><div class="prog-label"><span class="name">Längsta cykel</span><span class="vals">90,3 / 180 km</span></div><div class="prog-bar"><div class="prog-fill bike" style="width:50%"></div></div></div>
     <div class="prog"><div class="prog-label"><span class="name">Längsta löp</span><span class="vals">21,1 / 42,2 km</span></div><div class="prog-bar"><div class="prog-fill run" style="width:50%"></div></div></div>
     <div class="prog"><div class="prog-label"><span class="name">Veckovolym</span><span class="vals">5,8 / 10 h</span></div><div class="prog-bar"><div class="prog-fill warn" style="width:58%"></div></div></div>
-    <div class="prog"><div class="prog-label"><span class="name">Löppace mål 5:48</span><span class="vals">5:26 bäst</span></div><div class="prog-bar"><div class="prog-fill run" style="width:85%"></div></div></div>
+    <div class="prog"><div class="prog-label"><span class="name">Löppace mål 5:48</span><span class="vals">5:02 bäst</span></div><div class="prog-bar"><div class="prog-fill run" style="width:100%"></div></div></div>
     <div class="prog"><div class="prog-label"><span class="name">Cykelpower mål 185 W snitt</span><span class="vals">FTP 219 W</span></div><div class="prog-bar"><div class="prog-fill bike" style="width:70%"></div></div></div>
   </div>
-
 </div>
 
 <div class="grid g-bot">
-
   <div class="panel">
     <h2>Vecka 17 (20–26 april)</h2>
     <table class="week-table">
       <tr><td class="day">Mån</td><td>Resa Sthlm + Nordbygg setup</td></tr>
-      <tr><td class="day">Tis</td><td>Camfil sändningar (vila träning)</td></tr>
-      <tr><td class="day">Ons</td><td>Camfil sändningar (vila träning)</td></tr>
-      <tr><td class="day">Tors</td><td>Camfil sändningar (vila träning)</td></tr>
+      <tr><td class="day">Tis</td><td>Camfil sändningar</td></tr>
+      <tr><td class="day">Ons</td><td>Camfil sändningar</td></tr>
+      <tr><td class="day">Tors</td><td>Camfil + 5 km morgonlöp ✓</td></tr>
       <tr><td class="day">Fre</td><td>Sändningar + nedplock + hemresa</td></tr>
       <tr><td class="day">Lör</td><td style="color:var(--good);font-weight:600;">ROUVY HIIT 18,5 km ✓</td></tr>
-      <tr><td class="day">Sön</td><td style="color:var(--gold);font-weight:600;">LÅNG CYKEL 70+ km (planerat)</td></tr>
+      <tr><td class="day">Sön</td><td style="color:var(--gold);font-weight:600;">LÅNGLÖP 21,1 km ✓ (PR-pace)</td></tr>
     </table>
   </div>
-
   <div class="panel">
     <h2>Disciplinfördelning (snitt 6v)</h2>
     <div class="chart-wrap"><canvas id="splitChart"></canvas></div>
   </div>
-
   <div class="panel zones">
     <h2>Zoner</h2>
     <div class="h3">Löpning (LTHR 172)</div>
@@ -341,14 +292,10 @@
       <tr><td>Z6</td><td>263–328</td></tr>
     </table>
   </div>
-
 </div>
 </div>
 
-<div class="foot">
-  staffans-hub.html · uppdaterad 2026-04-25 · uppdateras via Cowork scheduled task
-</div>
-
+<div class="foot">staffans-hub.html · uppdaterad 2026-04-26</div>
 </div>
 
 <script>
@@ -358,7 +305,6 @@ function switchTab(name) {
   document.querySelector(`#tab-${name}`).classList.add('active');
   event.target.classList.add('active');
 }
-
 const weekData = [
   {"w":"W03","tot":3.21,"run":1.09,"bike":0.0,"swim":0.0,"str":2.12,"ride":0,"runKm":11.3},
   {"w":"W04","tot":3.20,"run":0.51,"bike":0.87,"swim":0.0,"str":1.82,"ride":30.1,"runKm":4.4},
@@ -374,12 +320,11 @@ const weekData = [
   {"w":"W14","tot":5.80,"run":2.97,"bike":1.70,"swim":0.0,"str":0.83,"ride":52.7,"runKm":16.9},
   {"w":"W15","tot":4.10,"run":2.71,"bike":0.0,"swim":0.0,"str":1.40,"ride":0,"runKm":21.1},
   {"w":"W16","tot":6.90,"run":1.07,"bike":3.11,"swim":0.94,"str":1.78,"ride":90.3,"runKm":10.8},
-  {"w":"W17","tot":1.20,"run":0.50,"bike":0.69,"swim":0.0,"str":0.0,"ride":18.5,"runKm":5.0}
+  {"w":"W17","tot":3.00,"run":2.27,"bike":0.69,"swim":0.0,"str":0.0,"ride":18.5,"runKm":21.1}
 ];
 const labels = weekData.map(d=>d.w);
 const gridColor = '#222a3a';
 const tickColor = '#8b949e';
-
 new Chart(document.getElementById('volumeChart'), {
   type:'bar',
   data:{labels,datasets:[
@@ -393,7 +338,6 @@ new Chart(document.getElementById('volumeChart'), {
     scales:{x:{stacked:true,grid:{color:gridColor},ticks:{color:tickColor}},
              y:{stacked:true,grid:{color:gridColor},ticks:{color:tickColor,callback:v=>v+' h'}}}}
 });
-
 new Chart(document.getElementById('longPassChart'), {
   type:'line',
   data:{labels,datasets:[
@@ -407,7 +351,6 @@ new Chart(document.getElementById('longPassChart'), {
     scales:{x:{grid:{color:gridColor},ticks:{color:tickColor}},
              y:{grid:{color:gridColor},ticks:{color:tickColor,callback:v=>v+' km'},suggestedMax:200}}}
 });
-
 const recent = weekData.slice(-6);
 const sum = k => recent.reduce((a,d)=>a+d[k],0);
 new Chart(document.getElementById('splitChart'), {
@@ -421,6 +364,5 @@ new Chart(document.getElementById('splitChart'), {
     plugins:{legend:{position:'bottom',labels:{color:'#e6edf3',font:{size:11},padding:10}}}}
 });
 </script>
-
 </body>
 </html>
