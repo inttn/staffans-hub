@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<title>Sändningsschema — Run Together With Astronauts</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF7F2;
+    --paper-warm:#F3EEE4;
+    --ink:#1A1A1A;
+    --ink-soft:#3D3D3D;
+    --ink-mute:#6B645B;
+    --hairline:#D9D2C6;
+    --hairline-strong:#B8B0A1;
+    --accent:#1B2A4E;
+
+    /* category tints (row bg) */
+    --t-forb:#ECE9E4;
+    --t-sand:#D5DCE8;
+    --t-info:#DCE7F0;
+    --t-intv:#F5DFBE;
+    --t-nord:#D7E4D5;
+    --t-film:#E1D6EA;
+    --t-fysk:#F1D2C8;
+    --t-bild:#EDD7DE;
+    --t-part:#F0E4B8;
+
+    /* category ribbons (strong) */
+    --r-forb:#6B6156;
+    --r-sand:#1B2A4E;
+    --r-info:#3F6C95;
+    --r-intv:#B87A2E;
+    --r-nord:#4A7548;
+    --r-film:#6D4E8E;
+    --r-fysk:#B5482F;
+    --r-bild:#9D3F6B;
+    --r-part:#8B7020;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  html,body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans",sans-serif;
+    font-size:10.5px;
+    line-height:1.4;
+    font-feature-settings:"ss01","cv11","tnum" on;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* paper sheet for screen preview */
+  .sheet{
+    max-width:297mm;
+    min-height:210mm;
+    margin:24px auto;
+    padding:12mm 14mm;
+    background:var(--paper);
+    box-shadow:0 1px 2px rgba(0,0,0,.04),0 20px 60px rgba(40,30,10,.08);
+    position:relative;
+  }
+
+  .sheet + .sheet{margin-top:24px}
+
+  /* ======== header ======== */
+  header{
+    display:grid;
+    grid-template-columns:1fr auto;
+    align-items:end;
+    gap:24px;
+    padding-bottom:10px;
+    border-bottom:1px solid var(--ink);
+    margin-bottom:14px;
+  }
+  .eyebrow{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:8.5px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--ink-mute);
+    margin-bottom:4px;
+  }
+  h1{
+    font-family:"Fraunces",serif;
+    font-variation-settings:"opsz" 144,"SOFT" 50;
+    font-weight:500;
+    font-size:38px;
+    line-height:.98;
+    letter-spacing:-.01em;
+    color:var(--ink);
+  }
+  h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--accent);
+    font-variation-settings:"opsz" 144,"SOFT" 100;
+  }
+  .doc-meta{
+    text-align:right;
+    font-family:"IBM Plex Mono",monospace;
+    font-size:8.5px;
+    letter-spacing:.12em;
+    color:var(--ink-mute);
+    text-transform:uppercase;
+    line-height:1.5;
+  }
+  .doc-meta strong{color:var(--ink);font-weight:500}
+
+  .subheader{
+    display:grid;
+    grid-template-columns:1.4fr 1fr;
+    gap:40px;
+    padding:10px 0 16px;
+    align-items:start;
+  }
+  .facts{
+    font-family:"Fraunces",serif;
+    font-variation-settings:"opsz" 24;
+    font-weight:400;
+    font-size:12.5px;
+    line-height:1.45;
+    color:var(--ink-soft);
+  }
+  .facts .sep{color:var(--hairline-strong);padding:0 6px;font-weight:400}
+  .facts .strong{color:var(--ink);font-variation-settings:"opsz" 24;font-weight:500}
+
+  .nordic{
+    font-family:"IBM Plex Sans";
+    font-size:9.5px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--ink-mute);
+    border-left:1px solid var(--hairline-strong);
+    padding-left:16px;
+    line-height:1.8;
+  }
+  .nordic .label{display:block;color:var(--ink);font-weight:600;letter-spacing:.24em;margin-bottom:2px;font-size:8.5px}
+  .nordic span{color:var(--ink-soft)}
+
+  /* ======== legend ======== */
+  .legend{
+    display:grid;
+    grid-template-columns:repeat(9,1fr);
+    gap:0;
+    margin-bottom:12px;
+    border-top:1px solid var(--hairline);
+    border-bottom:1px solid var(--hairline);
+  }
+  .legend-item{
+    padding:7px 10px 7px 14px;
+    position:relative;
+    border-right:1px solid var(--hairline);
+    font-size:8.5px;
+    line-height:1.3;
+  }
+  .legend-item:last-child{border-right:none}
+  .legend-item::before{
+    content:"";
+    position:absolute;
+    left:6px;top:8px;bottom:8px;
+    width:3px;
+    background:var(--ribbon);
+  }
+  .legend-item .cat{
+    display:block;
+    font-weight:600;
+    color:var(--ink);
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    font-size:8.8px;
+    margin-bottom:1px;
+  }
+  .legend-item .desc{
+    color:var(--ink-mute);
+    font-size:8px;
+    letter-spacing:.02em;
+  }
+
+  /* ======== tables ======== */
+  .section-rule{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:14px 0 8px;
+  }
+  .section-rule h2{
+    font-family:"Fraunces",serif;
+    font-variation-settings:"opsz" 60;
+    font-weight:500;
+    font-size:16px;
+    letter-spacing:.01em;
+    color:var(--ink);
+    white-space:nowrap;
+  }
+  .section-rule .count{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:9px;
+    color:var(--ink-mute);
+    letter-spacing:.1em;
+    text-transform:uppercase;
+  }
+  .section-rule .line{
+    flex:1;
+    height:1px;
+    background:var(--ink);
+  }
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:10px;
+    table-layout:fixed;
+  }
+  thead th{
+    font-family:"IBM Plex Sans";
+    font-size:8.5px;
+    font-weight:600;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-mute);
+    text-align:left;
+    padding:6px 8px 5px 14px;
+    border-bottom:1.25px solid var(--ink);
+    background:var(--paper);
+  }
+
+  tbody td{
+    padding:7px 8px 7px 14px;
+    border-bottom:1px solid var(--hairline);
+    vertical-align:top;
+  }
+  tbody tr{position:relative}
+  tbody tr td:first-child{
+    position:relative;
+  }
+  tbody tr td:first-child::before{
+    content:"";
+    position:absolute;
+    left:0;top:0;bottom:0;
+    width:3px;
+    background:var(--ribbon,transparent);
+  }
+
+  /* column widths — INNEHÅLL bredast */
+  col.c-time{width:7%}
+  col.c-dur{width:5.5%}
+  col.c-seg{width:19%}
+  col.c-ctn{width:37%}
+  col.c-loc{width:11%}
+  col.c-ans{width:11%}
+  col.c-not{width:9.5%}
+
+  .c-time .tid,
+  .col-time{
+    font-family:"IBM Plex Mono",monospace;
+    font-weight:500;
+    font-size:10.5px;
+    color:var(--ink);
+    letter-spacing:-.02em;
+  }
+  .col-dur{
+    font-family:"IBM Plex Mono",monospace;
+    font-size:9px;
+    color:var(--ink-mute);
+  }
+  .col-seg{
+    font-weight:600;
+    font-size:9.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--ink);
+    line-height:1.35;
+  }
+  .col-ctn{
+    color:var(--ink-soft);
+    font-size:10px;
+    line-height:1.4;
+  }
+  .col-loc,.col-ans{
+    color:var(--ink-soft);
+    font-size:9.5px;
+    line-height:1.35;
+  }
+  .col-not{
+    font-style:italic;
+    color:var(--ink-mute);
+    font-size:9px;
+    line-height:1.35;
+  }
+
+  /* category row styling */
+  tr.forb{--ribbon:var(--r-forb);background:var(--t-forb)}
+  tr.sand{--ribbon:var(--r-sand);background:var(--t-sand)}
+  tr.info{--ribbon:var(--r-info);background:var(--t-info)}
+  tr.intv{--ribbon:var(--r-intv);background:var(--t-intv)}
+  tr.nord{--ribbon:var(--r-nord);background:var(--t-nord)}
+  tr.film{--ribbon:var(--r-film);background:var(--t-film)}
+  tr.fysk{--ribbon:var(--r-fysk);background:var(--t-fysk)}
+  tr.bild{--ribbon:var(--r-bild);background:var(--t-bild)}
+  tr.part{--ribbon:var(--r-part);background:var(--t-part)}
+
+  .legend-item.l-forb{--ribbon:var(--r-forb)}
+  .legend-item.l-sand{--ribbon:var(--r-sand)}
+  .legend-item.l-info{--ribbon:var(--r-info)}
+  .legend-item.l-intv{--ribbon:var(--r-intv)}
+  .legend-item.l-nord{--ribbon:var(--r-nord)}
+  .legend-item.l-film{--ribbon:var(--r-film)}
+  .legend-item.l-fysk{--ribbon:var(--r-fysk)}
+  .legend-item.l-bild{--ribbon:var(--r-bild)}
+  .legend-item.l-part{--ribbon:var(--r-part)}
+
+  /* special highlight — the actual running segment */
+  tr.highlight td{font-weight:500}
+  tr.highlight .col-seg{color:#000;letter-spacing:.08em}
+
+  /* ======== footer sections ======== */
+  .footer-grid{
+    display:grid;
+    grid-template-columns:1.15fr 1.35fr 1fr;
+    gap:20px;
+    margin-top:18px;
+    padding-top:14px;
+    border-top:1px solid var(--ink);
+  }
+  .footer-block h3{
+    font-family:"Fraunces",serif;
+    font-variation-settings:"opsz" 24;
+    font-weight:500;
+    font-size:12px;
+    color:var(--ink);
+    margin-bottom:6px;
+    letter-spacing:.01em;
+  }
+  .footer-block h4{
+    font-family:"IBM Plex Sans";
+    font-size:8.3px;
+    font-weight:600;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--ink-mute);
+    margin:8px 0 4px;
+  }
+  .footer-block h4:first-of-type{margin-top:0}
+
+  .after-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:9.5px;
+  }
+  .after-table td{
+    padding:4px 8px 4px 0;
+    vertical-align:top;
+    color:var(--ink-soft);
+    border-bottom:1px dashed var(--hairline);
+  }
+  .after-table tr:last-child td{border-bottom:none}
+  .after-table td.t{
+    font-family:"IBM Plex Mono",monospace;
+    color:var(--ink);
+    white-space:nowrap;
+    width:52px;
+    font-size:9.5px;
+  }
+  .after-table td.w{
+    font-weight:600;
+    color:var(--ink);
+    white-space:nowrap;
+    width:78px;
+  }
+
+  .cast-list{
+    list-style:none;
+    font-size:9.5px;
+    color:var(--ink-soft);
+    line-height:1.45;
+  }
+  .cast-list li{
+    padding:2px 0;
+  }
+  .cast-list strong{
+    color:var(--ink);
+    font-weight:600;
+  }
+
+  .open-list{
+    list-style:none;
+    font-size:9.5px;
+    color:var(--ink-soft);
+    line-height:1.45;
+  }
+  .open-list li{
+    position:relative;
+    padding:3px 0 3px 14px;
+  }
+  .open-list li::before{
+    content:"◆";
+    position:absolute;
+    left:0;top:2px;
+    color:var(--r-intv);
+    font-size:7px;
+  }
+  .open-list strong{color:var(--ink);font-weight:600}
+
+  .colophon{
+    text-align:right;
+    margin-top:16px;
+    padding-top:8px;
+    border-top:1px solid var(--hairline);
+    font-family:"IBM Plex Mono",monospace;
+    font-size:7.8px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-mute);
+  }
+  .colophon em{color:var(--ink-soft);font-style:normal;margin:0 6px}
+
+  /* ======== print ======== */
+  @page{
+    size:A4 landscape;
+    margin:10mm;
+  }
+  @media print{
+    html,body{background:#fff}
+    .sheet{
+      margin:0;
+      padding:0;
+      min-height:auto;
+      max-width:none;
+      box-shadow:none;
+      page-break-after:always;
+    }
+    .sheet:last-child{page-break-after:auto}
+    tbody tr,thead tr{page-break-inside:avoid}
+    .footer-grid,.footer-block{page-break-inside:avoid}
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+</style>
+</head>
+<body>
+
+<main class="sheet">
+
+  <header>
+    <div>
+      <div class="eyebrow">Sändningsschema · Livestudion för ESERO</div>
+      <h1>Run Together <em>With</em> Astronauts</h1>
+    </div>
+    <div class="doc-meta">
+      Version 11<br>
+      <strong>2026-05-06</strong><br>
+      Sändningsdag: 21 maj 2026
+    </div>
+  </header>
+
+  <div class="subheader">
+    <div class="facts">
+      <span class="strong">Ovalen</span>, Vallastaden, Linköping
+      <span class="sep">·</span>
+      Sändning <span class="strong">10:00–ca 11:20</span>
+      <span class="sep">·</span>
+      Löpning <span class="strong">10:30–11:00</span>
+      <span class="sep">·</span>
+      Ca <span class="strong">100 barn</span> + astronaut
+      <span class="sep">·</span>
+      Arrangör: <span class="strong">ESERO</span>
+    </div>
+    <div class="nordic">
+      <span class="label">Nordiska platser</span>
+      <span>Sverige · Norge · Finland · Danmark</span>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item l-forb"><span class="cat">Förberedelse</span><span class="desc">Tekniktest, positionering</span></div>
+    <div class="legend-item l-sand"><span class="cat">Sändningsram</span><span class="desc">Start, avslutning, outro</span></div>
+    <div class="legend-item l-info"><span class="cat">Info & presentation</span><span class="desc">Programupplägg, regler</span></div>
+    <div class="legend-item l-intv"><span class="cat">Intervju (live)</span><span class="desc">Astronaut, barn, atleter</span></div>
+    <div class="legend-item l-nord"><span class="cat">Nordisk inkoppling</span><span class="desc">NO · FI · DK live</span></div>
+    <div class="legend-item l-film"><span class="cat">Förinspelat film</span><span class="desc">Hälsningar på band</span></div>
+    <div class="legend-item l-fysk"><span class="cat">Fysisk aktivitet</span><span class="desc">Uppvärmning, löpning, mål</span></div>
+    <div class="legend-item l-bild"><span class="cat">Bildflöde skolor</span><span class="desc">Inskickade bilder live</span></div>
+    <div class="legend-item l-part"><span class="cat">Partner & arrangör</span><span class="desc">ESERO, Rymdstyrelsen</span></div>
+  </div>
+
+  <div class="section-rule">
+    <h2>Sändning</h2>
+    <span class="count">30 segment · ca 105 min</span>
+    <span class="line"></span>
+  </div>
+
+  <table>
+    <colgroup>
+      <col class="c-time"><col class="c-dur"><col class="c-seg"><col class="c-ctn"><col class="c-loc"><col class="c-ans"><col class="c-not">
+    </colgroup>
+    <thead>
+      <tr>
+        <th>Tid</th><th>Längd</th><th>Segment</th><th>Innehåll / beskrivning</th><th>Plats / källa</th><th>Ansvarig</th><th>Noteringar</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="forb"><td class="col-time">09:30</td><td class="col-dur">15 min</td><td class="col-seg">Förberedelse</td><td class="col-ctn">Teknisk genomgång, kamera- och ljudtest. Kontrollera uppkoppling mot Norge, Finland och Danmark.</td><td class="col-loc">Studion / Ovalen</td><td class="col-ans">Teknik + regissör</td><td class="col-not">Backup-kopplingar redo</td></tr>
+      <tr class="forb"><td class="col-time">09:45</td><td class="col-dur">10 min</td><td class="col-seg">Norden ansluter (Ecamm Live)</td><td class="col-ctn">Norge, Finland och Danmark loggar in på Staffans Ecamm Live. Audio/video-test per plats. Bekräfta att de hör studio och att studio hör dem. Gå igenom cue-system så varje land vet exakt när de är på.</td><td class="col-loc">Ecamm Live + Norden</td><td class="col-ans">Staffan + lokala reportrar</td><td class="col-not">Kritiskt för nordisk synk</td></tr>
+      <tr class="forb"><td class="col-time">09:55</td><td class="col-dur">5 min</td><td class="col-seg">Förberedelse</td><td class="col-ctn">Alla i position. Presentatör redo i studio. Astronauten och barn samlas på Ovalen. Reportrar redo på alla platser. Jenny tar emot elever/studenter.</td><td class="col-loc">Alla platser</td><td class="col-ans">Produktionsledare + Jenny</td><td class="col-not">Sista check inför sändningsstart</td></tr>
+      <tr class="sand"><td class="col-time">10:00</td><td class="col-dur">2 min</td><td class="col-seg">Sändningsstart</td><td class="col-ctn">Introjingel/grafik. Fredric hälsar tittarna välkomna. Kort intro: vad händer idag, vilka är med, vad är syftet med eventet.</td><td class="col-loc">Studio</td><td class="col-ans">Fredric (ESERO)</td><td class="col-not">—</td></tr>
+      <tr class="info"><td class="col-time">10:02</td><td class="col-dur">2 min</td><td class="col-seg">Presentation av platsen</td><td class="col-ctn">Utekamera visar Ovalen i Vallastaden, Linköping. Presentatör berättar kort om platsen och hur många barn som deltar.</td><td class="col-loc">Ovalen, Linköping</td><td class="col-ans">Utereporter / kamera</td><td class="col-not">—</td></tr>
+      <tr class="intv"><td class="col-time">10:04</td><td class="col-dur">2 min</td><td class="col-seg">Presentation av astronauten</td><td class="col-ctn">Fredric introducerar Marcus. Kort intervju: vem är han, varför springer de idag, vad vill han säga till barnen?</td><td class="col-loc">Studio eller Ovalen</td><td class="col-ans">Fredric + Marcus</td><td class="col-not">Förbered frågor i förväg</td></tr>
+      <tr class="nord"><td class="col-time">10:06</td><td class="col-dur">5 min</td><td class="col-seg">Nordisk utblick</td><td class="col-ctn">Liveinkoppling till Norge, Finland och Danmark. Ca 1,5 min per land. Fredric ställer specifika frågor till varje plats: Var står ni? Hur många barn deltar? Hur är vädret och stämningen? Hur har morgonen varit? Vad ser ni fram emot mest?</td><td class="col-loc">Norge / Finland / Danmark</td><td class="col-ans">Fredric + lokala reportrar</td><td class="col-not">Sammanslagen från del 1+2 (v9). Ger varje land tid att hitta flow.</td></tr>
+      <tr class="info"><td class="col-time">10:11</td><td class="col-dur">2 min</td><td class="col-seg">Regler & information</td><td class="col-ctn">Fredric berättar om hur löpningen fungerar: rutt, tid (30 min), säkerhet, hur man skickar in bilder.</td><td class="col-loc">Studio</td><td class="col-ans">Fredric</td><td class="col-not">Påminn om bild-hashtag / sändväg</td></tr>
+      <tr class="fysk"><td class="col-time">10:13</td><td class="col-dur">11 min</td><td class="col-seg">Uppvärmning live</td><td class="col-ctn">Kamera på Ovalen: uppvärmning med barnen, Marcus och LHC-atleterna (en dam + en herr). Pepp till tittarna att värma upp hemma! Lite extra tid (v10) — LHC leder dynamiskt program, gradvis stegring.</td><td class="col-loc">Ovalen, Linköping</td><td class="col-ans">Utereporter + kamera</td><td class="col-not">Dynamisk och rolig. LHC leder.</td></tr>
+      <tr class="intv"><td class="col-time">10:24</td><td class="col-dur">4 min</td><td class="col-seg">Intervju — astronauten inför start</td><td class="col-ctn">Intervju med Marcus på Ovalen inför start. Förväntningar, tips till barnen, hur känns det? Vad har han med sig från sin egen erfarenhet?</td><td class="col-loc">Ovalen, Linköping</td><td class="col-ans">Utereporter + Marcus</td><td class="col-not">Håll energin uppe inför start</td></tr>
+      <tr class="nord"><td class="col-time">10:28</td><td class="col-dur">2 min</td><td class="col-seg">Nordisk nedräkning</td><td class="col-ctn">Alla nordiska platser kopplas upp live samtidigt. Fredric leder gemensam nedräkning (10–9–8…). Varje land syns på skärmen. Startskottet ges på Ovalen kl 10:30.</td><td class="col-loc">Ovalen + Norden</td><td class="col-ans">Fredric + alla länder</td><td class="col-not">Synkronisera exakt. Alla live!</td></tr>
+      <tr class="fysk highlight"><td class="col-time">10:30</td><td class="col-dur">2 min</td><td class="col-seg">Löpning startar</td><td class="col-ctn">Löpning pågår 10:30–11:00. Barn, Marcus och LHC-atleterna springer. Sändningen fortsätter med innehåll under hela löpningen.</td><td class="col-loc">Ovalen + Norden</td><td class="col-ans">Alla</td><td class="col-not">30 min löpning</td></tr>
+      <tr class="bild"><td class="col-time">10:32</td><td class="col-dur">4 min</td><td class="col-seg">Bildvisning — skolor</td><td class="col-ctn">Första omgången inkomna bilder från skolor och grupper som springer runt om. Fredric lyfter fram roliga och inspirerande bilder. Eventuellt blandat med löpning-visuals från Ovalen — exakt mix bestäms närmare sändning.</td><td class="col-loc">Studio / Bildström</td><td class="col-ans">Fredric + bildredaktör</td><td class="col-not">Slås ev. ihop med Löpning pågår (TBD)</td></tr>
+      <tr class="film"><td class="col-time">10:36</td><td class="col-dur">30 sek</td><td class="col-seg">Hälsning — Christer Fuglesang</td><td class="col-ctn">Förinspelad hälsning från Christer Fuglesang.</td><td class="col-loc">Studio (inspelat)</td><td class="col-ans">Regi</td><td class="col-not">Andrum för Fredric</td></tr>
+      <tr class="fysk"><td class="col-time">10:37</td><td class="col-dur">1 min</td><td class="col-seg">Löpning pågår</td><td class="col-ctn">Miljöbilder från Ovalen. Barn springer, stämning, atmosfär. Fredric kommenterar kort.</td><td class="col-loc">Ovalen (utekamera)</td><td class="col-ans">Kamera</td><td class="col-not">Slås ev. ihop med Bildvisning (TBD)</td></tr>
+      <tr class="intv"><td class="col-time">10:38</td><td class="col-dur">3 min</td><td class="col-seg">Intervju — elever & studenter</td><td class="col-ctn">Lärarstudenter intervjuas om sina upplevelser. Därefter korta samtal med elever/ungdomar från de andra två grupperna.</td><td class="col-loc">Ovalen, Linköping</td><td class="col-ans">Utereporter</td><td class="col-not">Tre grupper, ca 1 min/grupp</td></tr>
+      <tr class="film"><td class="col-time">10:41</td><td class="col-dur">2 min 38 sek</td><td class="col-seg">Hälsning — Rymdministern (Lotta Edholm)</td><td class="col-ctn">Förinspelad hälsning från Rymdminister Lotta Edholm. Substantiellt segment — bygger upp tematiken inför Om ESERO. Fil: 260504 LE Run with astronauts.mp4</td><td class="col-loc">Studio (inspelat)</td><td class="col-ans">Regi</td><td class="col-not">Bekräftad &amp; mottagen 2026-05-04. Real längd 2:38.</td></tr>
+      <tr class="part"><td class="col-time">10:44</td><td class="col-dur">3 min</td><td class="col-seg">Om ESERO & RTWA</td><td class="col-ctn">Jenny och Rymdstyrelsen kliver in i studion till Fredric. Berättar om ESERO:s uppdrag och de olika Run Together With Astronauts-projekten. Vad gör Jenny för elev-/studentkopplingen? Vad vill Rymdstyrelsen nå med samarbetet?</td><td class="col-loc">Studio</td><td class="col-ans">Fredric + Jenny + Rymdstyrelsen</td><td class="col-not">Flyttat post-race (v10) — Fredric hinner samla sig efter starten</td></tr>
+      <tr class="intv"><td class="col-time">10:47</td><td class="col-dur">3 min</td><td class="col-seg">Intervju — Jannicke Mikelsen</td><td class="col-ctn">Liveintervju med Jannicke i Norge. Hur går löpningen där? Stämningen bland barnen? Vad betyder det här eventet för Norge?</td><td class="col-loc">Norge (live)</td><td class="col-ans">Fredric + Jannicke</td><td class="col-not">Likt Marcus-intervjuerna</td></tr>
+      <tr class="film"><td class="col-time">10:50</td><td class="col-dur">30 sek</td><td class="col-seg">Hälsning — Carolina Klüft</td><td class="col-ctn">Förinspelad hälsning från Carolina Klüft.</td><td class="col-loc">Studio (inspelat)</td><td class="col-ans">Regi</td><td class="col-not">Andrum för Fredric</td></tr>
+      <tr class="intv"><td class="col-time">10:51</td><td class="col-dur">2 min</td><td class="col-seg">Intervju — astronauten</td><td class="col-ctn">Reporter stoppar Marcus mitt i löpningen (kort andningspaus). 2 frågor: Hur mår du? Vad säger du till barnen?</td><td class="col-loc">Ovalen, Linköping</td><td class="col-ans">Utereporter + Marcus</td><td class="col-not">Max 2 min — Marcus springer fortfarande</td></tr>
+      <tr class="film"><td class="col-time">10:53</td><td class="col-dur">30 sek</td><td class="col-seg">Hälsning — Andy</td><td class="col-ctn">Förinspelad hälsning från astronaut Andy. Filmen produceras av Andy själv på begäran av ESERO Danmark (förmedlat via Marcus, bekräftat 26/4).</td><td class="col-loc">Studio (inspelat)</td><td class="col-ans">Regi</td><td class="col-not">Astronaut #2</td></tr>
+      <tr class="film"><td class="col-time">10:54</td><td class="col-dur">30 sek</td><td class="col-seg">Hälsning — Anders Hansen</td><td class="col-ctn">Förinspelad hälsning från Anders Hansen.</td><td class="col-loc">Studio (inspelat)</td><td class="col-ans">Regi</td><td class="col-not">Andrum för Fredric</td></tr>
+      <tr class="intv"><td class="col-time">10:54</td><td class="col-dur">3 min</td><td class="col-seg">Intervju — LHC-atleterna</td><td class="col-ctn">Kort intervju med LHC-dam och LHC-herr under löpningen. Varför är de med? Koppling mellan idrott och inspiration.</td><td class="col-loc">Ovalen, Linköping</td><td class="col-ans">Utereporter</td><td class="col-not">—</td></tr>
+      <tr class="forb"><td class="col-time">10:55</td><td class="col-dur">5 min</td><td class="col-seg">Norden återansluter (Ecamm Live)</td><td class="col-ctn">Norge, Finland och Danmark loggar in igen i Staffans Ecamm Live inför nordisk målgång (11:07). Off-air, parallell med pågående löpning, intervjuer och bildvisning. Tekniska teamet bekräftar audio/video och country-cues.</td><td class="col-loc">Ecamm Live + Norden</td><td class="col-ans">Staffan + tekniska teamet</td><td class="col-not">OFF-AIR. Klar senast 11:00.</td></tr>
+      <tr class="fysk"><td class="col-time">10:57</td><td class="col-dur">1 min</td><td class="col-seg">Löpning pågår</td><td class="col-ctn">Kameran hittar detaljer: skor mot grus, andetag, skratt, high-fives. Naturligt ljud.</td><td class="col-loc">Ovalen (utekamera)</td><td class="col-ans">Kamera</td><td class="col-not">Slås ev. ihop med Bildvisning del 2 (TBD)</td></tr>
+      <tr class="film"><td class="col-time">10:58</td><td class="col-dur">30 sek</td><td class="col-seg">Hälsning — Utbildningsministern</td><td class="col-ctn">Förinspelad hälsning från Utbildningsministern.</td><td class="col-loc">Studio (inspelat)</td><td class="col-ans">Regi</td><td class="col-not">Andrum för Fredric</td></tr>
+      <tr class="bild"><td class="col-time">10:59</td><td class="col-dur">2 min</td><td class="col-seg">Bildvisning — skolor del 2</td><td class="col-ctn">Ny omgång inkomna bilder från övriga skolor. Fredric lyfter fram orter, skolor, roliga tillrop. Eventuellt blandat med löpning-visuals.</td><td class="col-loc">Studio / Bildström</td><td class="col-ans">Fredric + bildredaktör</td><td class="col-not">Slås ev. ihop med Löpning pågår (TBD)</td></tr>
+      <tr class="film"><td class="col-time">11:01</td><td class="col-dur">1 min 44 sek</td><td class="col-seg">Hälsning — Socialministern (Jacob Forssmed)</td><td class="col-ctn">Förinspelad hälsning från Socialminister Jacob Forssmed. Tema: rörelse och hälsa. Substantiellt avslut före målgång. Fil: 260427 JF Run w Astronauts.mp4</td><td class="col-loc">Studio (inspelat)</td><td class="col-ans">Regi</td><td class="col-not">Bekräftad &amp; mottagen 2026-04-27. Real längd 1:44.</td></tr>
+      <tr class="info"><td class="col-time">11:03</td><td class="col-dur">2 min</td><td class="col-seg">Uppladdning inför mål</td><td class="col-ctn">Fredric laddar upp inför målgången. Sista bilderna från skolor. Gemensam nordisk nedräkning mot mål.</td><td class="col-loc">Studio + Ovalen</td><td class="col-ans">Fredric</td><td class="col-not">Energi och tempo upp!</td></tr>
+      <tr class="fysk highlight"><td class="col-time">11:00</td><td class="col-dur">—</td><td class="col-seg">Målkamera igång</td><td class="col-ctn">Dedikerad målkamera körs löpande från ca 11:00 (när snabbaste börjar komma i mål). Fångar alla som passerar mållinjen — jubel, high-fives, firande. Klipps in som bild-i-bild eller helskärm under övriga segment, inkl. parallellt med Forssmed-hälsningen och Uppladdning.</td><td class="col-loc">Ovalen, mål</td><td class="col-ans">Målkamera (fast)</td><td class="col-not">Kör tills sista löparen är i mål</td></tr>
+      <tr class="nord"><td class="col-time">11:07</td><td class="col-dur">3 min</td><td class="col-seg">Nordisk målgång</td><td class="col-ctn">Inkoppling till alla nordiska länder. Hur gick det? Firande och reaktioner live från varje plats.</td><td class="col-loc">Norge / Finland / Danmark</td><td class="col-ans">Fredric + lokala reportrar</td><td class="col-not">—</td></tr>
+      <tr class="intv"><td class="col-time">11:10</td><td class="col-dur">4 min</td><td class="col-seg">Avslutande intervju — Marcus</td><td class="col-ctn">Fredric intervjuar Marcus vid mål. Hur kändes det? Vad är budskapet till alla barn som sprang idag?</td><td class="col-loc">Ovalen / Studio</td><td class="col-ans">Fredric + Marcus</td><td class="col-not">Känslosamt och inspirerande</td></tr>
+      <tr class="bild"><td class="col-time">11:14</td><td class="col-dur">4 min</td><td class="col-seg">Bildgalleri & tack</td><td class="col-ctn">Bästa bilderna från skolor och platser visas. Fredric tackar alla deltagare, skolor, volontärer och sponsorer.</td><td class="col-loc">Studio</td><td class="col-ans">Fredric</td><td class="col-not">Förbered bildurval i förväg</td></tr>
+      <tr class="sand"><td class="col-time">11:18</td><td class="col-dur">2 min</td><td class="col-seg">Avslutning</td><td class="col-ctn">Fredric summerar dagen. Uppmanar tittare att fortsätta dela bilder. Nämner ev. framtida events. Outro-grafik/jingel.</td><td class="col-loc">Studio</td><td class="col-ans">Fredric</td><td class="col-not">—</td></tr>
+      <tr class="sand"><td class="col-time">ca 11:20</td><td class="col-dur">—</td><td class="col-seg">Sändning slut</td><td class="col-ctn">Sändningen avslutas.</td><td class="col-loc">—</td><td class="col-ans">—</td><td class="col-not">—</td></tr>
+    </tbody>
+  </table>
+
+</main>
+
+<main class="sheet">
+
+  <header>
+    <div>
+      <div class="eyebrow">Efter sändningen · medverkande · öppna frågor</div>
+      <h1 style="font-size:30px">Run Together With Astronauts <em>— forts.</em></h1>
+    </div>
+    <div class="doc-meta">
+      Sida <strong>2 / 2</strong><br>
+      v11 · 2026-05-06
+    </div>
+  </header>
+
+  <div class="section-rule">
+    <h2>Efter sändningen</h2>
+    <span class="count">Pressträff · filminspelning</span>
+    <span class="line"></span>
+  </div>
+
+  <table class="after-table" style="margin-top:6px">
+    <tr>
+      <td class="t">ca 11:23</td>
+      <td class="w">Pressträff</td>
+      <td>Marcus, Fredric, Jenny + media. Direkt efter sändningen.</td>
+    </tr>
+    <tr>
+      <td class="t">ca 11:43</td>
+      <td class="w">Filminspelning</td>
+      <td>Marcus, Jenny, Fredric. Kort film — innehåll/manus TBD.</td>
+    </tr>
+  </table>
+
+  <div class="footer-grid">
+
+    <div class="footer-block">
+      <h3>Medverkande</h3>
+
+      <h4>I sändningen (live)</h4>
+      <ul class="cast-list">
+        <li><strong>Fredric</strong> — huvudpresentatör (ESERO). Håller ihop sändningen.</li>
+        <li><strong>Marcus</strong> — astronaut. Intervjuer + springer med barnen.</li>
+        <li><strong>Rymdstyrelsen</strong> — studio-medverkan i Om ESERO-segmentet 10:42 (post-race).</li>
+        <li><strong>Jannicke Mikelsen</strong> — reporter/kontakt Norge.</li>
+        <li><strong>LHC-atleter</strong> — 1 dam + 1 herr. Uppvärmning, löpning, intervju.</li>
+        <li><strong>Jenny</strong> — elevansvarig. Tar emot elever/studenter. Studio-medverkan i Om ESERO-segmentet 10:42.</li>
+        <li><strong>Lärarstudenter</strong> — grupp 1, intervjuas under löpningen.</li>
+        <li><strong>Elevgrupp 2 & 3</strong> — TBD.</li>
+        <li><strong>Skolklasser</strong> — en per land (SE · NO · FI · DK). TBD.</li>
+      </ul>
+
+      <h4>Förinspelade filmhälsningar</h4>
+      <ul class="cast-list">
+        <li><strong>Lotta Edholm</strong> — Rymdminister (bekräftad, mottagen 2026-05-04, 2:38). <strong>Jacob Forssmed</strong> — Socialminister (bekräftad, mottagen 2026-04-27, 1:44). <strong>Utbildningsministern</strong> — ej bekräftad.</li>
+        <li><strong>Carolina Klüft</strong> · <strong>Christer Fuglesang</strong> · <strong>Anders Hansen</strong></li>
+        <li><strong>Andy</strong> — astronaut, hälsning till sändningen via ESERO Danmark (bekräftad 2026-04-26).</li>
+        <li><strong>Ryan Gosling</strong> — förfrågan skickad, ej bekräftad.</li>
+      </ul>
+
+      <h4>Arrangör & partners</h4>
+      <ul class="cast-list">
+        <li><strong>ESERO</strong> — arrangör. Eget segment om RTWA-projekten.</li>
+        <li><strong>Rymdstyrelsen</strong> — medverkar i ESERO/RTWA-segmentet.</li>
+      </ul>
+    </div>
+
+    <div class="footer-block">
+      <h3>Att bekräfta · öppna frågor</h3>
+      <ul class="open-list">
+        <li><strong>Löpning pågår + Bildvisning skolor:</strong> tanken är att slå ihop dessa till blandat innehåll (skol-bilder + atmosfär från Ovalen). Format och hur ej spikat. Berör 10:32, 10:37, 10:55 och 10:57.</li>
+        <li><strong>Elev-/studentgrupper:</strong> hoppas på lärarstudenter + 2–3 klasser. Ej spikade. Jenny ansvarar.</li>
+        <li><strong>Ryan Gosling:</strong> förfrågan skickad, inget svar ännu.</li>
+
+        <li><strong>LHC-atleter:</strong> namn ej klara — en dam och en herr.</li>
+        <li><strong>Nordiska skolor:</strong> vilka specifika skolor per land?</li>
+        <li><strong>Filminspelning efter sändning:</strong> innehåll/manus TBD.</li>
+      </ul>
+    </div>
+
+    <div class="footer-block">
+      <h3>Regi-noter</h3>
+      <ul class="open-list">
+        <li><strong>Sändningslängd:</strong> ~11:20 (utökad från 11:17 i v10) pga reella ministerlängder — Edholm 2:38 och Forssmed 1:44. Allt nedströms skiftat ~3 min. Alternativ: komprimera/skippa obekräftade 30-sek-hälsningar för att hålla 11:17.</li>
+        <li><strong>Ecamm Live · Norden:</strong> två tillfällen då Norge/Finland/Danmark ska vara inkopplade. Första 09:45–09:55 (innan sändning). Andra 10:55–11:00 (off-air, inför nordisk målgång 11:07). Mellan dessa kan de vara av/på efter behov.</li>
+        <li><strong>Om ESERO & RTWA (10:42):</strong> flyttat post-race i v10. Jenny + Rymdstyrelsen kliver in i studion direkt efter Rymdminister-hälsningen. Fredric får andrum, sedan tar han emot dem på sittplats för ett lugnare studio-segment.</li>
+        <li><strong>Målkamera</strong> körs löpande från ca 11:00. Klipps in som bild-i-bild eller helskärm mellan segment. Inget krav att alla passerar samtidigt — kameran fångar alla som kommer i mål.</li>
+        <li><strong>Synkronisering</strong> vid nordisk nedräkning (10:28) är kritiskt. Dubbelkolla uppkopplingar 10:20.</li>
+        <li><strong>Bekräftade ministerhälsningar (v11):</strong> Edholm 10:41 (2:38), Forssmed 11:01 (1:44). Övriga 30-sek-hälsningar (Christer, Carolina, Andy, Anders Hansen, Utbildningsministern) — bekräftelsestatus oklar, fråga ESERO/Jenny.</li>
+        <li><strong>Nordisk utblick (10:06):</strong> Fredric ställer specifika frågor till varje land — det hjälper ovana medverkande att hitta sin plats. Ge dem tid att svara.</li>
+        <li><strong>Energi-kurva:</strong> uppvärmning och start ska vara topp. Målgång eufori. Avslutning värme och tack.</li>
+        <li><strong>Bildurval</strong> för bildgalleri förbereds under löpningen — håll koll på flödet.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="colophon">
+    Livestudion <em>·</em> ESERO <em>·</em> Rymdstyrelsen <em>·</em> Sändningsschema v11 <em>·</em> 2026-05-06
+  </div>
+
+</main>
+
+</body>
+</html>
