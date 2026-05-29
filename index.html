@@ -52,12 +52,15 @@
   .t-net { background:#ffa65733; color:var(--net); }
   .t-admin { background:#8b949e33; color:var(--mute); }
   .t-done { background:#3fb95033; color:var(--good); }
+  .t-warn { background:#f0883e33; color:var(--warn); }
   .train-box { background:#bc8cff11; border:1px solid #bc8cff44; border-radius:6px; padding:10px 12px; margin-bottom:10px; }
   .train-box .lbl { color:var(--train); font-size:11px; text-transform:uppercase; letter-spacing:.6px; font-weight:600; }
   .train-box .pass { font-size:14px; margin-top:2px; }
   .train-box .detail { color:var(--mute); font-size:12px; margin-top:2px; }
   .train-box.done { background:#3fb95011; border-color:#3fb95044; }
   .train-box.done .lbl { color:var(--good); }
+  .train-box.alert { background:#f0883e11; border-color:#f0883e44; }
+  .train-box.alert .lbl { color:var(--warn); }
   .hero { background:linear-gradient(135deg,#1a2130 0%,#0d1320 100%);
     border:1px solid var(--border); border-radius:10px; padding:24px;
     display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:24px; margin-bottom:16px; }
@@ -104,9 +107,11 @@
   .zones .h3 { color:var(--mute); font-size:10px; text-transform:uppercase; letter-spacing:.6px; margin:10px 0 4px 0; }
   .note { background:#f088391a; border-left:3px solid var(--warn); padding:10px 12px; border-radius:4px; font-size:12px; margin-top:10px;}
   .note.good { background:#3fb9501a; border-left-color:var(--good); }
+  .note.alert { background:#f851491a; border-left-color:var(--bad); }
   ul { margin:6px 0 0 0; padding-left:18px; }
   li { margin:4px 0; }
   .warning { color:var(--warn); }
+  .alert { color:var(--bad); }
   .good { color:var(--good); }
   .foot { text-align:center; color:var(--mute); font-size:11px; margin-top:20px; }
   .weeksum { font-size:11px; color:var(--mute); }
@@ -120,6 +125,11 @@
   .session-card .verdict { margin-top:6px; font-size:12px; }
   .v-good { color:var(--good); }
   .v-warn { color:var(--warn); }
+  .v-alert { color:var(--bad); }
+  .hm-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .hm-table th { text-align:left; color:var(--mute); padding:6px 4px; font-size:10px; text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--border); }
+  .hm-table td { padding:6px 4px; border-bottom:1px solid var(--panel2); }
+  .hm-table .fast { color:var(--gold); font-weight:700; }
 </style>
 </head>
 <body>
@@ -127,9 +137,9 @@
 
 <header>
   <div>
-    <h1>Staffans Hub <span class="mute">Söndag 3 maj 2026 · v18</span></h1>
+    <h1>Staffans Hub <span class="mute">Söndag 24 maj 2026 · v21</span></h1>
   </div>
-  <div class="countdown">Ironman: 104 dagar · 15 veckor kvar</div>
+  <div class="countdown">Ironman: 82 dagar · 11 veckor + 5 dagar kvar</div>
 </header>
 
 <div class="tabs">
@@ -142,66 +152,72 @@
 <div class="grid g-3">
 
   <div class="panel">
-    <h2>Dagens schema · sön</h2>
+    <h2>Idag · sön 24 maj</h2>
     <div class="row">
-      <div class="time">13:00</div>
-      <div class="what"><span class="tag t-train">Tävling</span><span class="tag t-done">Klar</span>Kanallöpet — halvmara
-        <div style="color:var(--good);font-size:12px;margin-top:2px;font-weight:600;">21.2 km · 1:48:55 · pace 5:08/km · NY PR (-7:29)</div>
+      <div class="time">08:35</div>
+      <div class="what"><span class="tag t-train">Träning</span><span class="tag t-done">Klar</span>Löpning Linköping 9,9 km
+        <div style="color:var(--good);font-size:12px;margin-top:2px;font-weight:600;">60 min · pace 6:01 · HR 140 (Z2) · solid återhämtningspass</div>
       </div>
     </div>
     <div class="row">
       <div class="time">EM</div>
-      <div class="what"><span class="tag t-admin">Återhämtning</span>Vila, mat, vätska. Lätt promenad ev.
-      </div>
+      <div class="what"><span class="tag t-admin">Söndagsplanering</span>Veckoplan v22 (referens v33) finaliserad — Sommen runt 144 km lör!</div>
     </div>
     <div class="row">
-      <div class="time">V19 mån</div>
-      <div class="what"><span class="tag t-train">Träning</span>Vilodag rekommenderas
-        <div style="color:var(--mute);font-size:12px;margin-top:2px;">Z4/Z5 för 91 min ger ordentlig belastning</div>
-      </div>
+      <div class="time">Kväll</div>
+      <div class="what"><span class="tag t-admin">Vila</span>Tidig sömn — Sommen runt kräver väckarklocka 06:30 lör</div>
     </div>
   </div>
 
   <div class="panel">
-    <h2>Träning · Vecka 18</h2>
+    <h2>Träning · denna vecka</h2>
 
-    <div class="train-box done">
-      <div class="lbl">Idag sön — TÄVLING KLAR ✓</div>
-      <div class="pass">Kanallöpet 21.2 km · 1:48:55</div>
-      <div class="detail">Pace 5:08/km · NY HALVMARA-PR (-7:29 mot 12/4)</div>
+    <div class="train-box alert">
+      <div class="lbl">⚠ HÖGSTA PRIORITET</div>
+      <div class="pass">SIM x2 (ons + fre)</div>
+      <div class="detail">0 simpass på 5 veckor — måste lösas v22</div>
+    </div>
+
+    <div class="train-box">
+      <div class="lbl">🚴 Lördag 30/5 — NYCKELPASS</div>
+      <div class="pass">SOMMEN RUNT 144 km</div>
+      <div class="detail">Start 10:00 Tranås · klunga, snittfart 25–28 km/h · 4 depåer · ~5:30 h</div>
     </div>
 
     <div class="train-box done">
-      <div class="lbl">Igår lör — KLAR</div>
-      <div class="pass">Cykel 35 km / 350m elev</div>
-      <div class="detail">Snitt 34.7 km/h · HR 144 Z3-Z4</div>
+      <div class="lbl">Idag sön — KLART ✓</div>
+      <div class="pass">Löpning 9,9 km / 60 min</div>
+      <div class="detail">Z2 (HR 140) · solid återhämtning · knäet pratglatt men inte farligt</div>
     </div>
 
     <div class="weeksum" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
-      Vecka 18 KLAR: <strong>5.5 h</strong> (styrka × 2 + löp 10 km + cykel 35 km + halvmara PR)<br>
-      Snitt 6v: <strong>5.0 h</strong> · Mål v18: <strong>~7 h</strong>
+      Vecka 21: <strong>~4:42 h</strong> · 5 pass · cykel 37 km / löp 30 km / sim 0<br>
+      Snitt 6v: <strong>4,85 h</strong> · Mål v22: <strong>~10 h</strong>
     </div>
   </div>
 
   <div class="panel">
     <h2>Denna vecka — viktigast</h2>
     <ul>
-      <li class="good">🏆 KANALLÖPET PR: 21.2 km på 1:48:55 (pace 5:08)</li>
-      <li class="good">−7:29 mot förra halvmaran (12/4) — stor progress</li>
-      <li>V19 startar mån: vila eller lätt cykel/sim</li>
-      <li class="warning">Simningen står stilla 3+ veckor — boka pass v19</li>
-      <li>FTP-test 18/5 · Halvmara-test 7/6</li>
+      <li class="alert"><strong>SIM 0 sedan 17/4</strong> — kritiskt att starta v22 (ons lunch + fre morgon)</li>
+      <li class="warning"><strong>Knäkänning insida vänster</strong> — pes anserinus, tål nuvarande nivå men inte race-tröskel</li>
+      <li class="good">🚴 Sommen runt 144 km lör 30/5 — sätter långcykel-progression i ett enda pass</li>
+      <li class="good">Vecka 21 utan helgkonflikter — Viggos konfirmation-dubblett i kalendern rensad</li>
+      <li>Söndag 31/5 = vila/sim · långlöp flyttas till tis 2/6</li>
+      <li>v24-26 reduktion + FTP-test (18/6) · granskning sub-11 vs sub-12</li>
     </ul>
 
     <h2 style="margin-top:18px;">Aktiva klienter</h2>
     <ul style="font-size:13px;">
+      <li>Link 22</li>
       <li>Camfil</li>
       <li>ADON</li>
-      <li>Link 22</li>
       <li>Vreta Kluster</li>
       <li>Medtechbyrån</li>
       <li>Jullan</li>
       <li>SA Skåne (Livestudion)</li>
+      <li>Wandt (Handymen)</li>
+      <li>Jarskog (Microbruket)</li>
     </ul>
   </div>
 
@@ -210,58 +226,66 @@
 <div class="grid g-2" style="margin-top:16px;">
 
   <div class="panel">
-    <h2>Veckoplan v19 · 4–10 maj</h2>
+    <h2>Veckoplan v22 · 25–31 maj (referensplan v33)</h2>
     <div class="row">
-      <div class="time">Mån 4/5</div>
-      <div class="what"><span class="tag t-work">Handymen</span>Wandt — bygga trätrall (heldag)</div>
+      <div class="time">Mån 25/5</div>
+      <div class="what"><span class="tag t-train">Träning</span>Kort cykel Z2 60–75 min / 25–30 km (recovery + bas)</div>
     </div>
     <div class="row">
-      <div class="time">Tis 5/5 fm</div>
-      <div class="what"><span class="tag t-work">Microbruket</span>Badrumsmontering — hjälpa rörmockaren</div>
+      <div class="time">Tis 26/5</div>
+      <div class="what"><span class="tag t-train">Träning</span>Löp Z2 morgon 50–60 min / 8–10 km</div>
     </div>
     <div class="row">
-      <div class="time">Tis 5/5 em</div>
-      <div class="what"><span class="tag t-work">Handymen</span>Wandt-trall (em)</div>
+      <div class="time">Ons 27/5</div>
+      <div class="what"><span class="tag t-train">Sim 12:00</span><span class="tag t-net">Cirkel 19</span>Sim 1500–1800m teknik + cirkelpass</div>
     </div>
     <div class="row">
-      <div class="time">Ons 6/5</div>
-      <div class="what"><span class="tag t-work">Handymen</span>Wandt — bygga trätrall (heldag)</div>
+      <div class="time">Tors 28/5</div>
+      <div class="what"><span class="tag t-train">Tröskel</span>3 × 1 km @ 5:10–5:20 (knä-anpassat) · ~9 km</div>
     </div>
     <div class="row">
-      <div class="time">Tors 7/5</div>
-      <div class="what"><span class="tag t-work">Livestudion</span>Link22 — film (heldag)</div>
+      <div class="time">Fre 29/5</div>
+      <div class="what"><span class="tag t-train">Sim 06:30</span><span class="tag t-net">Cirkel lätt</span>Sim morgon + lätt cirkelpass</div>
     </div>
     <div class="row">
-      <div class="time">Fre 8/5</div>
-      <div class="what"><span class="tag t-admin">Privat</span>Tatuering (heldag)</div>
+      <div class="time">Lör 30/5</div>
+      <div class="what"><span class="tag t-train">🚴 NYCKELPASS</span><strong style="color:var(--bike);">SOMMEN RUNT 144 km</strong> · start 10:00 Tranås</div>
+    </div>
+    <div class="row">
+      <div class="time">Sön 31/5</div>
+      <div class="what"><span class="tag t-admin">Vila</span>Vila eller easy sim 30 min Z1 (långlöp flyttas till tis 2/6)</div>
     </div>
   </div>
 
   <div class="panel">
-    <h2>Veckoplan v20 · 11–15 maj</h2>
+    <h2>v23 (1–7/6) — auto-reducering efter Sommen</h2>
     <div class="row">
-      <div class="time">Mån 11/5 fm</div>
-      <div class="what"><span class="tag t-work">Microbruket</span>Jarskog — skisser utekök (3h)</div>
+      <div class="time">Mån 1/6</div>
+      <div class="what"><span class="tag t-admin">Vila helt</span>Aktiv återhämtning efter 144 km</div>
     </div>
     <div class="row">
-      <div class="time">Mån 11/5 em</div>
-      <div class="what"><span class="tag t-work">Livestudion</span>Link22 — film (em)</div>
+      <div class="time">Tis 2/6</div>
+      <div class="what"><span class="tag t-train">Långlöp</span>14–15 km Z2 (uppskjuten från sön)</div>
     </div>
     <div class="row">
-      <div class="time">Tis 12/5</div>
-      <div class="what"><span class="tag t-work">Livestudion</span>Link22 — film (heldag)</div>
+      <div class="time">Ons 3/6</div>
+      <div class="what"><span class="tag t-train">Sim + cirkel</span></div>
     </div>
     <div class="row">
-      <div class="time">Ons 13/5</div>
-      <div class="what"><span class="tag t-work">Livestudion</span>Link22 — film (heldag)</div>
+      <div class="time">Tors 4/6</div>
+      <div class="what"><span class="tag t-admin">Vila / easy</span>30 min jogg om kropp vill</div>
     </div>
     <div class="row">
-      <div class="time">Tors 14/5</div>
-      <div class="what"><span class="tag t-work">Livestudion</span>Link22 — film (heldag)</div>
+      <div class="time">Fre 5/6</div>
+      <div class="what"><span class="tag t-train">Sim + cirkel</span></div>
     </div>
     <div class="row">
-      <div class="time">Fre 15/5</div>
-      <div class="what"><span class="tag t-work">Livestudion</span>Link22 — film (heldag)</div>
+      <div class="time">Lör 6/6</div>
+      <div class="what"><span class="tag t-train">Medel cykel</span>60–70 km Z2 (recovery efter Sommen)</div>
+    </div>
+    <div class="row">
+      <div class="time">Sön 7/6</div>
+      <div class="what"><span class="tag t-train">Långlöp</span>17–18 km Z2</div>
     </div>
   </div>
 
@@ -271,10 +295,10 @@
 <div id="tab-traning" class="tab-content">
 
 <div class="hero">
-  <div class="metric days"><div class="num">104</div><div class="lbl">Dagar kvar</div></div>
-  <div class="metric"><div class="num">15</div><div class="lbl">Veckor kvar</div></div>
+  <div class="metric days"><div class="num">82</div><div class="lbl">Dagar kvar</div></div>
+  <div class="metric"><div class="num">11+5d</div><div class="lbl">Veckor kvar</div></div>
   <div class="metric goal"><div class="num">11:00</div><div class="lbl">Mål · total tid</div></div>
-  <div class="metric"><div class="num">5.0 h</div><div class="lbl">Veckosnitt (6v)</div></div>
+  <div class="metric"><div class="num">4,85 h</div><div class="lbl">Veckosnitt (6v)</div></div>
 </div>
 
 <div class="grid g-2" style="margin-bottom:16px;">
@@ -282,40 +306,38 @@
   <div class="panel">
     <h2>Senaste 3 pass — analys</h2>
 
-    <div class="session-card run" style="border-left-color:var(--gold);">
-      <div class="top"><span>🏆 Idag · Kanallöpet halvmara</span><span style="color:var(--gold);font-weight:700;">21.2 km · 1:48:55 PR</span></div>
-      <div class="meta">Pace 5:08/km · HR 165/181 · cadence 191</div>
-      <div class="meta">HR-zoner: Z4 73 min · Z5 17 min · Z3 12 min</div>
-      <div class="meta">Splits: KM 1-10 i 5:00-5:08 (HR 155-167) · KM 11-21 i 5:00-5:26 (HR 166-176) · sista 200m sprint 4:39</div>
-      <div class="verdict v-good">✓ Massiv PR (-7:29). Du höll snäppet under tröskel större delen av loppet och accepterade lite drift sista 5 km — bra ras-management.</div>
+    <div class="session-card run">
+      <div class="top"><span>Idag sön · Löpning Linköping</span><span class="v-good" style="font-weight:700;">9,9 km · 60 min</span></div>
+      <div class="meta">Pace 6:01/km · HR 140/157 · Z2 dominant</div>
+      <div class="verdict v-good">✓ Mönsterexempel Z2-pass. Disciplinerad puls trots Blodomloppet 2 dagar tidigare. Knäet kände av men inte farligt.</div>
     </div>
 
     <div class="session-card bike">
-      <div class="top"><span>Igår · Cykel utomhus</span><span style="color:var(--mute);">35.3 km · 1h00</span></div>
-      <div class="meta">Snitt 34.7 km/h · 350 m elev · HR 144/173 (Z3-Z4)</div>
-      <div class="verdict">✓ Tempopass. Bensvar OK efter detta — kunde köra full halvmara dagen efter.</div>
+      <div class="top"><span>Igår lör · Cykel Linköping</span><span style="color:var(--mute);">36,8 km · 64 min</span></div>
+      <div class="meta">Snitt 34,4 km/h · 272 m klättring · HR 144/156 · 74 % Z3 (tempo)</div>
+      <div class="verdict v-warn">✓ Snabbt tempopass (8/10 som stand-alone), men ersatte tänkt långcykel pga tidsbrist. Lördagens nyckelpass-roll inte fylld v21.</div>
     </div>
 
     <div class="session-card run">
-      <div class="top"><span>1 maj · Löpning Linköping</span><span style="color:var(--mute);">10.1 km · 60 min</span></div>
-      <div class="meta">Pace 5:58/km · HR 139/152 · jämn split</div>
-      <div class="verdict v-good">✓ Mönsterexempel Z2-pass. Bra inför Kanallöpet 2 dagar senare.</div>
+      <div class="top"><span>Tors 21/5 · Blodomloppet</span><span style="color:var(--mute);">10,2 km · 56 min</span></div>
+      <div class="meta">Pace 5:30/km · HR 151/184 · sprang med Tarvi (hans första mil)</div>
+      <div class="verdict v-good">🏅 Familjeminne — räknas inte som träningsdata. Tarvis första mil under 1h.</div>
     </div>
   </div>
 
   <div class="panel">
     <h2>Coach-analys denna vecka</h2>
     <ul>
-      <li class="good"><strong>Stor progress:</strong> Pace 5:08 på halvmara → indikerar löppace mål 5:48 är fullt rimligt på IM-distans.</li>
-      <li class="good">HR-snitt 165 / max 181 — du körde nära LTHR (172) hela tiden men kontrollerat. 91 min Z4+Z5 är seriös belastning.</li>
-      <li>Belastningsbild: 91 min på/över tröskel + cykel 1h dagen innan = stor TSB-träff. <strong>Återhämtning 2-3 dagar prioriteras.</strong></li>
-      <li class="warning">Simningen står stilla 3+ veckor — schemalägg pass tis/ons v19.</li>
-      <li>FTP-test 18/5 om 15 dagar — du behöver mjuk vecka v19 sen ramp v20.</li>
-      <li>V18 totalt: 5.5 h (under planerat 7 h, men halvmara väger upp kvalitativt).</li>
+      <li class="alert"><strong>SIM 0 sedan 17 april</strong> — 5 v utan ett enda pass. Enskilt största problemet inför IM. Lunch-fönster faller när jobbet pressar. Roxen i juni = räddning.</li>
+      <li class="warning"><strong>Knäkänning insida vänster (pes anserinus)</strong> — efter 3 halvmaror på 22 dagar utan basvolym. Klassisk "för mycket för fort". Läker med smart volym, inte vila.</li>
+      <li class="good">Cykel ute har skenat: 0 → 35 → 66 → 76 km på 3 helger. Stark progression. Sommen runt 144 km lör fortsätter trappan.</li>
+      <li class="good">Konsistens hög: 28 pass på 6,5 v = 4,3/vecka. <strong>Inte motivationsproblem.</strong></li>
+      <li>Långlöp paus sedan 3/5 (3 v) — medvetet pga knät. Återstart tis 2/6 med 14–15 km strikt Z2.</li>
+      <li>VO2max löp <strong>50</strong>, cykel <strong>48</strong>. Sub-11 fortfarande matematiskt möjligt.</li>
     </ul>
 
-    <div class="note">
-      <strong>Återhämtning:</strong> Z4/Z5 för 91 min är hård belastning. Måndag = vila eller mycket lätt simning. HR-drift från 155 → 176 visar du gick på gränsen — inget fel, men kroppen behöver tid.
+    <div class="note alert">
+      <strong>Sommen runt-protokoll:</strong> Klunga hela vägen, snitt 25–28 km/h, puls ≤145, stopp vid alla 4 depåer, 60–80 g kol/h, vetorätt vid 100 km. Söndagen blir vila. v23 = auto-reducering.
     </div>
   </div>
 
@@ -326,20 +348,20 @@
   <div class="panel">
     <h2>Veckovolym · senaste 13 veckorna</h2>
     <div class="chart-wrap"><canvas id="volumeChart"></canvas></div>
-    <div class="note">Snitt senaste 6 v: <strong>5.0 h</strong>. V18 slutade på 5.5 h med halvmara-PR.</div>
+    <div class="note">Snitt 6v: <strong>4,85 h</strong>. v21 slutade på 4,72 h utan långpass. <strong>v22 mål: ~10 h</strong> tack vare Sommen runt.</div>
   </div>
 
   <div class="panel">
-    <h2>Sub-11h · pace breakdown</h2>
-    <table class="split-table">
-      <tr><th>Disciplin</th><th>Tid</th><th>Pace</th></tr>
-      <tr><td class="disc swim">Sim 3.8 km</td><td>1:15:00</td><td>1:58/100m</td></tr>
-      <tr><td class="disc">T1</td><td>0:05:00</td><td>—</td></tr>
-      <tr><td class="disc bike">Cykel 180 km</td><td>5:20:00</td><td>33.8 km/h</td></tr>
-      <tr><td class="disc">T2</td><td>0:05:00</td><td>—</td></tr>
-      <tr><td class="disc run">Löp 42.2 km</td><td>4:05:00</td><td>5:48/km</td></tr>
-      <tr class="total"><td>Total</td><td>10:50:00</td><td>marginal 10 min</td></tr>
+    <h2>Halvmaratider 2026</h2>
+    <table class="hm-table">
+      <tr><th>Datum</th><th>Tid</th><th>Pace</th><th>Kontext</th></tr>
+      <tr><td>12/4</td><td>1:56:24</td><td>5:30/km</td><td>Kontrollerad första</td></tr>
+      <tr><td>26/4</td><td class="fast">~1:46:00</td><td class="fast">5:01/km</td><td>Snabbast (träningslopp)</td></tr>
+      <tr><td>3/5</td><td>1:48:55</td><td>5:08/km</td><td><strong>Kanallöpet officiell PR</strong></td></tr>
     </table>
+    <div class="note good">
+      Tre halvmaror på 22 dagar = bekräftar VO2max 50 + att <strong>sub-3:50 marathon</strong> är realistiskt (B-mål TUI Palma 18/10). För IM-löpsplit Z2 5:30–5:45/km efter 180 km cykel = sub-4h marathon = sub-11 totalt.
+    </div>
   </div>
 
   <div class="panel">
@@ -347,10 +369,12 @@
     <div class="stats">
       <div class="stat"><div class="v">219 W</div><div class="l">FTP cykel</div></div>
       <div class="stat"><div class="v">172</div><div class="l">LTHR löp</div></div>
-      <div class="stat"><div class="v">193</div><div class="l">Max HR</div></div>
-      <div class="stat"><div class="v">5:08</div><div class="l">Bästa pace 8+km</div><div class="delta">−18 sek/km</div></div>
-      <div class="stat"><div class="v">21.2</div><div class="l">Längsta löp (km)</div><div class="delta">PR halvmara 1:48:55</div></div>
-      <div class="stat"><div class="v">90.3</div><div class="l">Längsta cykel (km)</div><div class="delta">+37.6 km</div></div>
+      <div class="stat"><div class="v">50</div><div class="l">VO2max löp</div><div class="delta">+1 från april</div></div>
+      <div class="stat"><div class="v">48</div><div class="l">VO2max cykel</div></div>
+      <div class="stat"><div class="v">5:01</div><div class="l">Bästa pace 21 km</div><div class="delta">−7 sek/km</div></div>
+      <div class="stat"><div class="v">21,2</div><div class="l">Längsta löp (km)</div><div class="delta">PR 1:48:55</div></div>
+      <div class="stat"><div class="v">76,2</div><div class="l">Längsta cykel ute (km)</div><div class="delta">16/5</div></div>
+      <div class="stat"><div class="v">90,3</div><div class="l">Längsta cykel total</div><div class="delta">Rouvy 13/4</div></div>
     </div>
   </div>
 
@@ -365,11 +389,16 @@
 
   <div class="panel">
     <h2>Avstånd till målet</h2>
-    <div class="prog"><div class="prog-label"><span class="name">Längsta cykel</span><span class="vals">90.3 / 180 km</span></div><div class="prog-bar"><div class="prog-fill bike" style="width:50%"></div></div></div>
-    <div class="prog"><div class="prog-label"><span class="name">Längsta löp</span><span class="vals">21.1 / 42.2 km</span></div><div class="prog-bar"><div class="prog-fill run" style="width:50%"></div></div></div>
-    <div class="prog"><div class="prog-label"><span class="name">Veckovolym</span><span class="vals">5.0 / 10 h</span></div><div class="prog-bar"><div class="prog-fill warn" style="width:49%"></div></div></div>
-    <div class="prog"><div class="prog-label"><span class="name">Löppace mål 5:48</span><span class="vals">5:08 bäst</span></div><div class="prog-bar"><div class="prog-fill run" style="width:90%"></div></div></div>
-    <div class="prog"><div class="prog-label"><span class="name">Cykelpower mål 185 W snitt</span><span class="vals">FTP 219 W</span></div><div class="prog-bar"><div class="prog-fill bike" style="width:75%"></div></div></div>
+    <div class="prog"><div class="prog-label"><span class="name">Längsta cykel</span><span class="vals">76 / 180 km</span></div><div class="prog-bar"><div class="prog-fill bike" style="width:42%"></div></div></div>
+    <div class="prog"><div class="prog-label"><span class="name">Längsta löp</span><span class="vals">21,2 / 42,2 km</span></div><div class="prog-bar"><div class="prog-fill run" style="width:50%"></div></div></div>
+    <div class="prog"><div class="prog-label"><span class="name">Sim längst</span><span class="vals">2,0 / 3,8 km</span></div><div class="prog-bar"><div class="prog-fill swim" style="width:53%"></div></div></div>
+    <div class="prog"><div class="prog-label"><span class="name">Veckovolym</span><span class="vals">4,85 / 10 h</span></div><div class="prog-bar"><div class="prog-fill warn" style="width:49%"></div></div></div>
+    <div class="prog"><div class="prog-label"><span class="name">Löppace mål 5:48</span><span class="vals">5:01 bäst</span></div><div class="prog-bar"><div class="prog-fill run" style="width:100%"></div></div></div>
+    <div class="prog"><div class="prog-label"><span class="name">Cykelpower mål 185 W snitt</span><span class="vals">FTP 219 W</span></div><div class="prog-bar"><div class="prog-fill bike" style="width:84%"></div></div></div>
+
+    <div class="note">
+      <strong>Kritisk progression:</strong> 76 → 144 (Sommen) → 110 → 120 → 130 → 145 km. Cykel måste nå 150 km senast v38 (29/6) för taper. Helgcyklarna är heliga.
+    </div>
   </div>
 
 </div>
@@ -377,16 +406,17 @@
 <div class="grid g-bot">
 
   <div class="panel">
-    <h2>Vecka 18 (27 april–3 maj)</h2>
+    <h2>Vecka 21 (18–24 maj)</h2>
     <table class="week-table">
-      <tr><td class="day">Mån</td><td><span class="good">✓ Styrka 39 min</span></td></tr>
+      <tr><td class="day">Mån</td><td style="color:var(--mute);">vila</td></tr>
       <tr><td class="day">Tis</td><td style="color:var(--mute);">vila</td></tr>
-      <tr><td class="day">Ons</td><td><span class="good">✓ Styrka 63 min</span></td></tr>
-      <tr><td class="day">Tors</td><td style="color:var(--mute);">vila</td></tr>
-      <tr><td class="day">Fre</td><td><span class="good">✓ Löp 10 km Z2 (5:58/km)</span></td></tr>
-      <tr><td class="day">Lör</td><td><span class="good">✓ Cykel 35 km (idag)</span></td></tr>
-      <tr><td class="day">Sön</td><td style="color:var(--gold);font-weight:600;">🏆 ✓ KANALLÖPET 21.2 km · 1:48:55 PR</td></tr>
+      <tr><td class="day">Ons</td><td><span class="good">✓ Styrka 61 min</span></td></tr>
+      <tr><td class="day">Tors</td><td><span class="good">🏅 Blodomloppet 10 km · pace 5:30 (med Tarvi)</span></td></tr>
+      <tr><td class="day">Fre</td><td><span class="good">✓ Styrka 42 min</span></td></tr>
+      <tr><td class="day">Lör</td><td><span class="warning">⚠ Cykel 37 km (för kort — konfirmation)</span></td></tr>
+      <tr><td class="day">Sön</td><td style="color:var(--good);font-weight:600;">✓ Löp 9,9 km Z2 (idag)</td></tr>
     </table>
+    <div class="weeksum" style="margin-top:8px;">Tot: <strong>4:42 h</strong> · 5 pass · sim 0</div>
   </div>
 
   <div class="panel">
@@ -418,7 +448,7 @@
 </div>
 
 <div class="foot">
-  staffans-hub.html · uppdaterad 2026-05-03 · uppdateras via Cowork scheduled task
+  staffans-hub.html · uppdaterad 2026-05-24 · Garmin live-data + söndagsplanering v22
 </div>
 
 </div>
@@ -431,7 +461,21 @@ function switchTab(name) {
   event.target.classList.add('active');
 }
 
-const weekData = [{"w": "W06", "tot": 6.62, "run": 2.56, "bike": 1.71, "swim": 0.0, "str": 2.35, "ride": 56.7, "runKm": 13.1}, {"w": "W07", "tot": 2.38, "run": 0.54, "bike": 0.0, "swim": 0.86, "str": 0.98, "ride": 0, "runKm": 5.7}, {"w": "W08", "tot": 1.55, "run": 0.89, "bike": 0.67, "swim": 0.0, "str": 0.0, "ride": 18.2, "runKm": 9.3}, {"w": "W09", "tot": 1.52, "run": 1.52, "bike": 0.0, "swim": 0.0, "str": 0.0, "ride": 0, "runKm": 15.1}, {"w": "W10", "tot": 5.4, "run": 1.3, "bike": 1.84, "swim": 0.61, "str": 1.65, "ride": 31.3, "runKm": 12.8}, {"w": "W11", "tot": 4.13, "run": 1.63, "bike": 0.84, "swim": 0.54, "str": 1.12, "ride": 26.8, "runKm": 8.7}, {"w": "W12", "tot": 8.91, "run": 3.38, "bike": 2.67, "swim": 1.21, "str": 1.65, "ride": 51.8, "runKm": 14.3}, {"w": "W13", "tot": 6.18, "run": 3.44, "bike": 0.95, "swim": 0.59, "str": 1.2, "ride": 32.6, "runKm": 16.5}, {"w": "W14", "tot": 4.22, "run": 1.69, "bike": 1.7, "swim": 0.0, "str": 0.83, "ride": 52.7, "runKm": 16.9}, {"w": "W15", "tot": 4.05, "run": 2.72, "bike": 0.0, "swim": 0.0, "str": 1.33, "ride": 0, "runKm": 21.1}, {"w": "W16", "tot": 6.86, "run": 1.07, "bike": 3.11, "swim": 0.93, "str": 1.75, "ride": 90.3, "runKm": 10.8}, {"w": "W17", "tot": 2.96, "run": 2.27, "bike": 0.69, "swim": 0.0, "str": 0.0, "ride": 18.5, "runKm": 21.1}, {"w": "W18", "tot": 5.52, "run": 2.81, "bike": 1.02, "swim": 0.0, "str": 1.69, "ride": 35.3, "runKm": 21.2}];
+const weekData = [
+  {"w": "W09", "tot": 1.52, "run": 1.52, "bike": 0.0, "swim": 0.0, "str": 0.0, "ride": 0, "runKm": 15.1},
+  {"w": "W10", "tot": 5.4, "run": 1.3, "bike": 1.84, "swim": 0.61, "str": 1.65, "ride": 31.3, "runKm": 12.8},
+  {"w": "W11", "tot": 4.13, "run": 1.63, "bike": 0.84, "swim": 0.54, "str": 1.12, "ride": 26.8, "runKm": 8.7},
+  {"w": "W12", "tot": 8.91, "run": 3.38, "bike": 2.67, "swim": 1.21, "str": 1.65, "ride": 51.8, "runKm": 14.3},
+  {"w": "W13", "tot": 6.18, "run": 3.44, "bike": 0.95, "swim": 0.59, "str": 1.2, "ride": 32.6, "runKm": 16.5},
+  {"w": "W14", "tot": 4.22, "run": 1.69, "bike": 1.7, "swim": 0.0, "str": 0.83, "ride": 52.7, "runKm": 16.9},
+  {"w": "W15", "tot": 4.05, "run": 2.72, "bike": 0.0, "swim": 0.0, "str": 1.33, "ride": 0, "runKm": 21.1},
+  {"w": "W16", "tot": 6.86, "run": 1.07, "bike": 3.11, "swim": 0.93, "str": 1.75, "ride": 90.3, "runKm": 10.8},
+  {"w": "W17", "tot": 2.96, "run": 2.27, "bike": 0.69, "swim": 0.0, "str": 0.0, "ride": 18.5, "runKm": 21.1},
+  {"w": "W18", "tot": 5.52, "run": 2.81, "bike": 1.02, "swim": 0.0, "str": 1.69, "ride": 35.3, "runKm": 21.2},
+  {"w": "W19", "tot": 3.78, "run": 0.0, "bike": 2.23, "swim": 0.0, "str": 1.55, "ride": 66.0, "runKm": 0},
+  {"w": "W20", "tot": 5.23, "run": 1.0, "bike": 2.32, "swim": 0.0, "str": 1.92, "ride": 76.2, "runKm": 10.0},
+  {"w": "W21", "tot": 4.72, "run": 1.93, "bike": 1.07, "swim": 0.0, "str": 1.72, "ride": 36.8, "runKm": 10.2}
+];
 const labels = weekData.map(d=>d.w);
 const gridColor = '#222a3a';
 const tickColor = '#8b949e';
@@ -455,8 +499,9 @@ new Chart(document.getElementById('longPassChart'), {
   data:{labels,datasets:[
     {label:'Längsta cykel (km)',data:weekData.map(d=>d.ride),borderColor:'#bc8cff',backgroundColor:'#bc8cff33',tension:.3,fill:true,pointRadius:3},
     {label:'Längsta löp (km)',data:weekData.map(d=>d.runKm),borderColor:'#3fb950',backgroundColor:'#3fb95033',tension:.3,fill:true,pointRadius:3},
+    {label:'Sommen 144 km (v22)',data:[...Array(labels.length-1).fill(null),144],borderColor:'#ffd700',backgroundColor:'#ffd70066',pointRadius:6,pointBackgroundColor:'#ffd700',showLine:false},
     {label:'Ironman cykel (180)',data:Array(labels.length).fill(180),borderColor:'#bc8cff',borderDash:[6,4],borderWidth:1,pointRadius:0,fill:false},
-    {label:'Ironman löp (42.2)',data:Array(labels.length).fill(42.2),borderColor:'#3fb950',borderDash:[6,4],borderWidth:1,pointRadius:0,fill:false}
+    {label:'Ironman löp (42,2)',data:Array(labels.length).fill(42.2),borderColor:'#3fb950',borderDash:[6,4],borderWidth:1,pointRadius:0,fill:false}
   ]},
   options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{labels:{color:'#e6edf3',font:{size:11}}}},
