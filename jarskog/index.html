@@ -387,26 +387,32 @@ box(HS_X2 - 30, HS_Y1, 692, HS_X2, HS_Y2, 720, matHeatshield, groupHeatshield);
 // Lucka 1: x=0..483, full cabinet depth y=0..700, height z=0..STOMME_H
 // Place 2 flaskor side by side in lucka 1, below heat shield
 function addGasolFlaska(cx, cy, cz, group) {
+  // PC10 composite gasol bottle: 310mm dia × 510mm body + 50mm cap + 40mm valve = 600mm total
+  const RADIUS = 155;       // 310mm diameter
+  const BODY_H = 510;
+  const CAP_H = 50;
+  const VALVE_H = 40;
   // Body (red cylinder)
-  const bodyGeo = new THREE.CylinderGeometry(105, 105, 310, 24);
+  const bodyGeo = new THREE.CylinderGeometry(RADIUS, RADIUS, BODY_H, 24);
   const body = new THREE.Mesh(bodyGeo, matGasol);
-  body.position.set(cx, cz + 155, -cy);  // Three.js coord (note: cy → -cz)
+  body.position.set(cx, cz + BODY_H/2, -cy);
   body.castShadow = true;
   body.receiveShadow = true;
   group.add(body);
   // Top cap (smaller, valve area)
-  const capGeo = new THREE.CylinderGeometry(70, 105, 50, 24);
+  const capGeo = new THREE.CylinderGeometry(RADIUS * 0.65, RADIUS, CAP_H, 24);
   const cap = new THREE.Mesh(capGeo, matGasol);
-  cap.position.set(cx, cz + 310 + 20, -cy);
+  cap.position.set(cx, cz + BODY_H + CAP_H/2, -cy);
   group.add(cap);
   // Valve
-  const valveGeo = new THREE.CylinderGeometry(15, 15, 50, 16);
+  const valveGeo = new THREE.CylinderGeometry(20, 20, VALVE_H, 16);
   const valve = new THREE.Mesh(valveGeo, matGasolValve);
-  valve.position.set(cx, cz + 310 + 60, -cy);
+  valve.position.set(cx, cz + BODY_H + CAP_H + VALVE_H/2, -cy);
   group.add(valve);
 }
-addGasolFlaska(125, 350, 0, groupGasol);
-addGasolFlaska(355, 350, 0, groupGasol);
+// 2× PC10 i lucka 2 (mellan sizzler och grill), placerade i y-riktning
+addGasolFlaska(698, 185, 0, groupGasol);  // front bottle
+addGasolFlaska(698, 515, 0, groupGasol);  // back bottle
 
 // === HUSVÄGG (vänster sida, mot uthus) ===
 // Wall to the left of kitchen, slightly behind kitchen too
