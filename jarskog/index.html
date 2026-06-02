@@ -229,9 +229,8 @@ box(1676, 0, STOMME_H - PROFILE, TOTAL_L, PROFILE, STOMME_H, matSteel, groupStom
 // NEDSÄNKT framsida-balk i grill-zonen (under grill-body-bottenytan vid z=610)
 // Ger strukturell kontinuitet utan att blockera grillens nedsänkning
 box(914, 0, 570, 1676, PROFILE, 610, matSteel, groupStomme);  // lowered KKR z=570..610 (top vid grill-body-botten)
-// Vertikala anslutningar mellan högre och lägre nivå (vid grillens hörn)
-box(914, 0, 610, 954, PROFILE, STOMME_H - PROFILE, matSteel, groupStomme);  // vänster vertikal anslutning (från lowered balk topp upp till topp-ramen)
-box(1636, 0, 610, 1676, PROFILE, STOMME_H - PROFILE, matSteel, groupStomme);  // höger vertikal anslutning (från lowered balk topp upp till topp-ramen)
+// (Vertikala anslutningar BORTTAGNA — stolparna vid x=874..914 och x=1676..1716
+//  går redan full höjd och möter den nedsänkta balken direkt vid z=570..610)
 
 box(0, DEPTH - PROFILE, STOMME_H - PROFILE, TOTAL_L, DEPTH, STOMME_H, matSteel, groupStomme);  // baksida-balk kontinuerlig
 box(0, PROFILE, STOMME_H - PROFILE, PROFILE, DEPTH - PROFILE, STOMME_H, matSteel, groupStomme);
