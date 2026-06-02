@@ -270,39 +270,56 @@ for (const l of luckaPositions) {
   }
 }
 
-// === GRILL BIG32 — REALISTISK "SVAMP"-FORM ===
-// Above-bench: 852 wide × 700 deep (full bänk depth) × 300 tall, sticks to bänk front edge
-// Drop-in: 762 × 502 (= cutout) × 130 mm into cabinet (= 200 total below bänk top inkl 70 bänk)
-// Cutout in bänkskiva: x=914..1676, y=50..552
+// === GRILL BIG32 — CORRECTED PER NAPOLEON MANUAL ===
+// Cutout = RAK rektangel 762 × 502 (no L-shape forward)
+// Body fits in cutout, ABOVE-bench body sits in cutout area
+// CONTROL PANEL hangs DOWN from grill front edge, IN FRONT of bänk-front
+// Spec: 851 W × 701 D × 612 H mm (701 includes control panel sticking forward)
 const GC = [914, 50, 1676, 552];
-const ABOVE_W_EXTRA = 45;  // 45mm extra each side beyond cutout
-const ABOVE_X1 = GC[0] - ABOVE_W_EXTRA;  // = 869
-const ABOVE_X2 = GC[2] + ABOVE_W_EXTRA;  // = 1721
-const ABOVE_Y1 = 0;                       // bänk front edge
-const ABOVE_Y2 = DEPTH;                   // bänk back edge
-const ABOVE_Z_BOT = STOMME_H + BANK_H;    // bänk top
-const ABOVE_BODY_H = 100;                 // lower body section with controls
-const ABOVE_LID_H = 240;                  // lid above
-const ABOVE_Z_BODY_TOP = ABOVE_Z_BOT + ABOVE_BODY_H;
-const ABOVE_Z_LID_TOP = ABOVE_Z_BODY_TOP + ABOVE_LID_H;
-// Body (lower portion above bänk, with knobs)
-box(ABOVE_X1, ABOVE_Y1, ABOVE_Z_BOT, ABOVE_X2, ABOVE_Y2, ABOVE_Z_BODY_TOP, matGrillBody, groupGrill);
-// Lid (top portion, slightly smaller)
-box(ABOVE_X1 + 5, ABOVE_Y1 + 5, ABOVE_Z_BODY_TOP, ABOVE_X2 - 5, ABOVE_Y2 - 5, ABOVE_Z_LID_TOP, matGrillLid, groupGrill);
-// Lid handle (on front, near top)
-box(ABOVE_X1 + 250, ABOVE_Y1 - 25, ABOVE_Z_LID_TOP - 80, ABOVE_X2 - 250, ABOVE_Y1, ABOVE_Z_LID_TOP - 55, matStainless, groupGrill);
-// 4 burner knobs on front of body (at y=front, z=middle of body)
+
+// Main above-bench body — fits in cutout area (not wider than cutout in y, slight bit wider in x for flange)
+const ABOVE_W_EXTRA = 45;
+const ABOVE_X1 = GC[0] - ABOVE_W_EXTRA;
+const ABOVE_X2 = GC[2] + ABOVE_W_EXTRA;
+// Body footprint matches cutout in depth (502mm), positioned at cutout y
+const BODY_Y1 = GC[1] - 5;   // tiny overhang on cutout edge for flange
+const BODY_Y2 = GC[3] + 5;
+const ABOVE_Z_BOT = STOMME_H + BANK_H;     // bänk top
+const ABOVE_BODY_H = 60;                    // small upper rim before lid
+const ABOVE_LID_H = 260;                    // lid
+const Z_BODY_TOP = ABOVE_Z_BOT + ABOVE_BODY_H;
+const Z_LID_TOP = Z_BODY_TOP + ABOVE_LID_H;
+
+// Upper body rim (just above bänk)
+box(ABOVE_X1, BODY_Y1, ABOVE_Z_BOT, ABOVE_X2, BODY_Y2, Z_BODY_TOP, matGrillBody, groupGrill);
+// Lid
+box(ABOVE_X1 + 5, BODY_Y1 + 5, Z_BODY_TOP, ABOVE_X2 - 5, BODY_Y2 - 5, Z_LID_TOP, matGrillLid, groupGrill);
+// Lid handle
+box(ABOVE_X1 + 250, BODY_Y1 - 25, Z_LID_TOP - 80, ABOVE_X2 - 250, BODY_Y1, Z_LID_TOP - 55, matStainless, groupGrill);
+
+// CONTROL PANEL — hangs DOWN from grill front edge, in front of bänk
+// Per manual: control panel is in front of/below bänk surface, NOT on top
+const CP_X1 = ABOVE_X1;
+const CP_X2 = ABOVE_X2;
+const CP_Y_FRONT = -100;        // sticks 100mm forward of bänk
+const CP_Y_BACK = 0;            // back of CP = bänk front edge
+const CP_Z_TOP = ABOVE_Z_BOT;   // top of CP = bänk top
+const CP_Z_BOT = STOMME_H - 30; // bottom of CP = 30mm below bänk bottom (sticks down 100mm total)
+box(CP_X1, CP_Y_FRONT, CP_Z_BOT, CP_X2, CP_Y_BACK, CP_Z_TOP, matGrillBody, groupGrill);
+
+// 4 knobs on FRONT face of control panel
 for (let i = 0; i < 4; i++) {
-  const knobX = ABOVE_X1 + (ABOVE_X2 - ABOVE_X1) * (0.18 + i * 0.215);
+  const knobX = CP_X1 + (CP_X2 - CP_X1) * (0.18 + i * 0.215);
   const knobGeo = new THREE.CylinderGeometry(14, 14, 18, 24);
   const knob = new THREE.Mesh(knobGeo, matSteel);
-  // Position on FRONT face of body, halfway up
-  knob.position.set(knobX, ABOVE_Z_BOT + 50, -(ABOVE_Y1 - 10));  // negate y for three.js convention
+  // Position on FRONT face of CP (at y=CP_Y_FRONT, sticks out forward)
+  knob.position.set(knobX, (CP_Z_TOP + CP_Z_BOT)/2, -(CP_Y_FRONT - 10));
   knob.rotation.x = Math.PI / 2;
   groupGrill.add(knob);
 }
-// Drop-in stem below bänk (fits in cutout)
-const DROP_IN_DEPTH = 130;  // 130mm into cabinet (under bänkskiva)
+
+// Drop-in firebox below bänk (fits in cutout)
+const DROP_IN_DEPTH = 130;
 box(GC[0] + 5, GC[1] + 5, STOMME_H - DROP_IN_DEPTH, GC[2] - 5, GC[3] - 5, STOMME_H + BANK_H, matStainless, groupGrill);
 
 // === SIZZLER BIB10IR — flush-mount infrared element ===
