@@ -219,8 +219,10 @@ for (const xr of stolpareXR) {
 }
 box(GAVEL_STOLPE_X, 0, 0, GAVEL_STOLPE_X + PROFILE, PROFILE, STOMME_H, matSteel, groupStomme);
 box(GAVEL_STOLPE_X, DEPTH - PROFILE, 0, GAVEL_STOLPE_X + PROFILE, DEPTH, STOMME_H, matSteel, groupStomme);
-box(0, 0, STOMME_H - PROFILE, TOTAL_L, PROFILE, STOMME_H, matSteel, groupStomme);
-box(0, DEPTH - PROFILE, STOMME_H - PROFILE, TOTAL_L, DEPTH, STOMME_H, matSteel, groupStomme);
+// Framsida-balk BRUTEN i grill-zonen (grillen sänks ner där, kan inte ha balk i vägen)
+box(0, 0, STOMME_H - PROFILE, 914, PROFILE, STOMME_H, matSteel, groupStomme);  // vänster del
+box(1676, 0, STOMME_H - PROFILE, TOTAL_L, PROFILE, STOMME_H, matSteel, groupStomme);  // höger del
+box(0, DEPTH - PROFILE, STOMME_H - PROFILE, TOTAL_L, DEPTH, STOMME_H, matSteel, groupStomme);  // baksida-balk kontinuerlig
 box(0, PROFILE, STOMME_H - PROFILE, PROFILE, DEPTH - PROFILE, STOMME_H, matSteel, groupStomme);
 const tvarbalkPositions = [[189,229],[483,523],[874,914],[1676,1716],[1865,1905],[2545,2585],[3242,3282]];
 for (const [x1, x2] of tvarbalkPositions) box(x1, PROFILE, STOMME_H - PROFILE, x2, DEPTH - PROFILE, STOMME_H, matSteel, groupStomme);
@@ -228,8 +230,8 @@ const midBalkSegs = [[40,189],[523,874],[1716,1865],[1905,2545],[2585,3242]];
 for (const [x1, x2] of midBalkSegs) box(x1, 330, STOMME_H - PROFILE, x2, 370, STOMME_H, matSteel, groupStomme);
 box(229, 80, STOMME_H-PROFILE, 483, 120, STOMME_H, matSteel, groupStomme);
 box(229, 596, STOMME_H-PROFILE, 483, 636, STOMME_H, matSteel, groupStomme);
-box(914, 10, STOMME_H-PROFILE, 1676, 50, STOMME_H, matSteel, groupStomme);
-box(914, 552, STOMME_H-PROFILE, 1676, 592, STOMME_H, matSteel, groupStomme);
+// Grill front frame TAGEN BORT (cutout öppen i front)
+box(914, 502, STOMME_H-PROFILE, 1676, 542, STOMME_H, matSteel, groupStomme);  // grill back frame (flyttad från y=552 till y=502)
 box(0, 0, 0, SKAP_L, PROFILE, PROFILE, matSteel, groupStomme);
 box(0, DEPTH - PROFILE, 0, SKAP_L, DEPTH, PROFILE, matSteel, groupStomme);
 box(0, PROFILE, 0, PROFILE, DEPTH - PROFILE, PROFILE, matSteel, groupStomme);
