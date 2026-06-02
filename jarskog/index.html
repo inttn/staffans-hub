@@ -272,7 +272,7 @@ const luckaPositions = [
   {x1: 0, x2: 483, name: 'lucka1', under_grill: false},
   {x1: 483, x2: 914, name: 'lucka2', under_grill: false},
   {x1: 914, x2: 1414, name: 'lucka3', under_grill: true},   // under grill — kortare
-  {x1: 1414, x2: 1905, name: 'lucka4', under_grill: true},  // delvis under grill — kortare
+  {x1: 1414, x2: 1676, name: 'lucka4', under_grill: true},  // helt under grill — kortare, slutar vid stolpe 1676
 ];
 const LUCKA_Y_OFFSET = -5;
 const LUCKA_TOP_FULL = STOMME_H - 30;  // = 770 (för luckor utan grill ovanför)
@@ -294,6 +294,24 @@ for (const l of luckaPositions) {
     const lx1 = startX + i * LAMELL_STEP;
     box(lx1, LUCKA_Y_OFFSET - LAMELL_T, LUCKA_BOT, lx1 + LAMELL_W, LUCKA_Y_OFFSET, lucka_top, matWood, groupLuckor);
   }
+}
+
+// === FIXED LAMELLFASAD-PANEL (ingen dörr, bara ribbor) vid x=1676..1905 ===
+// Höger del av skåpet där det inte finns någon lucka (för att luckor 3+4 är kortare)
+// Bara ribbor som täcker hela höjden — dödt utrymme bakom (no access)
+const fixed_panel_x1 = 1676;
+const fixed_panel_x2 = 1905;
+const fixed_panel_top = LUCKA_TOP_FULL;  // full height z=30..770
+const fixed_panel_margin = 10;
+const fixed_panel_inner_w = (fixed_panel_x2 - fixed_panel_x1) - 2 * fixed_panel_margin - LAMELL_GAP;
+const fixed_panel_n = Math.floor(fixed_panel_inner_w / LAMELL_STEP);
+const fixed_panel_start_x = fixed_panel_x1 + fixed_panel_margin + ((fixed_panel_x2 - fixed_panel_x1 - 2 * fixed_panel_margin) - (fixed_panel_n * LAMELL_STEP - LAMELL_GAP)) / 2;
+// Backing (steel mounting plate)
+box(fixed_panel_x1 + fixed_panel_margin, LUCKA_Y_OFFSET - 3, LUCKA_BOT, fixed_panel_x2 - fixed_panel_margin, LUCKA_Y_OFFSET, fixed_panel_top, matSteel, groupLuckor);
+// Ribbor (lamellfasad strips, full height — no door, just decoration)
+for (let i = 0; i < fixed_panel_n; i++) {
+  const lx1 = fixed_panel_start_x + i * LAMELL_STEP;
+  box(lx1, LUCKA_Y_OFFSET - LAMELL_T, LUCKA_BOT, lx1 + LAMELL_W, LUCKA_Y_OFFSET, fixed_panel_top, matWood, groupLuckor);
 }
 
 // === GRILL BIG32 — VERIFIED PER OWNER'S MANUAL SIDA 6 ===
