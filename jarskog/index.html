@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<title>Jarskog utomhuskök — Interaktiv 3D-modell</title>
+<style>
+  body { margin: 0; overflow: hidden; font-family: -apple-system, system-ui, sans-serif; background: #1a1a1c; color: #f6f1e1; }
+  #controls { position: fixed; top: 16px; left: 16px; background: rgba(20,18,16,0.92); padding: 14px 18px; border-radius: 8px; font-size: 13px; z-index: 10; min-width: 220px; backdrop-filter: blur(8px); }
+  #controls h3 { margin: 0 0 8px; font-size: 14px; color: #f6f1e1; font-weight: 600; }
+  #controls label { display: flex; align-items: center; gap: 8px; padding: 3px 0; cursor: pointer; user-select: none; }
+  #controls input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; }
+  #controls .section { margin-top: 10px; padding-top: 10px; border-top: 1px solid #444; }
+  #controls button { width: 100%; padding: 6px 10px; background: #c9c1b1; color: #2a2520; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; margin-top: 4px; font-weight: 600; }
+  #controls button:hover { background: #f6f1e1; }
+  #info { position: fixed; top: 16px; right: 16px; background: rgba(20,18,16,0.92); padding: 14px 18px; border-radius: 8px; font-size: 12px; z-index: 10; max-width: 320px; backdrop-filter: blur(8px); }
+  #info h2 { margin: 0 0 8px; font-size: 15px; font-weight: 600; }
+  #info p { margin: 4px 0; color: #c9c1b1; }
+  #info .key { background: #444; padding: 1px 6px; border-radius: 3px; font-family: Menlo, Monaco, monospace; font-size: 11px; }
+  #orientation { position: fixed; bottom: 16px; left: 16px; background: rgba(20,18,16,0.85); padding: 8px 14px; border-radius: 6px; font-size: 11px; color: #c9c1b1; }
+  .dim-label {
+    background: rgba(255, 255, 248, 0.96);
+    border: 1px solid #888;
+    padding: 1px 6px;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 10px;
+    color: #1a1a1c;
+    border-radius: 3px;
+    pointer-events: none;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .dim-label.cat-total { background: rgba(255, 240, 220, 0.96); border-color: #c5824a; color: #5a2a08; }
+  .dim-label.cat-layout { background: rgba(220, 240, 255, 0.96); border-color: #4a72c5; color: #08245a; }
+  .dim-label.cat-luckor { background: rgba(240, 240, 240, 0.96); border-color: #666; color: #1a1a1a; }
+  .dim-label.cat-apparat { background: rgba(255, 245, 220, 0.96); border-color: #c5a44a; color: #5a4408; }
+  .dim-label.cat-stomme { background: rgba(220, 255, 230, 0.96); border-color: #4ac572; color: #084a2a; }
+</style>
+</head>
+<body>
+
+<div id="controls">
+  <h3>Visa / dölj</h3>
+  <label><input type="checkbox" id="show-stomme" checked> Stomme (KKR)</label>
+  <label><input type="checkbox" id="show-cementskiva" checked> Cementskiva + microcement</label>
+  <label><input type="checkbox" id="show-bank" checked> Bänkskiva</label>
+  <label><input type="checkbox" id="show-luckor" checked> 4 Luckor (lamellfasad)</label>
+  <label><input type="checkbox" id="show-grill" checked> Grill BIG32</label>
+  <label><input type="checkbox" id="show-sizzler" checked> Sizzler BIB10IR</label>
+  <label><input type="checkbox" id="show-trall" checked> Trall (golv)</label>
+  <label><input type="checkbox" id="show-heatshield" checked> Värmesköld (under sizzler)</label>
+  <label><input type="checkbox" id="show-gasol" checked> Gasolflaskor (2× P11)</label>
+  <label><input type="checkbox" id="show-husvagg" checked> Husvägg (vänster sida)</label>
+  <div class="section">
+    <h3>Mått (visa/dölj)</h3>
+    <label><input type="checkbox" id="dim-total"> Total mått (LxDxH)</label>
+    <label><input type="checkbox" id="dim-layout"> Layout (skåp/svävande/gavel)</label>
+    <label><input type="checkbox" id="dim-luckor"> Luckor (4 st)</label>
+    <label><input type="checkbox" id="dim-apparat"> Apparater (cutout + höjd)</label>
+    <label><input type="checkbox" id="dim-stomme"> Stomme (stolpar + tvärbalkar)</label>
+  </div>
+  <div class="section">
+    <h3>Kamera</h3>
+    <button onclick="resetCamera('iso')">Isometrisk</button>
+    <button onclick="resetCamera('front')">Framifrån (lamellfasad)</button>
+    <button onclick="resetCamera('back')">Bakifrån (mot uthus)</button>
+    <button onclick="resetCamera('top')">Uppifrån</button>
+    <button onclick="resetCamera('right')">Höger (gavel)</button>
+    <button onclick="resetCamera('left')">Vänster (mot husvägg)</button>
+  </div>
+</div>
+
+<div id="info">
+  <h2>Jarskog utomhuskök</h2>
+  <p><strong>3 300 × 700 × 870 mm</strong></p>
+  <p>Layout från VÄNSTER (uthus-vägg) → HÖGER (trädgård):</p>
+  <p>sizzler · grill · bänkyta · svävande bänkdel · gavel</p>
+  <p style="margin-top: 10px;">
+    <span class="key">drag</span> rotera<br>
+    <span class="key">scroll</span> zoom<br>
+    <span class="key">höger-drag</span> pan
+  </p>
+</div>
+
+<div id="orientation">Standard 3D-konvention: +X höger, +Y upp, +Z mot dig (framsida)</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xb8c4d4);
+scene.fog = new THREE.Fog(0xb8c4d4, 8, 30);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 50);
+const renderer = new THREE.WebGLRenderer({antialias: true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.1;
+document.body.appendChild(renderer.domElement);
+
+// CSS2D renderer for dimension labels
+const labelRenderer = new CSS2DRenderer();
+labelRenderer.setSize(window.innerWidth, window.innerHeight);
+labelRenderer.domElement.style.position = 'absolute';
+labelRenderer.domElement.style.top = '0';
+labelRenderer.domElement.style.left = '0';
+labelRenderer.domElement.style.pointerEvents = 'none';
+document.body.appendChild(labelRenderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+
+// Lighting
+scene.add(new THREE.HemisphereLight(0xa8c0d8, 0x66543a, 0.6));
+const sun = new THREE.DirectionalLight(0xfff2d0, 2.0);
+sun.position.set(4, 8, 5);  // upper-right-front
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.left = -5; sun.shadow.camera.right = 8;
+sun.shadow.camera.top = 5; sun.shadow.camera.bottom = -3;
+sun.shadow.camera.near = 0.1; sun.shadow.camera.far = 25;
+sun.shadow.bias = -0.001;
+scene.add(sun);
+scene.add(new THREE.DirectionalLight(0xa0b0c8, 0.35).translateX(-3));
+
+// Materials
+const matSteel = new THREE.MeshStandardMaterial({color: 0x14141a, roughness: 0.45, metalness: 0.5});
+const matStainless = new THREE.MeshStandardMaterial({color: 0xb4b4b8, roughness: 0.22, metalness: 0.92});
+const matGrillBody = new THREE.MeshStandardMaterial({color: 0x383840, roughness: 0.3, metalness: 0.75});
+const matGrillLid = new THREE.MeshStandardMaterial({color: 0x0e0e10, roughness: 0.28, metalness: 0.5});
+const matWood = new THREE.MeshStandardMaterial({color: 0x5a4e30, roughness: 0.7, metalness: 0.0});
+const matMicrocement = new THREE.MeshStandardMaterial({color: 0xc8c0aa, roughness: 0.88, metalness: 0.0});
+const matCementskiva = new THREE.MeshStandardMaterial({color: 0xa8a297, roughness: 0.92, metalness: 0.0});
+const matTrall = new THREE.MeshStandardMaterial({color: 0x6e5a3a, roughness: 0.85, metalness: 0.0});
+const matHeatshield = new THREE.MeshStandardMaterial({color: 0xc8c8cc, roughness: 0.25, metalness: 0.9, side: THREE.DoubleSide});
+const matGasol = new THREE.MeshStandardMaterial({color: 0xa83a2c, roughness: 0.55, metalness: 0.1});
+const matGasolValve = new THREE.MeshStandardMaterial({color: 0xa8a8a8, roughness: 0.4, metalness: 0.7});
+const matHusvagg = new THREE.MeshStandardMaterial({color: 0xe8dec8, roughness: 0.9, metalness: 0.0});
+
+const root = new THREE.Group();
+scene.add(root);
+root.scale.setScalar(0.001);
+
+// ==============================================================
+// COORDINATE MAPPING — FIXED to standard Three.js conventions
+// SCAD: x=length(0=vänster, 3300=höger), y=djup(0=front, 700=back), z=height(0=trall, 800=topp_stomme)
+// Three.js: x=length (same direction), y=up (same as scad_z), z=DEPTH (negated from scad_y)
+// 
+// Why negate y: in standard Three.js, +Z is TOWARD viewer (out of screen).
+// SCAD y=0 (front of kitchen, lamellfasad side) should be CLOSEST to viewer = three z=0 or slightly positive.
+// SCAD y=700 (back, uthus-vägg side) should be INTO screen = three z=-0.7 (negative).
+// SCAD y=-23 (lamellfasad in front) → three z=+0.023 (toward viewer).
+// ==============================================================
+function box(x1, y1, z1, x2, y2, z2, mat, group, castShadow=true, receiveShadow=true) {
+  const w = x2 - x1, d = y2 - y1, h = z2 - z1;
+  const g = new THREE.BoxGeometry(w, h, d);
+  const m = new THREE.Mesh(g, mat);
+  // Three.js coords: x = scad x, y = scad z (up), z = -(scad y) (negated for standard convention)
+  m.position.set((x1+x2)/2, (z1+z2)/2, -(y1+y2)/2);
+  m.castShadow = castShadow;
+  m.receiveShadow = receiveShadow;
+  group.add(m);
+  return m;
+}
+
+// Constants (in scad coords)
+const PROFILE = 40;
+const TOTAL_L = 3300;
+const DEPTH = 700;
+const STOMME_H = 800;
+const BANK_H = 70;
+const SKAP_L = 1905;
+const GAVEL_X = 3225;
+const GAVEL_W = 75;
+const GAVEL_STOLPE_X = 3242;
+
+// Groups
+const groupStomme = new THREE.Group();
+const groupCementskiva = new THREE.Group();
+const groupBank = new THREE.Group();
+const groupLuckor = new THREE.Group();
+const groupGrill = new THREE.Group();
+const groupSizzler = new THREE.Group();
+const groupTrall = new THREE.Group();
+const groupHeatshield = new THREE.Group();
+const groupGasol = new THREE.Group();
+const groupHusvagg = new THREE.Group();
+root.add(groupStomme, groupCementskiva, groupBank, groupLuckor, groupGrill, groupSizzler, groupTrall, groupHeatshield, groupGasol, groupHusvagg);
+
+// === STOMME ===
+const stolpareXR = [40, 483, 914, 1905];
+for (const xr of stolpareXR) {
+  box(xr - PROFILE, 0, 0, xr, PROFILE, STOMME_H, matSteel, groupStomme);
+  box(xr - PROFILE, DEPTH - PROFILE, 0, xr, DEPTH, STOMME_H, matSteel, groupStomme);
+}
+box(GAVEL_STOLPE_X, 0, 0, GAVEL_STOLPE_X + PROFILE, PROFILE, STOMME_H, matSteel, groupStomme);
+box(GAVEL_STOLPE_X, DEPTH - PROFILE, 0, GAVEL_STOLPE_X + PROFILE, DEPTH, STOMME_H, matSteel, groupStomme);
+box(0, 0, STOMME_H - PROFILE, TOTAL_L, PROFILE, STOMME_H, matSteel, groupStomme);
+box(0, DEPTH - PROFILE, STOMME_H - PROFILE, TOTAL_L, DEPTH, STOMME_H, matSteel, groupStomme);
+box(0, PROFILE, STOMME_H - PROFILE, PROFILE, DEPTH - PROFILE, STOMME_H, matSteel, groupStomme);
+const tvarbalkPositions = [[189,229],[483,523],[874,914],[1676,1716],[1865,1905],[2545,2585],[3242,3282]];
+for (const [x1, x2] of tvarbalkPositions) box(x1, PROFILE, STOMME_H - PROFILE, x2, DEPTH - PROFILE, STOMME_H, matSteel, groupStomme);
+const midBalkSegs = [[40,189],[523,874],[1716,1865],[1905,2545],[2585,3242]];
+for (const [x1, x2] of midBalkSegs) box(x1, 330, STOMME_H - PROFILE, x2, 370, STOMME_H, matSteel, groupStomme);
+box(229, 80, STOMME_H-PROFILE, 483, 120, STOMME_H, matSteel, groupStomme);
+box(229, 596, STOMME_H-PROFILE, 483, 636, STOMME_H, matSteel, groupStomme);
+box(914, 10, STOMME_H-PROFILE, 1676, 50, STOMME_H, matSteel, groupStomme);
+box(914, 552, STOMME_H-PROFILE, 1676, 592, STOMME_H, matSteel, groupStomme);
+box(0, 0, 0, SKAP_L, PROFILE, PROFILE, matSteel, groupStomme);
+box(0, DEPTH - PROFILE, 0, SKAP_L, DEPTH, PROFILE, matSteel, groupStomme);
+box(0, PROFILE, 0, PROFILE, DEPTH - PROFILE, PROFILE, matSteel, groupStomme);
+box(SKAP_L - PROFILE, PROFILE, 0, SKAP_L, DEPTH - PROFILE, PROFILE, matSteel, groupStomme);
+for (const [x1, x2] of [[443, 483], [874, 914]]) box(x1, PROFILE, 0, x2, DEPTH - PROFILE, PROFILE, matSteel, groupStomme);
+box(GAVEL_STOLPE_X, 0, 0, GAVEL_STOLPE_X + PROFILE, DEPTH, PROFILE, matSteel, groupStomme);
+
+// === CEMENTSKIVA ===
+box(0, DEPTH - 17.5, 0, SKAP_L, DEPTH, STOMME_H, matMicrocement, groupCementskiva);
+box(SKAP_L - 17.5, 0, 0, SKAP_L, DEPTH, STOMME_H, matMicrocement, groupCementskiva);
+box(0, 0, 0, 12.5, DEPTH, STOMME_H, matCementskiva, groupCementskiva);
+box(GAVEL_X, 0, 0, GAVEL_X + GAVEL_W, DEPTH, STOMME_H + BANK_H, matMicrocement, groupCementskiva);
+box(SKAP_L, 0, STOMME_H - 17.5, GAVEL_X, DEPTH, STOMME_H, matMicrocement, groupCementskiva);
+
+// === BÄNKSKIVA (with cutouts) ===
+box(0, 0, STOMME_H, 229, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
+box(229, 0, STOMME_H, 483, 120, STOMME_H + BANK_H, matMicrocement, groupBank);
+box(229, 596, STOMME_H, 483, 700, STOMME_H + BANK_H, matMicrocement, groupBank);
+box(483, 0, STOMME_H, 914, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
+box(914, 0, STOMME_H, 1676, 50, STOMME_H + BANK_H, matMicrocement, groupBank);
+box(914, 552, STOMME_H, 1676, 700, STOMME_H + BANK_H, matMicrocement, groupBank);
+box(1676, 0, STOMME_H, GAVEL_X, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
+
+// === LUCKOR (4 st med lamellfasad) ===
+const luckaPositions = [
+  {x1: 0, x2: 483, name: 'lucka1'},
+  {x1: 483, x2: 914, name: 'lucka2'},
+  {x1: 914, x2: 1414, name: 'lucka3'},
+  {x1: 1414, x2: 1905, name: 'lucka4'},
+];
+const LUCKA_Y_OFFSET = -5;
+const LUCKA_TOP = STOMME_H - 30;
+const LUCKA_BOT = 30;
+const LAMELL_W = 28;
+const LAMELL_T = 18;
+const LAMELL_GAP = 8;
+const LAMELL_STEP = LAMELL_W + LAMELL_GAP;
+
+for (const l of luckaPositions) {
+  const margin = 10;
+  box(l.x1 + margin, LUCKA_Y_OFFSET - 3, LUCKA_BOT, l.x2 - margin, LUCKA_Y_OFFSET, LUCKA_TOP, matSteel, groupLuckor);
+  const innerW = (l.x2 - l.x1) - 2 * margin - LAMELL_GAP;
+  const n = Math.floor(innerW / LAMELL_STEP);
+  const startX = l.x1 + margin + ((l.x2 - l.x1 - 2 * margin) - (n * LAMELL_STEP - LAMELL_GAP)) / 2;
+  for (let i = 0; i < n; i++) {
+    const lx1 = startX + i * LAMELL_STEP;
+    box(lx1, LUCKA_Y_OFFSET - LAMELL_T, LUCKA_BOT, lx1 + LAMELL_W, LUCKA_Y_OFFSET, LUCKA_TOP, matWood, groupLuckor);
+  }
+}
+
+// === GRILL BIG32 — REALISTISK "SVAMP"-FORM ===
+// Above-bench: 852 wide × 700 deep (full bänk depth) × 300 tall, sticks to bänk front edge
+// Drop-in: 762 × 502 (= cutout) × 130 mm into cabinet (= 200 total below bänk top inkl 70 bänk)
+// Cutout in bänkskiva: x=914..1676, y=50..552
+const GC = [914, 50, 1676, 552];
+const ABOVE_W_EXTRA = 45;  // 45mm extra each side beyond cutout
+const ABOVE_X1 = GC[0] - ABOVE_W_EXTRA;  // = 869
+const ABOVE_X2 = GC[2] + ABOVE_W_EXTRA;  // = 1721
+const ABOVE_Y1 = 0;                       // bänk front edge
+const ABOVE_Y2 = DEPTH;                   // bänk back edge
+const ABOVE_Z_BOT = STOMME_H + BANK_H;    // bänk top
+const ABOVE_BODY_H = 100;                 // lower body section with controls
+const ABOVE_LID_H = 240;                  // lid above
+const ABOVE_Z_BODY_TOP = ABOVE_Z_BOT + ABOVE_BODY_H;
+const ABOVE_Z_LID_TOP = ABOVE_Z_BODY_TOP + ABOVE_LID_H;
+// Body (lower portion above bänk, with knobs)
+box(ABOVE_X1, ABOVE_Y1, ABOVE_Z_BOT, ABOVE_X2, ABOVE_Y2, ABOVE_Z_BODY_TOP, matGrillBody, groupGrill);
+// Lid (top portion, slightly smaller)
+box(ABOVE_X1 + 5, ABOVE_Y1 + 5, ABOVE_Z_BODY_TOP, ABOVE_X2 - 5, ABOVE_Y2 - 5, ABOVE_Z_LID_TOP, matGrillLid, groupGrill);
+// Lid handle (on front, near top)
+box(ABOVE_X1 + 250, ABOVE_Y1 - 25, ABOVE_Z_LID_TOP - 80, ABOVE_X2 - 250, ABOVE_Y1, ABOVE_Z_LID_TOP - 55, matStainless, groupGrill);
+// 4 burner knobs on front of body (at y=front, z=middle of body)
+for (let i = 0; i < 4; i++) {
+  const knobX = ABOVE_X1 + (ABOVE_X2 - ABOVE_X1) * (0.18 + i * 0.215);
+  const knobGeo = new THREE.CylinderGeometry(14, 14, 18, 24);
+  const knob = new THREE.Mesh(knobGeo, matSteel);
+  // Position on FRONT face of body, halfway up
+  knob.position.set(knobX, ABOVE_Z_BOT + 50, -(ABOVE_Y1 - 10));  // negate y for three.js convention
+  knob.rotation.x = Math.PI / 2;
+  groupGrill.add(knob);
+}
+// Drop-in stem below bänk (fits in cutout)
+const DROP_IN_DEPTH = 130;  // 130mm into cabinet (under bänkskiva)
+box(GC[0] + 5, GC[1] + 5, STOMME_H - DROP_IN_DEPTH, GC[2] - 5, GC[3] - 5, STOMME_H + BANK_H, matStainless, groupGrill);
+
+// === SIZZLER BIB10IR — flush-mount infrared element ===
+// Above-bench: only ~5-10mm overhang on each side, 152mm tall total
+const SC = [229, 120, 483, 596];
+const SZ_OVERHANG = 5;
+const SZ_X1 = SC[0] - SZ_OVERHANG;
+const SZ_X2 = SC[2] + SZ_OVERHANG;
+const SZ_Y1 = SC[1] - SZ_OVERHANG;
+const SZ_Y2 = SC[3] + SZ_OVERHANG;
+const SZ_Z_BOT = ABOVE_Z_BOT;
+const SZ_Z_TOP = SZ_Z_BOT + 152;
+// Main body
+box(SZ_X1, SZ_Y1, SZ_Z_BOT, SZ_X2, SZ_Y2, SZ_Z_TOP, matGrillLid, groupSizzler);
+// Inner burner area (darker, slightly inset)
+box(SZ_X1 + 12, SZ_Y1 + 12, SZ_Z_TOP - 4, SZ_X2 - 12, SZ_Y2 - 12, SZ_Z_TOP + 2, matSteel, groupSizzler);
+// Drop-in stem (in cabinet)
+box(SC[0] + 5, SC[1] + 5, STOMME_H - 80, SC[2] - 5, SC[3] - 5, STOMME_H + BANK_H, matStainless, groupSizzler);
+
+// === VÄRMESKÖLD under sizzler (rostfri plåt, 30mm luftspalt) ===
+// Sizzler drop-in bottom at z = STOMME_H - 80 = 720
+// Heat shield 30mm below = z=690, 5mm thick
+const HS_X1 = SC[0] - 25, HS_X2 = SC[2] + 25;  // 300mm wide (50mm wider than cutout)
+const HS_Y1 = SC[1] - 37, HS_Y2 = SC[3] + 37;  // 550mm deep (74mm extra)
+box(HS_X1, HS_Y1, 685, HS_X2, HS_Y2, 692, matHeatshield, groupHeatshield);
+// Mounting bracket (small) on each long edge
+box(HS_X1, HS_Y1, 692, HS_X1 + 30, HS_Y2, 720, matHeatshield, groupHeatshield);
+box(HS_X2 - 30, HS_Y1, 692, HS_X2, HS_Y2, 720, matHeatshield, groupHeatshield);
+
+// === GASOLFLASKOR (2× P11, side by side in lucka 1 = gas-fack) ===
+// P11: ~210mm diameter, 310mm tall
+// Lucka 1: x=0..483, full cabinet depth y=0..700, height z=0..STOMME_H
+// Place 2 flaskor side by side in lucka 1, below heat shield
+function addGasolFlaska(cx, cy, cz, group) {
+  // Body (red cylinder)
+  const bodyGeo = new THREE.CylinderGeometry(105, 105, 310, 24);
+  const body = new THREE.Mesh(bodyGeo, matGasol);
+  body.position.set(cx, cz + 155, -cy);  // Three.js coord (note: cy → -cz)
+  body.castShadow = true;
+  body.receiveShadow = true;
+  group.add(body);
+  // Top cap (smaller, valve area)
+  const capGeo = new THREE.CylinderGeometry(70, 105, 50, 24);
+  const cap = new THREE.Mesh(capGeo, matGasol);
+  cap.position.set(cx, cz + 310 + 20, -cy);
+  group.add(cap);
+  // Valve
+  const valveGeo = new THREE.CylinderGeometry(15, 15, 50, 16);
+  const valve = new THREE.Mesh(valveGeo, matGasolValve);
+  valve.position.set(cx, cz + 310 + 60, -cy);
+  group.add(valve);
+}
+addGasolFlaska(125, 350, 0, groupGasol);
+addGasolFlaska(355, 350, 0, groupGasol);
+
+// === HUSVÄGG (vänster sida, mot uthus) ===
+// Wall to the left of kitchen, slightly behind kitchen too
+// Kitchen vänster kortsida at x=0..40
+// Wall at x=-100..-50 (50mm thick), extends in y/z beyond kitchen
+const HV_X1 = -100, HV_X2 = -50;
+const HV_Y1 = -300, HV_Y2 = DEPTH + 200;  // extends beyond kitchen front/back
+const HV_Z1 = 0, HV_Z2 = 2500;  // taller than kitchen
+box(HV_X1, HV_Y1, HV_Z1, HV_X2, HV_Y2, HV_Z2, matHusvagg, groupHusvagg);
+// Subtle vertical lines on wall (panel hint)
+for (let py = HV_Y1 + 150; py < HV_Y2; py += 200) {
+  box(HV_X2, py - 2, HV_Z1, HV_X2 + 2, py + 2, HV_Z2, matSteel, groupHusvagg);
+}
+
+// === TRALL (golv) ===
+const trallGeo = new THREE.PlaneGeometry(8000, 4000);
+const trallMesh = new THREE.Mesh(trallGeo, matTrall);
+trallMesh.rotation.x = -Math.PI / 2;
+trallMesh.position.set(1650, -10, -350);  // -350 = back/center of kitchen in three.js coords
+trallMesh.receiveShadow = true;
+groupTrall.add(trallMesh);
+
+
+// =============================================================
+// DIMENSION SYSTEM
+// =============================================================
+const dimGroupTotal = new THREE.Group();
+const dimGroupLayout = new THREE.Group();
+const dimGroupLuckor = new THREE.Group();
+const dimGroupApparat = new THREE.Group();
+const dimGroupStomme = new THREE.Group();
+root.add(dimGroupTotal, dimGroupLayout, dimGroupLuckor, dimGroupApparat, dimGroupStomme);
+// All hidden by default
+dimGroupTotal.visible = false;
+dimGroupLayout.visible = false;
+dimGroupLuckor.visible = false;
+dimGroupApparat.visible = false;
+dimGroupStomme.visible = false;
+
+const dimLineMat = new THREE.LineBasicMaterial({color: 0x333333, transparent: true, opacity: 0.7});
+
+// Convert scad coords [x,y,z] in mm to three.js Vector3 (with negated y → -z mapping)
+function scadV(x, y, z) {
+  return new THREE.Vector3(x, z, -y);
+}
+
+// Add a dimension between two scad points, with offset direction
+// offsetVec: scad offset [dx, dy, dz] in mm
+function addDim(scadP1, scadP2, label, group, offsetVec, cat='') {
+  const p1 = new THREE.Vector3(scadP1[0], scadP1[1], scadP1[2]);
+  const p2 = new THREE.Vector3(scadP2[0], scadP2[1], scadP2[2]);
+  const off = new THREE.Vector3(offsetVec[0], offsetVec[1], offsetVec[2]);
+  const p1off = p1.clone().add(off);
+  const p2off = p2.clone().add(off);
+  
+  // Convert to three.js coords
+  const tp1 = scadV(p1.x, p1.y, p1.z);
+  const tp2 = scadV(p2.x, p2.y, p2.z);
+  const tp1off = scadV(p1off.x, p1off.y, p1off.z);
+  const tp2off = scadV(p2off.x, p2off.y, p2off.z);
+  
+  // Extension lines + dim line
+  group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([tp1, tp1off]), dimLineMat));
+  group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([tp2, tp2off]), dimLineMat));
+  group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([tp1off, tp2off]), dimLineMat));
+  
+  // Label at midpoint
+  const mid = tp1off.clone().add(tp2off).multiplyScalar(0.5);
+  const div = document.createElement('div');
+  div.className = 'dim-label' + (cat ? ' cat-' + cat : '');
+  div.textContent = label;
+  const labelObj = new CSS2DObject(div);
+  labelObj.position.copy(mid);
+  group.add(labelObj);
+}
+
+// ==== TOTAL MÅTT ====
+// Total length (below kitchen)
+addDim([0, 0, 0], [TOTAL_L, 0, 0], '3 300 mm (total längd)', dimGroupTotal, [0, 0, -250], 'total');
+// Total depth (in front of kitchen, on ground)
+addDim([0, 0, 0], [0, DEPTH, 0], '700 mm (djup)', dimGroupTotal, [-150, 0, 0], 'total');
+// Total height (left side)
+addDim([0, 0, 0], [0, 0, STOMME_H + BANK_H], '870 mm (bänkyta höjd)', dimGroupTotal, [-300, 0, 0], 'total');
+
+// ==== LAYOUT ====
+addDim([0, 0, 0], [SKAP_L, 0, 0], '1 905 (skåp)', dimGroupLayout, [0, 0, -120], 'layout');
+addDim([SKAP_L, 0, 0], [GAVEL_X, 0, 0], '1 320 (svävande)', dimGroupLayout, [0, 0, -120], 'layout');
+addDim([GAVEL_X, 0, 0], [TOTAL_L, 0, 0], '75 (gavel)', dimGroupLayout, [0, 0, -120], 'layout');
+addDim([0, 0, STOMME_H], [0, 0, STOMME_H + BANK_H], '70 (bänkskiva)', dimGroupLayout, [-200, 0, 0], 'layout');
+addDim([0, 0, 0], [0, 0, STOMME_H], '800 (stomme)', dimGroupLayout, [-200, 0, 0], 'layout');
+
+// ==== LUCKOR ====
+addDim([0, -25, 30], [483, -25, 30], '483 (lucka 1, gas)', dimGroupLuckor, [0, 0, -30], 'luckor');
+addDim([483, -25, 30], [914, -25, 30], '431 (lucka 2)', dimGroupLuckor, [0, 0, -30], 'luckor');
+addDim([914, -25, 30], [1414, -25, 30], '500 (lucka 3, grill-undersida)', dimGroupLuckor, [0, 0, -30], 'luckor');
+addDim([1414, -25, 30], [1905, -25, 30], '491 (lucka 4, storage)', dimGroupLuckor, [0, 0, -30], 'luckor');
+
+// ==== APPARATER ====
+// Sizzler cutout position from left
+addDim([0, 0, STOMME_H + BANK_H], [229, 0, STOMME_H + BANK_H], '229', dimGroupApparat, [0, 0, 80], 'apparat');
+addDim([229, 0, STOMME_H + BANK_H], [483, 0, STOMME_H + BANK_H], '254 (sizzler)', dimGroupApparat, [0, 0, 80], 'apparat');
+addDim([483, 0, STOMME_H + BANK_H], [914, 0, STOMME_H + BANK_H], '431 (clearance)', dimGroupApparat, [0, 0, 80], 'apparat');
+addDim([914, 0, STOMME_H + BANK_H], [1676, 0, STOMME_H + BANK_H], '762 (grill)', dimGroupApparat, [0, 0, 80], 'apparat');
+addDim([1676, 0, STOMME_H + BANK_H], [1905, 0, STOMME_H + BANK_H], '229', dimGroupApparat, [0, 0, 80], 'apparat');
+// Cutout depths (sizzler + grill)
+addDim([229, 120, STOMME_H + BANK_H], [229, 596, STOMME_H + BANK_H], '476 (sizzler djup)', dimGroupApparat, [-50, 0, 0], 'apparat');
+addDim([914, 50, STOMME_H + BANK_H], [914, 552, STOMME_H + BANK_H], '502 (grill djup)', dimGroupApparat, [-50, 0, 0], 'apparat');
+// Sizzler height
+addDim([229, 350, STOMME_H + BANK_H], [229, 350, STOMME_H + BANK_H + 152], '152 (sizzler höjd)', dimGroupApparat, [-200, 0, 0], 'apparat');
+// Grill total above bench (body + lid)
+addDim([1676, 350, STOMME_H + BANK_H], [1676, 350, STOMME_H + BANK_H + 340], '340 (grill: 100 body + 240 lid)', dimGroupApparat, [200, 0, 0], 'apparat');
+// Grill drop-in
+addDim([914, 350, STOMME_H - 130], [914, 350, STOMME_H + BANK_H], '200 (grill drop-in)', dimGroupApparat, [-50, 0, 0], 'apparat');
+
+// ==== STOMME ====
+// Stolpe positions
+addDim([0, -50, 0], [40, -50, 0], '0', dimGroupStomme, [0, 0, 900], 'stomme');
+addDim([443, -50, 0], [483, -50, 0], '483', dimGroupStomme, [0, 0, 900], 'stomme');
+addDim([874, -50, 0], [914, -50, 0], '914', dimGroupStomme, [0, 0, 900], 'stomme');
+addDim([1865, -50, 0], [1905, -50, 0], '1905', dimGroupStomme, [0, 0, 900], 'stomme');
+addDim([3242, -50, 0], [3282, -50, 0], '3262 (gavel)', dimGroupStomme, [0, 0, 900], 'stomme');
+// Tvärbalk x-positions (a subset, the most important)
+addDim([189, 0, STOMME_H + 60], [229, 0, STOMME_H + 60], 'TB 229', dimGroupStomme, [0, 0, 50], 'stomme');
+addDim([1676, 0, STOMME_H + 60], [1716, 0, STOMME_H + 60], 'TB 1676', dimGroupStomme, [0, 0, 50], 'stomme');
+addDim([2545, 0, STOMME_H + 60], [2585, 0, STOMME_H + 60], 'TB 2565 (cantilever mid)', dimGroupStomme, [0, 0, 50], 'stomme');
+// KKR profile size note
+const profileDiv = document.createElement('div');
+profileDiv.className = 'dim-label cat-stomme';
+profileDiv.textContent = 'KKR 40×40×2 mm';
+const profileLabel = new CSS2DObject(profileDiv);
+profileLabel.position.copy(scadV(100, 0, STOMME_H + 200));
+dimGroupStomme.add(profileLabel);
+// Longitudinell mid-balk note
+const midDiv = document.createElement('div');
+midDiv.className = 'dim-label cat-stomme';
+midDiv.textContent = 'Mid-balk vid y=350 (bruten i 5 segment)';
+const midLabel = new CSS2DObject(midDiv);
+midLabel.position.copy(scadV(2200, 350, STOMME_H + 100));
+dimGroupStomme.add(midLabel);
+
+// === Checkbox controls ===
+const checkboxes = {
+  'show-stomme': groupStomme,
+  'show-cementskiva': groupCementskiva,
+  'show-bank': groupBank,
+  'show-luckor': groupLuckor,
+  'show-grill': groupGrill,
+  'show-sizzler': groupSizzler,
+  'show-trall': groupTrall,
+  'show-heatshield': groupHeatshield,
+  'show-gasol': groupGasol,
+  'show-husvagg': groupHusvagg,
+  'dim-total': dimGroupTotal,
+  'dim-layout': dimGroupLayout,
+  'dim-luckor': dimGroupLuckor,
+  'dim-apparat': dimGroupApparat,
+  'dim-stomme': dimGroupStomme,
+};
+for (const [id, group] of Object.entries(checkboxes)) {
+  document.getElementById(id).addEventListener('change', (e) => { group.visible = e.target.checked; });
+}
+
+// === CAMERA PRESETS — using standard Three.js convention ===
+// SCAD y=350 (mid-depth) → three z = -0.35 (away from viewer, into screen)
+// Camera "front" at +z (toward viewer, looking at lamellfasad)
+window.resetCamera = function(preset) {
+  if (preset === 'iso') {
+    camera.position.set(5.5, 3, 4);     // right + up + front
+  } else if (preset === 'front') {
+    camera.position.set(1.65, 1.0, 4.5); // straight in front
+  } else if (preset === 'back') {
+    camera.position.set(1.65, 1.0, -4.5); // behind kitchen (mot uthus)
+  } else if (preset === 'top') {
+    camera.position.set(1.65, 6, -0.35); // directly above
+  } else if (preset === 'right') {
+    camera.position.set(7, 1.5, -0.35);  // beyond gavel (right)
+  } else if (preset === 'left') {
+    camera.position.set(-4, 1.5, -0.35); // beyond husvägg (left)
+  }
+  controls.target.set(1.65, 0.5, -0.35); // target at center mid-depth
+  controls.update();
+};
+resetCamera('iso');
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>
