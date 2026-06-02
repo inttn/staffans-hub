@@ -600,6 +600,7 @@ function setGroupVisible(group, visible) {
   group.visible = visible;
   group.traverse((obj) => {
     if (obj.isCSS2DObject) {
+      obj.visible = visible;  // CSS2DRenderer checks this per-object, ignores parent visibility
       obj.element.style.display = visible ? '' : 'none';
     }
   });
