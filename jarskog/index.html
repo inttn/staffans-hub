@@ -50,6 +50,7 @@
   <label><input type="checkbox" id="show-heatshield" checked> Värmesköld (under sizzler)</label>
   <label><input type="checkbox" id="show-gasol" checked> Gasolflaskor (2× P11)</label>
   <label><input type="checkbox" id="show-husvagg" checked> Husvägg (vänster sida)</label>
+  <label><input type="checkbox" id="show-llist" checked> L-list rostfri (cutout-kanter)</label>
   <div class="section">
     <h3>Mått (visa/dölj)</h3>
     <label><input type="checkbox" id="dim-total"> Total mått (LxDxH)</label>
@@ -150,6 +151,7 @@ const matHeatshield = new THREE.MeshStandardMaterial({color: 0xc8c8cc, roughness
 const matGasol = new THREE.MeshStandardMaterial({color: 0xa83a2c, roughness: 0.55, metalness: 0.1});
 const matGasolValve = new THREE.MeshStandardMaterial({color: 0xa8a8a8, roughness: 0.4, metalness: 0.7});
 const matHusvagg = new THREE.MeshStandardMaterial({color: 0xe8dec8, roughness: 0.9, metalness: 0.0});
+const matLList = new THREE.MeshStandardMaterial({color: 0xc8c8d0, roughness: 0.15, metalness: 0.95});
 
 const root = new THREE.Group();
 scene.add(root);
@@ -199,7 +201,8 @@ const groupTrall = new THREE.Group();
 const groupHeatshield = new THREE.Group();
 const groupGasol = new THREE.Group();
 const groupHusvagg = new THREE.Group();
-root.add(groupStomme, groupCementskiva, groupBank, groupLuckor, groupGrill, groupSizzler, groupTrall, groupHeatshield, groupGasol, groupHusvagg);
+const groupLList = new THREE.Group();
+root.add(groupStomme, groupCementskiva, groupBank, groupLuckor, groupGrill, groupSizzler, groupTrall, groupHeatshield, groupGasol, groupHusvagg, groupLList);
 
 // === STOMME ===
 const stolpareXR = [40, 483, 914, 1905];
@@ -377,6 +380,34 @@ for (let py = HV_Y1 + 150; py < HV_Y2; py += 200) {
   box(HV_X2, py - 2, HV_Z1, HV_X2 + 2, py + 2, HV_Z2, matSteel, groupHusvagg);
 }
 
+// === L-LIST rostfri runt cutout-kanter ===
+// Skyddar microcement/cementskiva-kanten där grill-flänsen vilar
+// L-cross-section: horizontal leg 25mm out on bänkyta + vertical leg 25mm down in cutout
+function addLList(cx_x1, cx_y1, cx_x2, cx_y2, group) {
+  const H_W = 25;  // horizontal leg width (out from cutout)
+  const T = 2;     // thickness
+  const V_H = 25;  // vertical leg depth (into cutout)
+  const bench_top = STOMME_H + BANK_H;
+  
+  // FRONT (along y=cx_y1)
+  box(cx_x1 - H_W, cx_y1 - H_W, bench_top, cx_x2 + H_W, cx_y1, bench_top + T, matLList, group);
+  box(cx_x1, cx_y1, bench_top - V_H, cx_x2, cx_y1 + T, bench_top, matLList, group);
+  // BACK (along y=cx_y2)
+  box(cx_x1 - H_W, cx_y2, bench_top, cx_x2 + H_W, cx_y2 + H_W, bench_top + T, matLList, group);
+  box(cx_x1, cx_y2 - T, bench_top - V_H, cx_x2, cx_y2, bench_top, matLList, group);
+  // LEFT (along x=cx_x1)
+  box(cx_x1 - H_W, cx_y1, bench_top, cx_x1, cx_y2, bench_top + T, matLList, group);
+  box(cx_x1, cx_y1, bench_top - V_H, cx_x1 + T, cx_y2, bench_top, matLList, group);
+  // RIGHT (along x=cx_x2)
+  box(cx_x2, cx_y1, bench_top, cx_x2 + H_W, cx_y2, bench_top + T, matLList, group);
+  box(cx_x2 - T, cx_y1, bench_top - V_H, cx_x2, cx_y2, bench_top, matLList, group);
+}
+
+// Grill cutout L-list
+addLList(GC[0], GC[1], GC[2], GC[3], groupLList);
+// Sizzler cutout L-list
+addLList(SC[0], SC[1], SC[2], SC[3], groupLList);
+
 // === TRALL (golv) ===
 const trallGeo = new THREE.PlaneGeometry(8000, 4000);
 const trallMesh = new THREE.Mesh(trallGeo, matTrall);
@@ -515,6 +546,7 @@ const checkboxes = {
   'show-heatshield': groupHeatshield,
   'show-gasol': groupGasol,
   'show-husvagg': groupHusvagg,
+  'show-llist': groupLList,
   'dim-total': dimGroupTotal,
   'dim-layout': dimGroupLayout,
   'dim-luckor': dimGroupLuckor,
