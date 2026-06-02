@@ -390,32 +390,52 @@ for (let py = HV_Y1 + 150; py < HV_Y2; py += 200) {
 // === CUTOUT-RAM (synligt orange-frame som visar cutout-storlek) ===
 // Visar cutout-perimeter på bänkytan så man ser cutoutet även när grillen är på plats.
 // Två varianter: utan ZCL (762×502) och med ZCL (864×543)
-function addCutoutFrame(cx_x1, cx_y1, cx_x2, cx_y2, group) {
-  const T = 4;  // frame thickness
-  const W = 8;  // frame width
+function addCutoutFrame(cx_x1, cx_y1, cx_x2, cx_y2, depth, group) {
+  // depth = H from manual (260mm for grill, 152mm for sizzler) — clearance needed BELOW bänkyta
+  const T = 3;            // wall outline thickness
+  const RIM = 6;          // top rim width (visible on bänkyta around cutout)
   const bench_top = STOMME_H + BANK_H;
-  // 4 sides of frame, slightly above bänkyta so it's visible
-  box(cx_x1 - W, cx_y1 - W, bench_top + 1, cx_x2 + W, cx_y1, bench_top + T, matCutout, group);
-  box(cx_x1 - W, cx_y2, bench_top + 1, cx_x2 + W, cx_y2 + W, bench_top + T, matCutout, group);
-  box(cx_x1 - W, cx_y1, bench_top + 1, cx_x1, cx_y2, bench_top + T, matCutout, group);
-  box(cx_x2, cx_y1, bench_top + 1, cx_x2 + W, cx_y2, bench_top + T, matCutout, group);
+  const cutout_bot = bench_top - depth;  // bottom of cutout volume (in cabinet)
+  
+  // === 4 vertical wall outlines showing cutout volume going DOWN ===
+  // Walls positioned at cutout edge, going from bench_top down to cutout_bot
+  // Front wall (along y=cx_y1)
+  box(cx_x1, cx_y1 - T, cutout_bot, cx_x2, cx_y1, bench_top, matCutout, group);
+  // Back wall (along y=cx_y2)
+  box(cx_x1, cx_y2, cutout_bot, cx_x2, cx_y2 + T, bench_top, matCutout, group);
+  // Left wall (along x=cx_x1)
+  box(cx_x1 - T, cx_y1 - T, cutout_bot, cx_x1, cx_y2 + T, bench_top, matCutout, group);
+  // Right wall (along x=cx_x2)
+  box(cx_x2, cx_y1 - T, cutout_bot, cx_x2 + T, cx_y2 + T, bench_top, matCutout, group);
+  
+  // === Top rim on bänkyta (highlights perimeter visibility from above) ===
+  box(cx_x1 - RIM, cx_y1 - RIM, bench_top + 1, cx_x2 + RIM, cx_y1 - T, bench_top + 2, matCutout, group);
+  box(cx_x1 - RIM, cx_y2 + T, bench_top + 1, cx_x2 + RIM, cx_y2 + RIM, bench_top + 2, matCutout, group);
+  box(cx_x1 - RIM, cx_y1 - T, bench_top + 1, cx_x1 - T, cx_y2 + T, bench_top + 2, matCutout, group);
+  box(cx_x2 + T, cx_y1 - T, bench_top + 1, cx_x2 + RIM, cx_y2 + T, bench_top + 2, matCutout, group);
+  
+  // === Bottom rim at cutout floor (shows where the volume ends in cabinet) ===
+  box(cx_x1 - T, cx_y1 - T, cutout_bot - 2, cx_x2 + T, cx_y1, cutout_bot, matCutout, group);
+  box(cx_x1 - T, cx_y2, cutout_bot - 2, cx_x2 + T, cx_y2 + T, cutout_bot, matCutout, group);
+  box(cx_x1 - T, cx_y1, cutout_bot - 2, cx_x1, cx_y2, cutout_bot, matCutout, group);
+  box(cx_x2, cx_y1, cutout_bot - 2, cx_x2 + T, cx_y2, cutout_bot, matCutout, group);
 }
 
-// Grill cutout WITHOUT ZCL (762×502 per W×D in manual)
-addCutoutFrame(GC[0], GC[1], GC[2], GC[3], groupCutout);
-// Sizzler cutout (alltid samma storlek, ingen ZCL för sizzler)
-addCutoutFrame(SC[0], SC[1], SC[2], SC[3], groupCutout);
+// Grill cutout WITHOUT ZCL (W×D = 762×502, H = 260mm depth into cabinet)
+addCutoutFrame(GC[0], GC[1], GC[2], GC[3], 260, groupCutout);
+// Sizzler cutout (W×D = 254×476, H = 152mm depth)
+addCutoutFrame(SC[0], SC[1], SC[2], SC[3], 152, groupCutout);
 
-// Grill cutout WITH ZCL (864×543 per W×D in manual) - centered on same position
+// Grill cutout WITH ZCL (W×D = 864×543, H = 264mm) centered on same position
 const ZCL_W_EXTRA = (864 - 762) / 2;  // 51 mm extra each side in width
 const ZCL_D_EXTRA = (543 - 502) / 2;  // 20.5 mm extra each side in depth
 addCutoutFrame(
   GC[0] - ZCL_W_EXTRA, GC[1] - ZCL_D_EXTRA,
   GC[2] + ZCL_W_EXTRA, GC[3] + ZCL_D_EXTRA,
-  groupCutoutZCL
+  264, groupCutoutZCL
 );
-// Sizzler still 762×502 (no ZCL alternative)
-addCutoutFrame(SC[0], SC[1], SC[2], SC[3], groupCutoutZCL);
+// Sizzler still 152mm depth (no ZCL alternative)
+addCutoutFrame(SC[0], SC[1], SC[2], SC[3], 152, groupCutoutZCL);
 
 // === L-LIST rostfri runt cutout-kanter ===
 // Skyddar microcement/cementskiva-kanten där grill-flänsen vilar
