@@ -269,13 +269,14 @@ box(1676, 0, STOMME_H, GAVEL_X, DEPTH, STOMME_H + BANK_H, matMicrocement, groupB
 
 // === LUCKOR (4 st med lamellfasad) ===
 const luckaPositions = [
-  {x1: 0, x2: 483, name: 'lucka1'},
-  {x1: 483, x2: 914, name: 'lucka2'},
-  {x1: 914, x2: 1414, name: 'lucka3'},
-  {x1: 1414, x2: 1905, name: 'lucka4'},
+  {x1: 0, x2: 483, name: 'lucka1', under_grill: false},
+  {x1: 483, x2: 914, name: 'lucka2', under_grill: false},
+  {x1: 914, x2: 1414, name: 'lucka3', under_grill: true},   // under grill — kortare
+  {x1: 1414, x2: 1905, name: 'lucka4', under_grill: true},  // delvis under grill — kortare
 ];
 const LUCKA_Y_OFFSET = -5;
-const LUCKA_TOP = STOMME_H - 30;
+const LUCKA_TOP_FULL = STOMME_H - 30;  // = 770 (för luckor utan grill ovanför)
+const LUCKA_TOP_SHORT = 580;            // 580 = 30 mm säkerhetsmargin under grill body botten (z=610)
 const LUCKA_BOT = 30;
 const LAMELL_W = 28;
 const LAMELL_T = 18;
@@ -283,14 +284,15 @@ const LAMELL_GAP = 8;
 const LAMELL_STEP = LAMELL_W + LAMELL_GAP;
 
 for (const l of luckaPositions) {
+  const lucka_top = l.under_grill ? LUCKA_TOP_SHORT : LUCKA_TOP_FULL;
   const margin = 10;
-  box(l.x1 + margin, LUCKA_Y_OFFSET - 3, LUCKA_BOT, l.x2 - margin, LUCKA_Y_OFFSET, LUCKA_TOP, matSteel, groupLuckor);
+  box(l.x1 + margin, LUCKA_Y_OFFSET - 3, LUCKA_BOT, l.x2 - margin, LUCKA_Y_OFFSET, lucka_top, matSteel, groupLuckor);
   const innerW = (l.x2 - l.x1) - 2 * margin - LAMELL_GAP;
   const n = Math.floor(innerW / LAMELL_STEP);
   const startX = l.x1 + margin + ((l.x2 - l.x1 - 2 * margin) - (n * LAMELL_STEP - LAMELL_GAP)) / 2;
   for (let i = 0; i < n; i++) {
     const lx1 = startX + i * LAMELL_STEP;
-    box(lx1, LUCKA_Y_OFFSET - LAMELL_T, LUCKA_BOT, lx1 + LAMELL_W, LUCKA_Y_OFFSET, LUCKA_TOP, matWood, groupLuckor);
+    box(lx1, LUCKA_Y_OFFSET - LAMELL_T, LUCKA_BOT, lx1 + LAMELL_W, LUCKA_Y_OFFSET, lucka_top, matWood, groupLuckor);
   }
 }
 
@@ -332,7 +334,7 @@ for (let i = 0; i < 4; i++) {
 }
 
 // Drop-in firebox below bänk (fits in cutout = 762 × 502)
-const DROP_IN_DEPTH = 130;
+const DROP_IN_DEPTH = 190;  // 190mm into cabinet = 260mm below bänk-top (matchar Napoleon H-spec)
 box(GC[0] + 5, GC[1] + 5, STOMME_H - DROP_IN_DEPTH, GC[2] - 5, GC[3] - 5, Z_BENCH_TOP, matStainless, groupGrill);
 
 // === SIZZLER BIB10IR — flush-mount infrared element ===
