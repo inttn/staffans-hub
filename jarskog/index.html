@@ -50,6 +50,7 @@
   <label><input type="checkbox" id="show-heatshield" checked> Värmesköld (under sizzler)</label>
   <label><input type="checkbox" id="show-gasol" checked> Gasolflaskor (2× P11)</label>
   <label><input type="checkbox" id="show-husvagg" checked> Husvägg (vänster sida)</label>
+  <label><input type="checkbox" id="show-cutout" checked> Cutout-ram (visa hål i bänk)</label>
   <label><input type="checkbox" id="show-llist" checked> L-list rostfri (utan ZCL)</label>
   <label><input type="checkbox" id="show-zcl"> ZCL — Zero Clearance Liner (alternativ till L-list)</label>
   <div class="section">
@@ -154,6 +155,7 @@ const matGasolValve = new THREE.MeshStandardMaterial({color: 0xa8a8a8, roughness
 const matHusvagg = new THREE.MeshStandardMaterial({color: 0xe8dec8, roughness: 0.9, metalness: 0.0});
 const matLList = new THREE.MeshStandardMaterial({color: 0xc8c8d0, roughness: 0.15, metalness: 0.95});
 const matZCL = new THREE.MeshStandardMaterial({color: 0xa8a8b2, roughness: 0.2, metalness: 0.85, side: THREE.DoubleSide});
+const matCutout = new THREE.MeshStandardMaterial({color: 0xe06030, roughness: 0.4, metalness: 0.0, emissive: 0x401008, emissiveIntensity: 0.3});
 
 const root = new THREE.Group();
 scene.add(root);
@@ -205,7 +207,9 @@ const groupGasol = new THREE.Group();
 const groupHusvagg = new THREE.Group();
 const groupLList = new THREE.Group();
 const groupZCL = new THREE.Group();
-root.add(groupStomme, groupCementskiva, groupBank, groupLuckor, groupGrill, groupSizzler, groupTrall, groupHeatshield, groupGasol, groupHusvagg, groupLList, groupZCL);
+const groupCutout = new THREE.Group();        // cutout-ram utan ZCL (762×502)
+const groupCutoutZCL = new THREE.Group();     // cutout-ram med ZCL (864×543)
+root.add(groupStomme, groupCementskiva, groupBank, groupLuckor, groupGrill, groupSizzler, groupTrall, groupHeatshield, groupGasol, groupHusvagg, groupLList, groupZCL, groupCutout, groupCutoutZCL);
 
 // === STOMME ===
 const stolpareXR = [40, 483, 914, 1905];
@@ -382,6 +386,36 @@ box(HV_X1, HV_Y1, HV_Z1, HV_X2, HV_Y2, HV_Z2, matHusvagg, groupHusvagg);
 for (let py = HV_Y1 + 150; py < HV_Y2; py += 200) {
   box(HV_X2, py - 2, HV_Z1, HV_X2 + 2, py + 2, HV_Z2, matSteel, groupHusvagg);
 }
+
+// === CUTOUT-RAM (synligt orange-frame som visar cutout-storlek) ===
+// Visar cutout-perimeter på bänkytan så man ser cutoutet även när grillen är på plats.
+// Två varianter: utan ZCL (762×502) och med ZCL (864×543)
+function addCutoutFrame(cx_x1, cx_y1, cx_x2, cx_y2, group) {
+  const T = 4;  // frame thickness
+  const W = 8;  // frame width
+  const bench_top = STOMME_H + BANK_H;
+  // 4 sides of frame, slightly above bänkyta so it's visible
+  box(cx_x1 - W, cx_y1 - W, bench_top + 1, cx_x2 + W, cx_y1, bench_top + T, matCutout, group);
+  box(cx_x1 - W, cx_y2, bench_top + 1, cx_x2 + W, cx_y2 + W, bench_top + T, matCutout, group);
+  box(cx_x1 - W, cx_y1, bench_top + 1, cx_x1, cx_y2, bench_top + T, matCutout, group);
+  box(cx_x2, cx_y1, bench_top + 1, cx_x2 + W, cx_y2, bench_top + T, matCutout, group);
+}
+
+// Grill cutout WITHOUT ZCL (762×502 per W×D in manual)
+addCutoutFrame(GC[0], GC[1], GC[2], GC[3], groupCutout);
+// Sizzler cutout (alltid samma storlek, ingen ZCL för sizzler)
+addCutoutFrame(SC[0], SC[1], SC[2], SC[3], groupCutout);
+
+// Grill cutout WITH ZCL (864×543 per W×D in manual) - centered on same position
+const ZCL_W_EXTRA = (864 - 762) / 2;  // 51 mm extra each side in width
+const ZCL_D_EXTRA = (543 - 502) / 2;  // 20.5 mm extra each side in depth
+addCutoutFrame(
+  GC[0] - ZCL_W_EXTRA, GC[1] - ZCL_D_EXTRA,
+  GC[2] + ZCL_W_EXTRA, GC[3] + ZCL_D_EXTRA,
+  groupCutoutZCL
+);
+// Sizzler still 762×502 (no ZCL alternative)
+addCutoutFrame(SC[0], SC[1], SC[2], SC[3], groupCutoutZCL);
 
 // === L-LIST rostfri runt cutout-kanter ===
 // Skyddar microcement/cementskiva-kanten där grill-flänsen vilar
@@ -588,6 +622,7 @@ const checkboxes = {
   'show-husvagg': groupHusvagg,
   'show-llist': groupLList,
   'show-zcl': groupZCL,
+  'show-cutout': groupCutout,
   'dim-total': dimGroupTotal,
   'dim-layout': dimGroupLayout,
   'dim-luckor': dimGroupLuckor,
@@ -608,6 +643,7 @@ function setGroupVisible(group, visible) {
 
 // Apply initial visibility (dim groups are hidden by default)
 setGroupVisible(groupZCL, false);
+setGroupVisible(groupCutoutZCL, false);
 setGroupVisible(dimGroupTotal, false);
 setGroupVisible(dimGroupLayout, false);
 setGroupVisible(dimGroupLuckor, false);
@@ -619,6 +655,26 @@ for (const [id, group] of Object.entries(checkboxes)) {
     setGroupVisible(group, e.target.checked);
   });
 }
+
+// Special: when ZCL toggled, swap cutout frame size
+document.getElementById('show-zcl').addEventListener('change', (e) => {
+  const cutoutEnabled = document.getElementById('show-cutout').checked;
+  if (cutoutEnabled) {
+    setGroupVisible(groupCutout, !e.target.checked);
+    setGroupVisible(groupCutoutZCL, e.target.checked);
+  }
+});
+// When cutout toggled, respect ZCL state
+document.getElementById('show-cutout').addEventListener('change', (e) => {
+  const zclEnabled = document.getElementById('show-zcl').checked;
+  if (e.target.checked) {
+    setGroupVisible(groupCutout, !zclEnabled);
+    setGroupVisible(groupCutoutZCL, zclEnabled);
+  } else {
+    setGroupVisible(groupCutout, false);
+    setGroupVisible(groupCutoutZCL, false);
+  }
+});
 
 // === CAMERA PRESETS — using standard Three.js convention ===
 // SCAD y=350 (mid-depth) → three z = -0.35 (away from viewer, into screen)
