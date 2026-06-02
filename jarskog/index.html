@@ -325,7 +325,7 @@ const SZ_X1 = SC[0] - SZ_OVERHANG;
 const SZ_X2 = SC[2] + SZ_OVERHANG;
 const SZ_Y1 = SC[1] - SZ_OVERHANG;
 const SZ_Y2 = SC[3] + SZ_OVERHANG;
-const SZ_Z_BOT = ABOVE_Z_BOT;
+const SZ_Z_BOT = STOMME_H + BANK_H;  // bench top
 const SZ_Z_TOP = SZ_Z_BOT + 152;
 // Main body
 box(SZ_X1, SZ_Y1, SZ_Z_BOT, SZ_X2, SZ_Y2, SZ_Z_TOP, matGrillLid, groupSizzler);
