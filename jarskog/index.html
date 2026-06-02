@@ -245,12 +245,14 @@ box(GAVEL_X, 0, 0, GAVEL_X + GAVEL_W, DEPTH, STOMME_H + BANK_H, matMicrocement, 
 box(SKAP_L, 0, STOMME_H - 17.5, GAVEL_X, DEPTH, STOMME_H, matMicrocement, groupCementskiva);
 
 // === BÄNKSKIVA (with cutouts) ===
+// Grill cutout: U-formad, OPEN at front (extends from y=0 = bänk-front to y=502)
+// Sizzler cutout: rectangle (closed all sides) at y=120..596
 box(0, 0, STOMME_H, 229, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
 box(229, 0, STOMME_H, 483, 120, STOMME_H + BANK_H, matMicrocement, groupBank);
 box(229, 596, STOMME_H, 483, 700, STOMME_H + BANK_H, matMicrocement, groupBank);
 box(483, 0, STOMME_H, 914, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
-box(914, 0, STOMME_H, 1676, 50, STOMME_H + BANK_H, matMicrocement, groupBank);
-box(914, 552, STOMME_H, 1676, 700, STOMME_H + BANK_H, matMicrocement, groupBank);
+// NO front strip for grill — cutout extends to bänk-front edge (y=0)
+box(914, 502, STOMME_H, 1676, 700, STOMME_H + BANK_H, matMicrocement, groupBank);  // back strip y=502..700
 box(1676, 0, STOMME_H, GAVEL_X, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
 
 // === LUCKOR (4 st med lamellfasad) ===
@@ -285,7 +287,7 @@ for (const l of luckaPositions) {
 // Grill body above bänk: X × D = 851 × 502 (flange overhang 44mm per side)
 // Knobs on FRONT face of above-bench body, NOT hanging below bänk
 // Drop-in firebox below: 762 × 502, depth ~130mm into cabinet
-const GC = [914, 50, 1676, 552];  // cutout in bänkskiva (W × D)
+const GC = [914, 0, 1676, 502];  // U-formad cutout, OPEN at front (y=0 = bänk-front)
 
 // Flange dimensions (X = 851 mm wide, slight overhang front/back)
 const FLANGE_W_EXTRA = 45;  // (851 - 762)/2 = 44.5 mm each side
@@ -390,77 +392,54 @@ for (let py = HV_Y1 + 150; py < HV_Y2; py += 200) {
 // === CUTOUT-RAM (synligt orange-frame som visar cutout-storlek) ===
 // Visar cutout-perimeter på bänkytan så man ser cutoutet även när grillen är på plats.
 // Två varianter: utan ZCL (762×502) och med ZCL (864×543)
-function addCutoutFrame(cx_x1, cx_y1, cx_x2, cx_y2, depth, group, hasControlPanel) {
+function addCutoutFrame(cx_x1, cx_y1, cx_x2, cx_y2, depth, group, openFront) {
+  // openFront = true → no front wall (cutout extends to bänk-front edge for grill+control panel)
   // depth = H from manual (260mm for grill, 152mm for sizzler) — clearance needed BELOW bänkyta
   // hasControlPanel = true → adds a forward-extending notch where the control panel drops down
   const T = 3;            // wall outline thickness
-  const RIM = 6;          // top rim width (visible on bänkyta around cutout)
+  const RIM = 6;          // top rim width
   const bench_top = STOMME_H + BANK_H;
-  const cutout_bot = bench_top - depth;  // bottom of main cutout volume
+  const cutout_bot = bench_top - depth;
   
-  // === Main cutout: 4 vertical wall outlines going DOWN ===
-  // Front wall (along y=cx_y1) — only if NO control panel extension (else it's part of CP)
-  if (!hasControlPanel) {
+  // === Vertical wall outlines going DOWN ===
+  // Front wall — SKIP if openFront (cutout extends to bänk-front, no wall there)
+  if (!openFront) {
     box(cx_x1, cx_y1 - T, cutout_bot, cx_x2, cx_y1, bench_top, matCutout, group);
   }
-  // Back wall (along y=cx_y2)
+  // Back wall
   box(cx_x1, cx_y2, cutout_bot, cx_x2, cx_y2 + T, bench_top, matCutout, group);
-  // Left wall (along x=cx_x1)
+  // Left wall
   box(cx_x1 - T, cx_y1 - T, cutout_bot, cx_x1, cx_y2 + T, bench_top, matCutout, group);
-  // Right wall (along x=cx_x2)
+  // Right wall
   box(cx_x2, cx_y1 - T, cutout_bot, cx_x2 + T, cx_y2 + T, bench_top, matCutout, group);
   
-  // === CONTROL PANEL NOTCH — forward extension where ctrl panel drops down ===
-  if (hasControlPanel) {
-    const CP_DEPTH = 100;     // notch goes 100mm forward of main cutout
-    const CP_HEIGHT = 130;    // notch goes 130mm down from bench top (shorter than main)
-    const cp_y_front = cx_y1 - CP_DEPTH;  // notch extends to this y
-    const cp_bot = bench_top - CP_HEIGHT;
-    
-    // Front wall of CP notch
-    box(cx_x1, cp_y_front - T, cp_bot, cx_x2, cp_y_front, bench_top, matCutout, group);
-    // Left wall of CP notch (from cutout_y1 forward to cp_y_front)
-    box(cx_x1 - T, cp_y_front - T, cp_bot, cx_x1, cx_y1, bench_top, matCutout, group);
-    // Right wall of CP notch
-    box(cx_x2, cp_y_front - T, cp_bot, cx_x2 + T, cx_y1, bench_top, matCutout, group);
-    // Bottom of CP notch (where it ends in cabinet)
-    box(cx_x1 - T, cp_y_front - T, cp_bot - 2, cx_x2 + T, cx_y1, cp_bot, matCutout, group);
-    // STEP between CP notch (shallower) and main cutout (deeper) — vertical step at y=cx_y1
-    // Step happens from z=cp_bot down to z=cutout_bot at y=cx_y1
-    box(cx_x1, cx_y1 - T, cutout_bot, cx_x2, cx_y1, cp_bot, matCutout, group);
-    
-    // Top rim around CP notch
-    box(cx_x1 - RIM, cp_y_front - RIM, bench_top + 1, cx_x2 + RIM, cp_y_front - T, bench_top + 2, matCutout, group);
-    box(cx_x1 - RIM, cp_y_front - T, bench_top + 1, cx_x1 - T, cx_y1, bench_top + 2, matCutout, group);
-    box(cx_x2 + T, cp_y_front - T, bench_top + 1, cx_x2 + RIM, cx_y1, bench_top + 2, matCutout, group);
-  }
-  
-  // === Top rim on bänkyta (around main cutout perimeter) ===
-  if (!hasControlPanel) {
+  // === Top rim on bänkyta (around cutout perimeter, U-shape if openFront) ===
+  if (!openFront) {
     box(cx_x1 - RIM, cx_y1 - RIM, bench_top + 1, cx_x2 + RIM, cx_y1 - T, bench_top + 2, matCutout, group);
   }
   box(cx_x1 - RIM, cx_y2 + T, bench_top + 1, cx_x2 + RIM, cx_y2 + RIM, bench_top + 2, matCutout, group);
   box(cx_x1 - RIM, cx_y1 - T, bench_top + 1, cx_x1 - T, cx_y2 + T, bench_top + 2, matCutout, group);
   box(cx_x2 + T, cx_y1 - T, bench_top + 1, cx_x2 + RIM, cx_y2 + T, bench_top + 2, matCutout, group);
   
-  // === Bottom rim at main cutout floor ===
-  box(cx_x1 - T, cx_y1 - T, cutout_bot - 2, cx_x2 + T, cx_y1, cutout_bot, matCutout, group);
+  // === Bottom rim at cutout floor ===
+  if (!openFront) {
+    box(cx_x1 - T, cx_y1 - T, cutout_bot - 2, cx_x2 + T, cx_y1, cutout_bot, matCutout, group);
+  }
   box(cx_x1 - T, cx_y2, cutout_bot - 2, cx_x2 + T, cx_y2 + T, cutout_bot, matCutout, group);
   box(cx_x1 - T, cx_y1, cutout_bot - 2, cx_x1, cx_y2, cutout_bot, matCutout, group);
   box(cx_x2, cx_y1, cutout_bot - 2, cx_x2 + T, cx_y2, cutout_bot, matCutout, group);
 }
 
 // Grill cutout WITHOUT ZCL (W×D = 762×502, H = 260mm depth into cabinet)
-addCutoutFrame(GC[0], GC[1], GC[2], GC[3], 260, groupCutout, true);  // grill with control panel notch
+addCutoutFrame(GC[0], GC[1], GC[2], GC[3], 260, groupCutout, true);  // grill: U-formad, OPEN front
 // Sizzler cutout (W×D = 254×476, H = 152mm depth)
-addCutoutFrame(SC[0], SC[1], SC[2], SC[3], 152, groupCutout, false);
+addCutoutFrame(SC[0], SC[1], SC[2], SC[3], 152, groupCutout, false);  // sizzler: closed rectangle
 
 // Grill cutout WITH ZCL (W×D = 864×543, H = 264mm) centered on same position
 const ZCL_W_EXTRA = (864 - 762) / 2;  // 51 mm extra each side in width
 const ZCL_D_EXTRA = (543 - 502) / 2;  // 20.5 mm extra each side in depth
 addCutoutFrame(
-  GC[0] - ZCL_W_EXTRA, GC[1] - ZCL_D_EXTRA,
-  GC[2] + ZCL_W_EXTRA, GC[3] + ZCL_D_EXTRA,
+  GC[0] - ZCL_W_EXTRA, GC[1], GC[2] + ZCL_W_EXTRA, GC[3] + 2*ZCL_D_EXTRA,
   264, groupCutoutZCL, true
 );
 // Sizzler still 152mm depth (no ZCL alternative)
