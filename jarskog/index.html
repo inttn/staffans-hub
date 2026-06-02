@@ -515,8 +515,28 @@ const checkboxes = {
   'dim-apparat': dimGroupApparat,
   'dim-stomme': dimGroupStomme,
 };
+// Helper: set visibility on group AND traverse to set CSS2DObject children
+// (CSS2DObject does not inherit parent visibility in Three.js)
+function setGroupVisible(group, visible) {
+  group.visible = visible;
+  group.traverse((obj) => {
+    if (obj.isCSS2DObject) {
+      obj.element.style.display = visible ? '' : 'none';
+    }
+  });
+}
+
+// Apply initial visibility (dim groups are hidden by default)
+setGroupVisible(dimGroupTotal, false);
+setGroupVisible(dimGroupLayout, false);
+setGroupVisible(dimGroupLuckor, false);
+setGroupVisible(dimGroupApparat, false);
+setGroupVisible(dimGroupStomme, false);
+
 for (const [id, group] of Object.entries(checkboxes)) {
-  document.getElementById(id).addEventListener('change', (e) => { group.visible = e.target.checked; });
+  document.getElementById(id).addEventListener('change', (e) => {
+    setGroupVisible(group, e.target.checked);
+  });
 }
 
 // === CAMERA PRESETS — using standard Three.js convention ===
