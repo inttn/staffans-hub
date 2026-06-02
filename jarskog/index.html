@@ -460,15 +460,18 @@ addCutoutFrame(SC[0], SC[1], SC[2], SC[3], 152, groupCutoutZCL, false);
 // === L-LIST rostfri runt cutout-kanter ===
 // Skyddar microcement/cementskiva-kanten där grill-flänsen vilar
 // L-cross-section: horizontal leg 25mm out on bänkyta + vertical leg 25mm down in cutout
-function addLList(cx_x1, cx_y1, cx_x2, cx_y2, group) {
+function addLList(cx_x1, cx_y1, cx_x2, cx_y2, group, openFront) {
+  // openFront = true → skippa front-stycket (för grill-cutout som är öppet framtill)
   const H_W = 25;  // horizontal leg width (out from cutout)
   const T = 2;     // thickness
   const V_H = 25;  // vertical leg depth (into cutout)
   const bench_top = STOMME_H + BANK_H;
   
-  // FRONT (along y=cx_y1)
-  box(cx_x1 - H_W, cx_y1 - H_W, bench_top, cx_x2 + H_W, cx_y1, bench_top + T, matLList, group);
-  box(cx_x1, cx_y1, bench_top - V_H, cx_x2, cx_y1 + T, bench_top, matLList, group);
+  // FRONT (along y=cx_y1) — SKIP if openFront (grill sänks ner här, kan inte ha L-list i vägen)
+  if (!openFront) {
+    box(cx_x1 - H_W, cx_y1 - H_W, bench_top, cx_x2 + H_W, cx_y1, bench_top + T, matLList, group);
+    box(cx_x1, cx_y1, bench_top - V_H, cx_x2, cx_y1 + T, bench_top, matLList, group);
+  }
   // BACK (along y=cx_y2)
   box(cx_x1 - H_W, cx_y2, bench_top, cx_x2 + H_W, cx_y2 + H_W, bench_top + T, matLList, group);
   box(cx_x1, cx_y2 - T, bench_top - V_H, cx_x2, cx_y2, bench_top, matLList, group);
@@ -481,7 +484,7 @@ function addLList(cx_x1, cx_y1, cx_x2, cx_y2, group) {
 }
 
 // Grill cutout L-list
-addLList(GC[0], GC[1], GC[2], GC[3], groupLList);
+addLList(GC[0], GC[1], GC[2], GC[3], groupLList, true);  // grill: U-form, INGEN front-list
 
 // === ZCL — Napoleon Zero Clearance Liner (alternativ) ===
 // Rostfri "låda" som klädar hela cutout-zonen + sticker ner i skåpet ~260 mm
@@ -520,7 +523,7 @@ function addZCL(cx_x1, cx_y1, cx_x2, cx_y2, depth, group) {
 addZCL(GC[0], GC[1], GC[2], GC[3], 260, groupZCL);
 
 // Sizzler cutout L-list
-addLList(SC[0], SC[1], SC[2], SC[3], groupLList);
+addLList(SC[0], SC[1], SC[2], SC[3], groupLList, false);  // sizzler: stängd rektangel, alla 4 sidor
 
 // === TRALL (golv) ===
 const trallGeo = new THREE.PlaneGeometry(8000, 4000);
