@@ -663,25 +663,6 @@ for (const [id, group] of Object.entries(checkboxes)) {
   });
 }
 
-// Special: when ZCL toggled, swap cutout frame size
-document.getElementById('show-zcl').addEventListener('change', (e) => {
-  const cutoutEnabled = document.getElementById('show-cutout').checked;
-  if (cutoutEnabled) {
-    setGroupVisible(groupCutout, !e.target.checked);
-    setGroupVisible(groupCutoutZCL, e.target.checked);
-  }
-});
-// When cutout toggled, respect ZCL state
-document.getElementById('show-cutout').addEventListener('change', (e) => {
-  const zclEnabled = document.getElementById('show-zcl').checked;
-  if (e.target.checked) {
-    setGroupVisible(groupCutout, !zclEnabled);
-    setGroupVisible(groupCutoutZCL, zclEnabled);
-  } else {
-    setGroupVisible(groupCutout, false);
-      }
-});
-
 // === CAMERA PRESETS — using standard Three.js convention ===
 // SCAD y=350 (mid-depth) → three z = -0.35 (away from viewer, into screen)
 // Camera "front" at +z (toward viewer, looking at lamellfasad)
