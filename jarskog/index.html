@@ -217,6 +217,10 @@ for (const xr of stolpareXR) {
   box(xr - PROFILE, 0, 0, xr, PROFILE, STOMME_H, matSteel, groupStomme);
   box(xr - PROFILE, DEPTH - PROFILE, 0, xr, DEPTH, STOMME_H, matSteel, groupStomme);
 }
+// EXTRA stolpe vid x=1676 (höger om grill) för att stötta nedsänkta framsida-balken
+// och högra cutout-kanten — vänster om grillen finns stolpe vid x=874..914
+box(1676, 0, 0, 1716, PROFILE, STOMME_H, matSteel, groupStomme);  // front
+box(1676, DEPTH - PROFILE, 0, 1716, DEPTH, STOMME_H, matSteel, groupStomme);  // back
 box(GAVEL_STOLPE_X, 0, 0, GAVEL_STOLPE_X + PROFILE, PROFILE, STOMME_H, matSteel, groupStomme);
 box(GAVEL_STOLPE_X, DEPTH - PROFILE, 0, GAVEL_STOLPE_X + PROFILE, DEPTH, STOMME_H, matSteel, groupStomme);
 // Framsida-balk vid bänkyta-nivå: BRUTEN i grill-zonen (öppen framtill för grill-insättning)
@@ -224,10 +228,10 @@ box(0, 0, STOMME_H - PROFILE, 914, PROFILE, STOMME_H, matSteel, groupStomme);  /
 box(1676, 0, STOMME_H - PROFILE, TOTAL_L, PROFILE, STOMME_H, matSteel, groupStomme);  // höger del z=760..800
 // NEDSÄNKT framsida-balk i grill-zonen (under grill-body-bottenytan vid z=610)
 // Ger strukturell kontinuitet utan att blockera grillens nedsänkning
-box(914, 0, 540, 1676, PROFILE, 580, matSteel, groupStomme);  // lowered KKR z=540..580
+box(914, 0, 570, 1676, PROFILE, 610, matSteel, groupStomme);  // lowered KKR z=570..610 (top vid grill-body-botten)
 // Vertikala anslutningar mellan högre och lägre nivå (vid grillens hörn)
-box(914, 0, 580, 954, PROFILE, STOMME_H - PROFILE, matSteel, groupStomme);  // vänster vertikal anslutning
-box(1636, 0, 580, 1676, PROFILE, STOMME_H - PROFILE, matSteel, groupStomme);  // höger vertikal anslutning
+box(914, 0, 610, 954, PROFILE, STOMME_H - PROFILE, matSteel, groupStomme);  // vänster vertikal anslutning (från lowered balk topp upp till topp-ramen)
+box(1636, 0, 610, 1676, PROFILE, STOMME_H - PROFILE, matSteel, groupStomme);  // höger vertikal anslutning (från lowered balk topp upp till topp-ramen)
 
 box(0, DEPTH - PROFILE, STOMME_H - PROFILE, TOTAL_L, DEPTH, STOMME_H, matSteel, groupStomme);  // baksida-balk kontinuerlig
 box(0, PROFILE, STOMME_H - PROFILE, PROFILE, DEPTH - PROFILE, STOMME_H, matSteel, groupStomme);
