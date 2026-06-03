@@ -18,16 +18,17 @@
   #info .key { background: #444; padding: 1px 6px; border-radius: 3px; font-family: Menlo, Monaco, monospace; font-size: 11px; }
   #orientation { position: fixed; bottom: 16px; left: 16px; background: rgba(20,18,16,0.85); padding: 8px 14px; border-radius: 6px; font-size: 11px; color: #c9c1b1; }
   .dim-label {
-    background: rgba(255, 255, 248, 0.96);
-    border: 1px solid #888;
-    padding: 1px 6px;
+    background: rgba(255, 255, 248, 0.98);
+    border: 2px solid #555;
+    padding: 3px 9px;
     font-family: -apple-system, system-ui, sans-serif;
-    font-size: 10px;
+    font-size: 16px;
     color: #1a1a1c;
-    border-radius: 3px;
+    border-radius: 4px;
     pointer-events: none;
     white-space: nowrap;
-    font-weight: 500;
+    font-weight: 700;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
   }
   .dim-label.cat-total { background: rgba(255, 240, 220, 0.96); border-color: #c5824a; color: #5a2a08; }
   .dim-label.cat-layout { background: rgba(220, 240, 255, 0.96); border-color: #4a72c5; color: #08245a; }
@@ -462,7 +463,7 @@ dimGroupLuckor.visible = false;
 dimGroupApparat.visible = false;
 dimGroupStomme.visible = false;
 
-const dimLineMat = new THREE.LineBasicMaterial({color: 0x333333, transparent: true, opacity: 0.7});
+const dimLineMat = new THREE.LineBasicMaterial({color: 0xc8453c, transparent: false});
 
 // Convert scad coords [x,y,z] in mm to three.js Vector3 (with negated y → -z mapping)
 function scadV(x, y, z) {
@@ -515,53 +516,51 @@ addDim([0, 0, STOMME_H], [0, 0, STOMME_H + BANK_H], '70 (bänkskiva)', dimGroupL
 addDim([0, 0, 0], [0, 0, STOMME_H], '800 (stomme)', dimGroupLayout, [-200, 0, 0], 'layout');
 
 // ==== LUCKOR ====
-addDim([0, -25, 30], [483, -25, 30], '483 (lucka 1, gas)', dimGroupLuckor, [0, 0, -30], 'luckor');
-addDim([483, -25, 30], [914, -25, 30], '431 (lucka 2)', dimGroupLuckor, [0, 0, -30], 'luckor');
-addDim([914, -25, 30], [1414, -25, 30], '500 (lucka 3, grill-undersida)', dimGroupLuckor, [0, 0, -30], 'luckor');
-addDim([1414, -25, 30], [1905, -25, 30], '491 (lucka 4, storage)', dimGroupLuckor, [0, 0, -30], 'luckor');
+addDim([0, -25, 30], [483, -25, 30], '483 (L1 gas)', dimGroupLuckor, [0, 0, -30], 'luckor');
+addDim([483, -25, 30], [863, -25, 30], '380 (L2 gasol)', dimGroupLuckor, [0, 0, -30], 'luckor');
+addDim([863, -25, 30], [1295, -25, 30], '432 (L3)', dimGroupLuckor, [0, 0, -30], 'luckor');
+addDim([1295, -25, 30], [1727, -25, 30], '432 (L4)', dimGroupLuckor, [0, 0, -30], 'luckor');
+addDim([1727, -25, 30], [1905, -25, 30], '178 (fast panel)', dimGroupLuckor, [0, 0, -30], 'luckor');
 
 // ==== APPARATER ====
 // Sizzler cutout position from left
 addDim([0, 0, STOMME_H + BANK_H], [229, 0, STOMME_H + BANK_H], '229', dimGroupApparat, [0, 0, 80], 'apparat');
 addDim([229, 0, STOMME_H + BANK_H], [483, 0, STOMME_H + BANK_H], '254 (sizzler)', dimGroupApparat, [0, 0, 80], 'apparat');
-addDim([483, 0, STOMME_H + BANK_H], [914, 0, STOMME_H + BANK_H], '431 (clearance)', dimGroupApparat, [0, 0, 80], 'apparat');
-addDim([914, 0, STOMME_H + BANK_H], [1676, 0, STOMME_H + BANK_H], '762 (grill)', dimGroupApparat, [0, 0, 80], 'apparat');
-addDim([1676, 0, STOMME_H + BANK_H], [1905, 0, STOMME_H + BANK_H], '229', dimGroupApparat, [0, 0, 80], 'apparat');
-// Cutout depths (sizzler + grill)
+addDim([483, 0, STOMME_H + BANK_H], [863, 0, STOMME_H + BANK_H], '380', dimGroupApparat, [0, 0, 80], 'apparat');
+addDim([863, 0, STOMME_H + BANK_H], [1727, 0, STOMME_H + BANK_H], '864 (ZCL cutout)', dimGroupApparat, [0, 0, 80], 'apparat');
+addDim([1727, 0, STOMME_H + BANK_H], [1905, 0, STOMME_H + BANK_H], '178', dimGroupApparat, [0, 0, 80], 'apparat');
+// Cutout depths
 addDim([229, 120, STOMME_H + BANK_H], [229, 596, STOMME_H + BANK_H], '476 (sizzler djup)', dimGroupApparat, [-50, 0, 0], 'apparat');
-addDim([914, 50, STOMME_H + BANK_H], [914, 552, STOMME_H + BANK_H], '502 (grill djup)', dimGroupApparat, [-50, 0, 0], 'apparat');
-// Sizzler height
-addDim([229, 350, STOMME_H + BANK_H], [229, 350, STOMME_H + BANK_H + 152], '152 (sizzler höjd)', dimGroupApparat, [-200, 0, 0], 'apparat');
-// Grill total above bench (body + lid)
-addDim([1676, 350, STOMME_H + BANK_H], [1676, 350, STOMME_H + BANK_H + 340], '340 (grill: 100 body + 240 lid)', dimGroupApparat, [200, 0, 0], 'apparat');
-// Grill drop-in
-addDim([914, 350, STOMME_H - 130], [914, 350, STOMME_H + BANK_H], '200 (grill drop-in)', dimGroupApparat, [-50, 0, 0], 'apparat');
+addDim([863, 0, STOMME_H + BANK_H], [863, 543, STOMME_H + BANK_H], '543 (ZCL djup)', dimGroupApparat, [-50, 0, 0], 'apparat');
+// Clearance sizzler→ZCL stolpe (Napoleon 431 mm)
+addDim([483, 0, STOMME_H + BANK_H + 200], [914, 0, STOMME_H + BANK_H + 200], '431 (clearance)', dimGroupApparat, [0, 0, 60], 'apparat');
+// Grill drop-in depth
+addDim([1295, 350, STOMME_H - 194], [1295, 350, STOMME_H + BANK_H], '264 (grill clearance ↓)', dimGroupApparat, [400, 0, 0], 'apparat');
 
-// ==== STOMME ====
-// Stolpe positions
-addDim([0, -50, 0], [40, -50, 0], '0', dimGroupStomme, [0, 0, 900], 'stomme');
-addDim([443, -50, 0], [483, -50, 0], '483', dimGroupStomme, [0, 0, 900], 'stomme');
-addDim([874, -50, 0], [914, -50, 0], '914', dimGroupStomme, [0, 0, 900], 'stomme');
-addDim([1865, -50, 0], [1905, -50, 0], '1905', dimGroupStomme, [0, 0, 900], 'stomme');
-addDim([3242, -50, 0], [3282, -50, 0], '3262 (gavel)', dimGroupStomme, [0, 0, 900], 'stomme');
-// Tvärbalk x-positions (a subset, the most important)
-addDim([189, 0, STOMME_H + 60], [229, 0, STOMME_H + 60], 'TB 229', dimGroupStomme, [0, 0, 50], 'stomme');
-addDim([1676, 0, STOMME_H + 60], [1716, 0, STOMME_H + 60], 'TB 1676', dimGroupStomme, [0, 0, 50], 'stomme');
-addDim([2545, 0, STOMME_H + 60], [2585, 0, STOMME_H + 60], 'TB 2565 (cantilever mid)', dimGroupStomme, [0, 0, 50], 'stomme');
-// KKR profile size note
+// ==== STOMME — stolpe-mått (samma som smed-ritning) ====
+// Stolpe centerlines (CL): 20, 463, 843, 1747, 1885, 3262
+const STOLP_CL = [20, 463, 843, 1747, 1885, 3262];
+// C–C avstånd mellan stolpar (vid y=0, under köket)
+for (let i = 0; i < STOLP_CL.length - 1; i++) {
+  addDim([STOLP_CL[i], 0, 0], [STOLP_CL[i+1], 0, 0], String(STOLP_CL[i+1]-STOLP_CL[i]),
+         dimGroupStomme, [0, 0, -200], 'stomme');
+}
+// Löpmått från 0 till varje CL (staggade nedåt)
+let runZ = -380;
+for (const cl of STOLP_CL) {
+  addDim([0, 0, 0], [cl, 0, 0], String(cl), dimGroupStomme, [0, 0, runZ], 'stomme');
+  runZ -= 90;
+}
+// Total
+addDim([0, 0, 0], [TOTAL_L, 0, 0], '3300 (TOTAL)', dimGroupStomme, [0, 0, runZ - 40], 'stomme');
+
+// Profil-not
 const profileDiv = document.createElement('div');
 profileDiv.className = 'dim-label cat-stomme';
-profileDiv.textContent = 'KKR 40×40×2 mm';
+profileDiv.textContent = 'Profil 40×40×2 mm · mått till stolpens CENTRUM · x=0 vid vänster ytterkant';
 const profileLabel = new CSS2DObject(profileDiv);
-profileLabel.position.copy(scadV(100, 0, STOMME_H + 200));
+profileLabel.position.copy(scadV(1650, 0, STOMME_H + 260));
 dimGroupStomme.add(profileLabel);
-// Longitudinell mid-balk note
-const midDiv = document.createElement('div');
-midDiv.className = 'dim-label cat-stomme';
-midDiv.textContent = 'Mid-balk vid y=350 (bruten i 5 segment)';
-const midLabel = new CSS2DObject(midDiv);
-midLabel.position.copy(scadV(2200, 350, STOMME_H + 100));
-dimGroupStomme.add(midLabel);
 
 // === Checkbox controls ===
 const checkboxes = {
@@ -603,12 +602,7 @@ for (const [id, group] of Object.entries(checkboxes)) {
   });
 }
 
-// Dim groups hidden by default (none are checked)
-setGroupVisible(dimGroupTotal, false);
-setGroupVisible(dimGroupLayout, false);
-setGroupVisible(dimGroupLuckor, false);
-setGroupVisible(dimGroupApparat, false);
-setGroupVisible(dimGroupStomme, false);
+// (Dim-grupperna styrs helt av init-loopen ovan via checkbox-läget — inga hårdkodade overrides)
 
 // === CAMERA PRESETS — using standard Three.js convention ===
 // SCAD y=350 (mid-depth) → three z = -0.35 (away from viewer, into screen)
