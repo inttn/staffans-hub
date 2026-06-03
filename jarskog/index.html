@@ -307,46 +307,48 @@ for (let i = 0; i < fixed_panel_n; i++) {
   box(lx1, LUCKA_Y_OFFSET - LAMELL_T, LUCKA_BOT, lx1 + LAMELL_W, LUCKA_Y_OFFSET, fixed_panel_top, matWood, groupLuckor);
 }
 
-// === GRILL BIG32 — VERIFIED PER OWNER'S MANUAL SIDA 6 ===
-// Cutout in bänkskiva = RAK rektangel W × D = 762 × 502 (per manual)
-// Grill body above bänk: X × D = 851 × 502 (flange overhang 44mm per side)
-// Knobs on FRONT face of above-bench body, NOT hanging below bänk
-// Drop-in firebox below: 762 × 502, depth ~130mm into cabinet
-const GC = [863, 0, 1727, 543];  // ZCL cutout (W=864mm, D=543mm per Napoleon BI-3623-ZCL spec)
-
-// Flange dimensions (X = 851 mm wide, slight overhang front/back)
-const FLANGE_W_EXTRA = 5;   // ZCL is already 864mm wide — just tiny overhang for seating
-const FLANGE_Y_EXTRA = 0;   // ZCL goes flush to cutout edges
-const FX1 = GC[0] - FLANGE_W_EXTRA;     // 869
-const FX2 = GC[2] + FLANGE_W_EXTRA;     // 1721
-const FY1 = GC[1] - FLANGE_Y_EXTRA;     // 45
-const FY2 = GC[3] + FLANGE_Y_EXTRA;     // 557
+// === GRILL BIG32 — FAKTISKA MÅTT (uppmätt på plats 2026-06) ===
+// Fläns (vilar på bänk): 805 bred × 510 djup
+// Eldstad (sänks ner): 705 bred × 490 djup
+// Sitter i ZCL (864×543) — centrerad i ZCL-öppningen
+const GC = [863, 0, 1727, 543];  // ZCL cutout (864×543 per Napoleon BI-3623-ZCL)
 const Z_BENCH_TOP = STOMME_H + BANK_H;  // 870
+const ZCL_CX = (GC[0] + GC[2]) / 2;     // 1295 = ZCL-öppningens centrum
+
+// Uppmätta grill-mått
+const GR_FLANGE_W = 805, GR_FLANGE_D = 510;   // fläns ovan bänk
+const GR_FIRE_W = 705, GR_FIRE_D = 490;       // eldstad (drop-in)
+// Fläns centrerad i bredd, frontställd i djup (öppning är öppen i front y=0)
+const FX1 = ZCL_CX - GR_FLANGE_W/2;   // 892.5
+const FX2 = ZCL_CX + GR_FLANGE_W/2;   // 1697.5
+const FY1 = 0;                        // fronten flush mot bänk-front
+const FY2 = GR_FLANGE_D;              // 510
+// Eldstad centrerad i flänsen
+const BX1 = ZCL_CX - GR_FIRE_W/2;     // 942.5
+const BX2 = ZCL_CX + GR_FIRE_W/2;     // 1647.5
+const BY1 = (GR_FLANGE_D - GR_FIRE_D)/2;       // 10
+const BY2 = BY1 + GR_FIRE_D;          // 500
 
 // Above-bench body (with knobs section integrated at bottom)
-const KNOBS_SECTION_H = 60;   // bottom 60 mm has knobs
-const LID_H = 260;            // lid 260 mm tall
-// Body lower section (with knobs)
+const KNOBS_SECTION_H = 60;
+const LID_H = 260;
 box(FX1, FY1, Z_BENCH_TOP, FX2, FY2, Z_BENCH_TOP + KNOBS_SECTION_H, matGrillBody, groupGrill);
-// Lid (slightly smaller)
 box(FX1 + 5, FY1 + 5, Z_BENCH_TOP + KNOBS_SECTION_H, FX2 - 5, FY2 - 5, Z_BENCH_TOP + KNOBS_SECTION_H + LID_H, matGrillLid, groupGrill);
-// Lid handle on front
-box(FX1 + 250, FY1 - 25, Z_BENCH_TOP + KNOBS_SECTION_H + LID_H - 80, FX2 - 250, FY1, Z_BENCH_TOP + KNOBS_SECTION_H + LID_H - 55, matStainless, groupGrill);
+box(FX1 + 200, FY1 - 25, Z_BENCH_TOP + KNOBS_SECTION_H + LID_H - 80, FX2 - 200, FY1, Z_BENCH_TOP + KNOBS_SECTION_H + LID_H - 55, matStainless, groupGrill);
 
-// 4 burner knobs on FRONT face of body (integrated, NOT hanging below bänk)
+// 4 burner knobs on FRONT face of body
 for (let i = 0; i < 4; i++) {
   const knobX = FX1 + (FX2 - FX1) * (0.18 + i * 0.215);
   const knobGeo = new THREE.CylinderGeometry(14, 14, 18, 24);
   const knob = new THREE.Mesh(knobGeo, matSteel);
-  // Position on FRONT face of body (at y=FY1, sticking out forward)
   knob.position.set(knobX, Z_BENCH_TOP + 30, -(FY1 - 10));
   knob.rotation.x = Math.PI / 2;
   groupGrill.add(knob);
 }
 
-// Drop-in firebox below bänk (fits in cutout = 762 × 502)
-const DROP_IN_DEPTH = 194;  // Napoleon ZCL H=264mm from bänkskiva top → 264-70=194mm under bänkskiva botten → grill bottom z=606
-box(GC[0] + 5, GC[1] + 5, STOMME_H - DROP_IN_DEPTH, GC[2] - 5, GC[3] - 5, Z_BENCH_TOP, matStainless, groupGrill);
+// Drop-in eldstad (705×490) — sänks till z=606 (Napoleon ZCL H=264)
+const DROP_IN_DEPTH = 194;  // 264 under bänk-top − 70 bänkskiva
+box(BX1, BY1, STOMME_H - DROP_IN_DEPTH, BX2, BY2, Z_BENCH_TOP, matStainless, groupGrill);
 
 // === SIZZLER BIB10IR — flush-mount infrared element ===
 // Above-bench: only ~5-10mm overhang on each side, 152mm tall total
