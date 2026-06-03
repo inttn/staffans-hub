@@ -47,10 +47,8 @@
   <label><input type="checkbox" id="show-grill" checked> Grill BIG32</label>
   <label><input type="checkbox" id="show-sizzler" checked> Sizzler BIB10IR</label>
   <label><input type="checkbox" id="show-trall" checked> Trall (golv)</label>
-  <label><input type="checkbox" id="show-heatshield" checked> Värmesköld (under sizzler)</label>
   <label><input type="checkbox" id="show-gasol" checked> Gasolflaskor (2× P11)</label>
   <label><input type="checkbox" id="show-husvagg" checked> Husvägg (vänster sida)</label>
-  <label><input type="checkbox" id="show-llist"> L-list rostfri (utan ZCL — ej aktuellt, ZCL vald)</label>
   <label><input type="checkbox" id="show-zcl" checked> ZCL — Napoleon BI-3623-ZCL (installeras av Jarskog)</label>
   <div class="section">
     <h3>Mått (visa/dölj)</h3>
@@ -148,11 +146,9 @@ const matWood = new THREE.MeshStandardMaterial({color: 0x5a4e30, roughness: 0.7,
 const matMicrocement = new THREE.MeshStandardMaterial({color: 0xc8c0aa, roughness: 0.88, metalness: 0.0});
 const matCementskiva = new THREE.MeshStandardMaterial({color: 0xa8a297, roughness: 0.92, metalness: 0.0});
 const matTrall = new THREE.MeshStandardMaterial({color: 0x6e5a3a, roughness: 0.85, metalness: 0.0});
-const matHeatshield = new THREE.MeshStandardMaterial({color: 0xc8c8cc, roughness: 0.25, metalness: 0.9, side: THREE.DoubleSide});
 const matGasol = new THREE.MeshStandardMaterial({color: 0xa83a2c, roughness: 0.55, metalness: 0.1});
 const matGasolValve = new THREE.MeshStandardMaterial({color: 0xa8a8a8, roughness: 0.4, metalness: 0.7});
 const matHusvagg = new THREE.MeshStandardMaterial({color: 0xe8dec8, roughness: 0.9, metalness: 0.0});
-const matLList = new THREE.MeshStandardMaterial({color: 0xc8c8d0, roughness: 0.15, metalness: 0.95});
 const matZCL = new THREE.MeshStandardMaterial({color: 0xa8a8b2, roughness: 0.2, metalness: 0.85, side: THREE.DoubleSide});
 
 const root = new THREE.Group();
@@ -200,12 +196,10 @@ const groupLuckor = new THREE.Group();
 const groupGrill = new THREE.Group();
 const groupSizzler = new THREE.Group();
 const groupTrall = new THREE.Group();
-const groupHeatshield = new THREE.Group();
 const groupGasol = new THREE.Group();
 const groupHusvagg = new THREE.Group();
-const groupLList = new THREE.Group();
 const groupZCL = new THREE.Group();
-root.add(groupStomme, groupCementskiva, groupBank, groupLuckor, groupGrill, groupSizzler, groupTrall, groupHeatshield, groupGasol, groupHusvagg, groupLList, groupZCL);
+root.add(groupStomme, groupCementskiva, groupBank, groupLuckor, groupGrill, groupSizzler, groupTrall, groupGasol, groupHusvagg, groupZCL);
 
 // === STOMME ===
 const stolpareXR = [40, 483, 1905];  // x=914 replaced by ZCL stolpar at 823..863 and 1727..1767
@@ -370,15 +364,6 @@ box(SZ_X1 + 12, SZ_Y1 + 12, SZ_Z_TOP - 4, SZ_X2 - 12, SZ_Y2 - 12, SZ_Z_TOP + 2, 
 // Drop-in stem (in cabinet)
 box(SC[0] + 5, SC[1] + 5, STOMME_H - 80, SC[2] - 5, SC[3] - 5, STOMME_H + BANK_H, matStainless, groupSizzler);
 
-// === VÄRMESKÖLD under sizzler (rostfri plåt, 30mm luftspalt) ===
-// Sizzler drop-in bottom at z = STOMME_H - 80 = 720
-// Heat shield 30mm below = z=690, 5mm thick
-const HS_X1 = SC[0] - 25, HS_X2 = SC[2] + 25;  // 300mm wide (50mm wider than cutout)
-const HS_Y1 = SC[1] - 37, HS_Y2 = SC[3] + 37;  // 550mm deep (74mm extra)
-box(HS_X1, HS_Y1, 685, HS_X2, HS_Y2, 692, matHeatshield, groupHeatshield);
-// Mounting bracket (small) on each long edge
-box(HS_X1, HS_Y1, 692, HS_X1 + 30, HS_Y2, 720, matHeatshield, groupHeatshield);
-box(HS_X2 - 30, HS_Y1, 692, HS_X2, HS_Y2, 720, matHeatshield, groupHeatshield);
 
 // === GASOLFLASKOR (2× P11, side by side in lucka 1 = gas-fack) ===
 // P11: ~210mm diameter, 310mm tall
@@ -425,73 +410,32 @@ for (let py = HV_Y1 + 150; py < HV_Y2; py += 200) {
   box(HV_X2, py - 2, HV_Z1, HV_X2 + 2, py + 2, HV_Z2, matSteel, groupHusvagg);
 }
 
-// === L-LIST rostfri runt cutout-kanter ===
-// Skyddar microcement/cementskiva-kanten där grill-flänsen vilar
-// L-cross-section: horizontal leg 25mm out on bänkyta + vertical leg 25mm down in cutout
-function addLList(cx_x1, cx_y1, cx_x2, cx_y2, group, openFront) {
-  // openFront = true → skippa front-stycket (för grill-cutout som är öppet framtill)
-  const H_W = 25;  // horizontal leg width (out from cutout)
-  const T = 2;     // thickness
-  const V_H = 25;  // vertical leg depth (into cutout)
-  const bench_top = STOMME_H + BANK_H;
-  
-  // FRONT (along y=cx_y1) — SKIP if openFront (grill sänks ner här, kan inte ha L-list i vägen)
-  if (!openFront) {
-    box(cx_x1 - H_W, cx_y1 - H_W, bench_top, cx_x2 + H_W, cx_y1, bench_top + T, matLList, group);
-    box(cx_x1, cx_y1, bench_top - V_H, cx_x2, cx_y1 + T, bench_top, matLList, group);
-  }
-  // BACK (along y=cx_y2)
-  box(cx_x1 - H_W, cx_y2, bench_top, cx_x2 + H_W, cx_y2 + H_W, bench_top + T, matLList, group);
-  box(cx_x1, cx_y2 - T, bench_top - V_H, cx_x2, cx_y2, bench_top, matLList, group);
-  // LEFT (along x=cx_x1)
-  box(cx_x1 - H_W, cx_y1, bench_top, cx_x1, cx_y2, bench_top + T, matLList, group);
-  box(cx_x1, cx_y1, bench_top - V_H, cx_x1 + T, cx_y2, bench_top, matLList, group);
-  // RIGHT (along x=cx_x2)
-  box(cx_x2, cx_y1, bench_top, cx_x2 + H_W, cx_y2, bench_top + T, matLList, group);
-  box(cx_x2 - T, cx_y1, bench_top - V_H, cx_x2, cx_y2, bench_top, matLList, group);
-}
-
-// Grill cutout L-list
-addLList(GC[0], GC[1], GC[2], GC[3], groupLList, true);  // grill: U-form, INGEN front-list
-
-// === ZCL — Napoleon Zero Clearance Liner (alternativ) ===
-// Rostfri "låda" som klädar hela cutout-zonen + sticker ner i skåpet ~260 mm
-// Cutout för ZCL är något större (864 × 543 mm) men för viz använder vi grill-cutout
+// === ZCL — Napoleon BI-3623-ZCL (U-formad, ÖPPEN i fronten) ===
+// 3 väggar (bak, vänster, höger) + botten + fläns 3 sidor
+// Ingen framvägg — grill + control panel sticker ut i fronten
 function addZCL(cx_x1, cx_y1, cx_x2, cx_y2, depth, group) {
-  const T = 1.5;  // stainless thickness 1.5mm
-  const FLANGE_W = 35;  // top flange width extending outward
+  const T = 1.5;
+  const FLANGE_W = 35;
   const bench_top = STOMME_H + BANK_H;
-  const liner_top = bench_top;
   const liner_bot = STOMME_H - depth;
-  
-  // 4 side walls of the liner (going down into cabinet from bench top)
-  // Front wall
-  box(cx_x1, cx_y1, liner_bot, cx_x2, cx_y1 + T, liner_top, matZCL, group);
   // Back wall
-  box(cx_x1, cx_y2 - T, liner_bot, cx_x2, cx_y2, liner_top, matZCL, group);
+  box(cx_x1, cx_y2 - T, liner_bot, cx_x2, cx_y2, bench_top, matZCL, group);
   // Left wall
-  box(cx_x1, cx_y1, liner_bot, cx_x1 + T, cx_y2, liner_top, matZCL, group);
+  box(cx_x1, cx_y1, liner_bot, cx_x1 + T, cx_y2, bench_top, matZCL, group);
   // Right wall
-  box(cx_x2 - T, cx_y1, liner_bot, cx_x2, cx_y2, liner_top, matZCL, group);
-  // Bottom (closed except ventilation slots — show as solid)
+  box(cx_x2 - T, cx_y1, liner_bot, cx_x2, cx_y2, bench_top, matZCL, group);
+  // Bottom
   box(cx_x1, cx_y1, liner_bot, cx_x2, cx_y2, liner_bot + T, matZCL, group);
-  
-  // Top flange — extends outward on all 4 sides of cutout
-  // Front flange
-  box(cx_x1 - FLANGE_W, cx_y1 - FLANGE_W, bench_top, cx_x2 + FLANGE_W, cx_y1, bench_top + T, matZCL, group);
-  // Back flange
+  // Flange back
   box(cx_x1 - FLANGE_W, cx_y2, bench_top, cx_x2 + FLANGE_W, cx_y2 + FLANGE_W, bench_top + T, matZCL, group);
-  // Left flange
+  // Flange left
   box(cx_x1 - FLANGE_W, cx_y1, bench_top, cx_x1, cx_y2, bench_top + T, matZCL, group);
-  // Right flange
+  // Flange right
   box(cx_x2, cx_y1, bench_top, cx_x2 + FLANGE_W, cx_y2, bench_top + T, matZCL, group);
 }
 
-// Add ZCL for grill cutout (260 mm deep into cabinet per BIG32 spec H dimension)
-addZCL(GC[0], GC[1], GC[2], GC[3], 260, groupZCL);
-
-// Sizzler cutout L-list
-addLList(SC[0], SC[1], SC[2], SC[3], groupLList, false);  // sizzler: stängd rektangel, alla 4 sidor
+// ZCL per Napoleon BI-3623-ZCL spec: W=864, D=543, H=264
+addZCL(GC[0], GC[1], GC[2], GC[3], 264, groupZCL);
 
 // === TRALL (golv) ===
 const trallGeo = new THREE.PlaneGeometry(8000, 4000);
@@ -628,10 +572,8 @@ const checkboxes = {
   'show-grill': groupGrill,
   'show-sizzler': groupSizzler,
   'show-trall': groupTrall,
-  'show-heatshield': groupHeatshield,
   'show-gasol': groupGasol,
   'show-husvagg': groupHusvagg,
-  'show-llist': groupLList,
   'show-zcl': groupZCL,
   'dim-total': dimGroupTotal,
   'dim-layout': dimGroupLayout,
@@ -663,8 +605,6 @@ for (const [id, group] of Object.entries(checkboxes)) {
     setGroupVisible(group, e.target.checked);
   });
 }
-
-setGroupVisible(groupLList, false);  // L-list utan ZCL döljs — ZCL vald
 
 // === CAMERA PRESETS — using standard Three.js convention ===
 // SCAD y=350 (mid-depth) → three z = -0.35 (away from viewer, into screen)
