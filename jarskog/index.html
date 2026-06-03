@@ -540,13 +540,23 @@ addDim([1295, 350, STOMME_H - 194], [1295, 350, STOMME_H + BANK_H], '264 (grill 
 // ==== STOMME — stolpe-mått (samma som smed-ritning) ====
 // Stolpe centerlines (CL): 20, 463, 843, 1747, 1885, 3262
 const STOLP_CL = [20, 463, 843, 1747, 1885, 3262];
+// FRIA öppningar mellan stolpar (innerkant→innerkant) — där grill/sizzler sänks
+const OPENINGS = [
+  [40, 443, '403'], [483, 823, '340'], [863, 1727, '864 = ZCL'],
+  [1767, 1865, '98'], [1905, 3242, '1337 svävande'],
+];
+for (const [x1, x2, t] of OPENINGS) {
+  addDim([x1, 0, 0], [x2, 0, 0], t, dimGroupStomme, [0, 0, -110], 'stomme');
+}
+// Sizzler cutout fria öppning
+addDim([229, 0, STOMME_H + BANK_H], [483, 0, STOMME_H + BANK_H], '254 = sizzler', dimGroupStomme, [0, 0, 120], 'stomme');
 // C–C avstånd mellan stolpar (vid y=0, under köket)
 for (let i = 0; i < STOLP_CL.length - 1; i++) {
   addDim([STOLP_CL[i], 0, 0], [STOLP_CL[i+1], 0, 0], String(STOLP_CL[i+1]-STOLP_CL[i]),
-         dimGroupStomme, [0, 0, -200], 'stomme');
+         dimGroupStomme, [0, 0, -230], 'stomme');
 }
 // Löpmått från 0 till varje CL (staggade nedåt)
-let runZ = -380;
+let runZ = -420;
 for (const cl of STOLP_CL) {
   addDim([0, 0, 0], [cl, 0, 0], String(cl), dimGroupStomme, [0, 0, runZ], 'stomme');
   runZ -= 90;
