@@ -347,25 +347,23 @@ for (let i = 0; i < 4; i++) {
 }
 
 // Drop-in eldstad (705×490) — sänks till z=606 (Napoleon ZCL H=264)
-const DROP_IN_DEPTH = 194;  // 264 under bänk-top − 70 bänkskiva
+const DROP_IN_DEPTH = 134;  // uppmätt 204mm under bänkytan (z=666). Vilar på ZCL/cementplatta — högre än ZCL-botten (606)
 box(BX1, BY1, STOMME_H - DROP_IN_DEPTH, BX2, BY2, Z_BENCH_TOP, matStainless, groupGrill);
 
-// === SIZZLER BIB10IR — flush-mount infrared element ===
-// Above-bench: only ~5-10mm overhang on each side, 152mm tall total
-const SC = [229, 120, 483, 596];
-const SZ_OVERHANG = 5;
-const SZ_X1 = SC[0] - SZ_OVERHANG;
-const SZ_X2 = SC[2] + SZ_OVERHANG;
-const SZ_Y1 = SC[1] - SZ_OVERHANG;
-const SZ_Y2 = SC[3] + SZ_OVERHANG;
-const SZ_Z_BOT = STOMME_H + BANK_H;  // bench top
-const SZ_Z_TOP = SZ_Z_BOT + 152;
-// Main body
-box(SZ_X1, SZ_Y1, SZ_Z_BOT, SZ_X2, SZ_Y2, SZ_Z_TOP, matGrillLid, groupSizzler);
-// Inner burner area (darker, slightly inset)
-box(SZ_X1 + 12, SZ_Y1 + 12, SZ_Z_TOP - 4, SZ_X2 - 12, SZ_Y2 - 12, SZ_Z_TOP + 2, matSteel, groupSizzler);
-// Drop-in stem (in cabinet)
-box(SC[0] + 5, SC[1] + 5, STOMME_H - 80, SC[2] - 5, SC[3] - 5, STOMME_H + BANK_H, matStainless, groupSizzler);
+// === SIZZLER BIB10IR — FAKTISKA MÅTT (uppmätt 2026-06) ===
+// Långsidan in i bänken (A): fläns 344 bred × 560 djup, eldstad 244 bred × 462 djup
+const SC = [229, 120, 483, 596];   // cutout 254×476 (oförändrad)
+const SZ_CX = (SC[0] + SC[2]) / 2;  // 356
+const SZ_CY = (SC[1] + SC[3]) / 2;  // 358
+const SZ_FL_W = 344, SZ_FL_D = 560;   // fläns
+const SZ_FB_W = 244, SZ_FB_D = 462;   // eldstad
+const SZ_Z_BOT = STOMME_H + BANK_H;   // bench top 870
+// Fläns/body ovan bänk (centrerad på cutout), 152 hög
+box(SZ_CX - SZ_FL_W/2, SZ_CY - SZ_FL_D/2, SZ_Z_BOT, SZ_CX + SZ_FL_W/2, SZ_CY + SZ_FL_D/2, SZ_Z_BOT + 152, matGrillLid, groupSizzler);
+// Inner brännaryta (mörkare, infälld)
+box(SZ_CX - SZ_FL_W/2 + 12, SZ_CY - SZ_FL_D/2 + 12, SZ_Z_BOT + 148, SZ_CX + SZ_FL_W/2 - 12, SZ_CY + SZ_FL_D/2 - 12, SZ_Z_BOT + 154, matSteel, groupSizzler);
+// Eldstad (drop-in) 244×462, centrerad
+box(SZ_CX - SZ_FB_W/2, SZ_CY - SZ_FB_D/2, STOMME_H - 80, SZ_CX + SZ_FB_W/2, SZ_CY + SZ_FB_D/2, SZ_Z_BOT, matStainless, groupSizzler);
 
 
 // === GASOLFLASKOR (2× P11, side by side in lucka 1 = gas-fack) ===
