@@ -593,18 +593,22 @@ function setGroupVisible(group, visible) {
   });
 }
 
-// Apply initial visibility (dim groups are hidden by default)
+// Apply initial visibility — sync each group to its checkbox state at load
+// (Three.js groups default to visible=true, checkboxes may start unchecked)
+for (const [id, group] of Object.entries(checkboxes)) {
+  const el = document.getElementById(id);
+  setGroupVisible(group, el.checked);  // set from checkbox initial state
+  el.addEventListener('change', (e) => {
+    setGroupVisible(group, e.target.checked);
+  });
+}
+
+// Dim groups hidden by default (none are checked)
 setGroupVisible(dimGroupTotal, false);
 setGroupVisible(dimGroupLayout, false);
 setGroupVisible(dimGroupLuckor, false);
 setGroupVisible(dimGroupApparat, false);
 setGroupVisible(dimGroupStomme, false);
-
-for (const [id, group] of Object.entries(checkboxes)) {
-  document.getElementById(id).addEventListener('change', (e) => {
-    setGroupVisible(group, e.target.checked);
-  });
-}
 
 // === CAMERA PRESETS — using standard Three.js convention ===
 // SCAD y=350 (mid-depth) → three z = -0.35 (away from viewer, into screen)
