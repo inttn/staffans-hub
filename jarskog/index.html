@@ -220,7 +220,7 @@ box(0, 0, STOMME_H - PROFILE, 863, PROFILE, STOMME_H, matSteel, groupStomme);  /
 box(1727, 0, STOMME_H - PROFILE, TOTAL_L, PROFILE, STOMME_H, matSteel, groupStomme);  // framsida höger (1727..3300)
 // NEDSÄNKT framsida-balk i grill-zonen (under grill-body-bottenytan vid z=610)
 // Ger strukturell kontinuitet utan att blockera grillens nedsänkning
-box(863, 0, 530, 1727, PROFILE, 570, matSteel, groupStomme);  // nedsänkt framsida-balk z=530..570 (under ZCL bottom z=606)
+box(863, 0, 566, 1727, PROFILE, 606, matSteel, groupStomme);  // nedsänkt framsida-balk z=566..606 (topp vid grill bottom z=606)
 // (Vertikala anslutningar BORTTAGNA — stolparna vid x=874..914 och x=1676..1716
 //  går redan full höjd och möter den nedsänkta balken direkt vid z=570..610)
 
@@ -344,7 +344,7 @@ for (let i = 0; i < 4; i++) {
 }
 
 // Drop-in firebox below bänk (fits in cutout = 762 × 502)
-const DROP_IN_DEPTH = 190;  // 190mm into cabinet = 260mm below bänk-top (matchar Napoleon H-spec)
+const DROP_IN_DEPTH = 194;  // Napoleon ZCL H=264mm from bänkskiva top → 264-70=194mm under bänkskiva botten → grill bottom z=606
 box(GC[0] + 5, GC[1] + 5, STOMME_H - DROP_IN_DEPTH, GC[2] - 5, GC[3] - 5, Z_BENCH_TOP, matStainless, groupGrill);
 
 // === SIZZLER BIB10IR — flush-mount infrared element ===
