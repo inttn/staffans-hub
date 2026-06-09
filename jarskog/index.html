@@ -243,21 +243,14 @@ for (const [x1, x2] of [[483, 523], [823, 863], [1727, 1767]]) box(x1, PROFILE, 
 box(GAVEL_STOLPE_X, 0, 0, GAVEL_STOLPE_X + PROFILE, DEPTH, PROFILE, matSteel, groupStomme);
 
 // === CEMENTSKIVA + MICROCEMENT ===
-// Skåp-delen (x=0..1905) har en MICROCEMENT-KRONA runt topp på 3 sidor (50 mm hög)
-// som täcker stommens topp-ram + KKR. Lameller slutar 50 mm under bänken där microcement-kronan tar vid.
-const MC_OUTSIDE = 17.5;       // microcement+cementskiva utstick från KKR
-const MC_KRONA_H = 50;          // microcement-kronan är 50 mm hög (täcker topp-ramen + lite till)
-const MC_KRONA_TOP = STOMME_H;       // 800
-const MC_KRONA_BOT = STOMME_H - MC_KRONA_H;  // 750
+// Skåp-delen (x=0..1905):
+//   - Framsida + baksida + höger skåp-end-gavel = LAMELLER hela vägen från trall till bänk (z=0..800)
+//   - Vänster kortsida = full microcement (mot uthus)
+//   - Höger gavel = full microcement (mot trädgården)
+// Bänkskivan har LÄPP på fram+bak+höger som täcker lamellernas övre kant (flush)
+const MC_OUTSIDE = 17.5;       // microcement+cementskiva utstick från KKR (= lamell-tjocklek)
 
-// Microcement-krona FRAMSIDA skåp (sticker 17.5 mm framåt)
-box(0, -MC_OUTSIDE, MC_KRONA_BOT, SKAP_L, 0, MC_KRONA_TOP, matMicrocement, groupCementskiva);
-// Microcement-krona BAKSIDA skåp (sticker 17.5 mm bakåt)
-box(0, DEPTH, MC_KRONA_BOT, SKAP_L, DEPTH + MC_OUTSIDE, MC_KRONA_TOP, matMicrocement, groupCementskiva);
-// Microcement-krona HÖGER sida av skåp-end-gavel (vid x=1905, mot svävande)
-box(SKAP_L, 0, MC_KRONA_BOT, SKAP_L + MC_OUTSIDE, DEPTH, MC_KRONA_TOP, matMicrocement, groupCementskiva);
-
-// Vänster kortsida (mot uthus) — FULL höjd (z=0..870), microcement+cementskiva
+// Vänster kortsida (mot uthus) — FULL höjd (z=0..870), cementskiva + microcement
 box(0, 0, 0, 12.5, DEPTH, STOMME_H + BANK_H, matCementskiva, groupCementskiva);
 box(-MC_OUTSIDE, 0, 0, 0, DEPTH, STOMME_H + BANK_H, matMicrocement, groupCementskiva);
 // Höger gavel utsida + insida (på gavel-stolpen vid x=3242..3282)
@@ -275,6 +268,15 @@ box(483, 0, STOMME_H, 914, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
 // NO front strip for grill — cutout extends to bänk-front edge (y=0)
 box(863, 543, STOMME_H, 1727, 700, STOMME_H + BANK_H, matMicrocement, groupBank);  // ZCL back strip y=543..700
 box(1676, 0, STOMME_H, GAVEL_X, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
+
+// === BÄNKSKIVA-LÄPP över lamellerna på skåp-delen (täcker lamellernas topp så det blir flush) ===
+// Framsida — bara där det inte är grill-cutout (cutout öppnar bänk-front mellan x=863..1727)
+box(0, -17.5, STOMME_H, 863, 0, STOMME_H + BANK_H, matMicrocement, groupBank);    // läpp vänster om grill
+box(1727, -17.5, STOMME_H, SKAP_L, 0, STOMME_H + BANK_H, matMicrocement, groupBank);  // läpp höger om grill
+// Baksida hela skåp-delen
+box(0, DEPTH, STOMME_H, SKAP_L, DEPTH + 17.5, STOMME_H + BANK_H, matMicrocement, groupBank);
+// Höger sida (skåp-end-gavel mot svävande)
+box(SKAP_L, 0, STOMME_H, SKAP_L + 17.5, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
 
 // === LAMELLFASAD (tryckimpregnerat virke) — kontinuerlig över hela skåp-delen ===
 // Användarens design 2026-06-09:
@@ -310,8 +312,8 @@ function fillLamellerY(y1, y2, x_out, x_in, z_bot, z_top, group) {
   }
 }
 
-// Lameller sträcker sig från trall (z=0) upp till microcement-kronans UNDERkant (z=MC_KRONA_BOT=750)
-const LAMELL_Z_TOP = MC_KRONA_BOT;  // 750
+// Lameller sträcker sig från trall (z=0) ända upp till bänk-undersida (z=STOMME_H=800)
+const LAMELL_Z_TOP = STOMME_H;  // 800 — bänkskivan ligger ovanpå med läpp över lamellerna
 
 // FRAMSIDA skåp (x=0..1905), lamellfront vid y=-17.5
 fillLamellerX(0, SKAP_L, -LAMELL_OUTSIDE, -LAMELL_OUTSIDE + LAMELL_T, 0, LAMELL_Z_TOP, groupLuckor);
