@@ -218,14 +218,14 @@ box(GAVEL_STOLPE_X, 0, 0, GAVEL_STOLPE_X + PROFILE, PROFILE, STOMME_H, matSteel,
 box(GAVEL_STOLPE_X, DEPTH - PROFILE, 0, GAVEL_STOLPE_X + PROFILE, DEPTH, STOMME_H, matSteel, groupStomme);
 // Framsida-balk vid bänkyta-nivå: BRUTEN i grill-zonen (öppen framtill för grill-insättning)
 box(0, 0, STOMME_H - PROFILE, 863, PROFILE, STOMME_H, matSteel, groupStomme);  // framsida vänster (0..863)
-box(1727, 0, STOMME_H - PROFILE, TOTAL_L, PROFILE, STOMME_H, matSteel, groupStomme);  // framsida höger (1727..3300)
+box(1727, 0, STOMME_H - PROFILE, 3282, PROFILE, STOMME_H, matSteel, groupStomme);  // framsida höger (1727..3282) — KAPAD vid gavel-stolpens ytterkant. Microcement+cementskiva (17.5 mm) täcker bortom till x=3299.5.
 // NEDSÄNKT framsida-balk i grill-zonen (under grill-body-bottenytan vid z=610)
 // Ger strukturell kontinuitet utan att blockera grillens nedsänkning
 box(863, 0, 566, 1727, PROFILE, 606, matSteel, groupStomme);  // nedsänkt framsida-balk z=566..606 — STÖTTAR ZCL (topp 606 = ZCL botten, 264mm djup). Grill sitter inuti ZCL vid z=666.
 // (Vertikala anslutningar BORTTAGNA — stolparna vid x=874..914 och x=1676..1716
 //  går redan full höjd och möter den nedsänkta balken direkt vid z=570..610)
 
-box(0, DEPTH - PROFILE, STOMME_H - PROFILE, TOTAL_L, DEPTH, STOMME_H, matSteel, groupStomme);  // baksida-balk kontinuerlig
+box(0, DEPTH - PROFILE, STOMME_H - PROFILE, 3282, DEPTH, STOMME_H, matSteel, groupStomme);  // baksida-balk (0..3282) — KAPAD vid gavel-stolpens ytterkant
 box(0, PROFILE, STOMME_H - PROFILE, PROFILE, DEPTH - PROFILE, STOMME_H, matSteel, groupStomme);
 const tvarbalkPositions = [[189,229],[483,523],[823,863],[1727,1767],[1865,1905],[2545,2585],[3242,3282]];  // ZCL: 874→823, 1676→1727
 for (const [x1, x2] of tvarbalkPositions) box(x1, PROFILE, STOMME_H - PROFILE, x2, DEPTH - PROFILE, STOMME_H, matSteel, groupStomme);
