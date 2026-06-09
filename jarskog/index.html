@@ -242,11 +242,19 @@ box(SKAP_L - PROFILE, PROFILE, 0, SKAP_L, DEPTH - PROFILE, PROFILE, matSteel, gr
 for (const [x1, x2] of [[483, 523], [823, 863], [1727, 1767]]) box(x1, PROFILE, 0, x2, DEPTH - PROFILE, PROFILE, matSteel, groupStomme);  // sizzler-R: 443→483 (fluchtar med topp-tvärbalk)
 box(GAVEL_STOLPE_X, 0, 0, GAVEL_STOLPE_X + PROFILE, DEPTH, PROFILE, matSteel, groupStomme);
 
-// === CEMENTSKIVA ===
-box(0, DEPTH - 17.5, 0, SKAP_L, DEPTH, STOMME_H, matMicrocement, groupCementskiva);
-box(SKAP_L - 17.5, 0, 0, SKAP_L, DEPTH, STOMME_H, matMicrocement, groupCementskiva);
-box(0, 0, 0, 12.5, DEPTH, STOMME_H, matCementskiva, groupCementskiva);
+// === CEMENTSKIVA + MICROCEMENT ===
+// Skåp-delen (x=0..1905):
+//   - Framsida + baksida = LAMELLER (ingen microcement)
+//   - Höger sida vid x=1905 = LAMELLER (skåp-end gavel insida, vetter mot svävande)
+//   - Vänster kortsida = microcement (mot uthus)
+// Microcement-läpp under bänkskiva (sticker ut 17.5 mm framåt) framsidan av skåp
+box(0, -17.5, STOMME_H - 50, SKAP_L, 0, STOMME_H, matMicrocement, groupCementskiva);
+// Vänster kortsida cementskiva-microcement (mot uthus)
+box(0, 0, 0, 12.5, DEPTH, STOMME_H + BANK_H, matCementskiva, groupCementskiva);
+box(-5, 0, 0, 0, DEPTH, STOMME_H + BANK_H, matMicrocement, groupCementskiva);
+// Höger gavel utsida + insida (på gavel-stolpen vid x=3242..3282)
 box(GAVEL_X, 0, 0, GAVEL_X + GAVEL_W, DEPTH, STOMME_H + BANK_H, matMicrocement, groupCementskiva);
+// Svävande del-undersida (microcement)
 box(SKAP_L, 0, STOMME_H - 17.5, GAVEL_X, DEPTH, STOMME_H, matMicrocement, groupCementskiva);
 
 // === BÄNKSKIVA (with cutouts) ===
@@ -260,52 +268,49 @@ box(483, 0, STOMME_H, 914, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
 box(863, 543, STOMME_H, 1727, 700, STOMME_H + BANK_H, matMicrocement, groupBank);  // ZCL back strip y=543..700
 box(1676, 0, STOMME_H, GAVEL_X, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
 
-// === LUCKOR (4 st med lamellfasad) ===
-const luckaPositions = [
-  {x1: 0, x2: 483, name: 'lucka1', under_grill: false},
-  {x1: 483, x2: 863, name: 'lucka2', under_grill: false},  // ends at ZCL left edge (380mm wide)
-  {x1: 863, x2: 1295, name: 'lucka3', under_grill: true},   // under ZCL vänster (432mm bred)
-  {x1: 1295, x2: 1727, name: 'lucka4', under_grill: true},  // under ZCL höger (432mm bred)
-];
-const LUCKA_Y_OFFSET = -5;
-const LUCKA_TOP_FULL = STOMME_H - 30;  // = 770 (för luckor utan grill ovanför)
-const LUCKA_TOP_SHORT = 580;            // 580 = 30 mm säkerhetsmargin under grill body botten (z=610)
-const LUCKA_BOT = 30;
-const LAMELL_W = 28;
-const LAMELL_T = 18;
-const LAMELL_GAP = 8;
+// === LAMELLFASAD (tryckimpregnerat virke) — kontinuerlig över hela skåp-delen ===
+// Användarens design 2026-06-09:
+// - Lamellerna täcker FRAMSIDA + BAKSIDA av skåp-delen (x=0..1905) från trall (z=0) upp till bänk-undersida (z=800)
+// - Lamellerna täcker även STOLPARNA mellan luckorna (kontinuerligt mönster, inga små microcement-bitar)
+// - INSIDA av svävande vänster vägg (skåp-end gavel vid x=1905) också täckt med lameller
+// - Lamellerna är FLUSH med microcement-skalet (sticker ut 17.5 mm från KKR-stommen)
+// - Luckor är dolda bakom samma lamell-mönster — kan vara öppningsbara med rörliga lamell-grupper, här visualiseras som fast lamellyta
+const LAMELL_W = 21;       // mm bred lamell (matchar verklig spec)
+const LAMELL_T = 21;       // mm tjock lamell
+const LAMELL_GAP = 8;      // mm gap mellan lameller
 const LAMELL_STEP = LAMELL_W + LAMELL_GAP;
+const LAMELL_OUTSIDE = 17.5;  // mm utstick från KKR-stommen (flush med microcement)
 
-for (const l of luckaPositions) {
-  const lucka_top = l.under_grill ? LUCKA_TOP_SHORT : LUCKA_TOP_FULL;
-  const margin = 10;
-  box(l.x1 + margin, LUCKA_Y_OFFSET - 3, LUCKA_BOT, l.x2 - margin, LUCKA_Y_OFFSET, lucka_top, matSteel, groupLuckor);
-  const innerW = (l.x2 - l.x1) - 2 * margin - LAMELL_GAP;
-  const n = Math.floor(innerW / LAMELL_STEP);
-  const startX = l.x1 + margin + ((l.x2 - l.x1 - 2 * margin) - (n * LAMELL_STEP - LAMELL_GAP)) / 2;
+function fillLamellerX(x1, x2, y_out, y_in, z_bot, z_top, group) {
+  // Lameller vertikalt, bredd i x-led, tjocklek i y-led
+  const n = Math.floor((x2 - x1 + LAMELL_GAP) / LAMELL_STEP);
+  const fillW = n * LAMELL_STEP - LAMELL_GAP;
+  const startX = x1 + ((x2 - x1) - fillW) / 2;
   for (let i = 0; i < n; i++) {
-    const lx1 = startX + i * LAMELL_STEP;
-    box(lx1, LUCKA_Y_OFFSET - LAMELL_T, LUCKA_BOT, lx1 + LAMELL_W, LUCKA_Y_OFFSET, lucka_top, matWood, groupLuckor);
+    const lx = startX + i * LAMELL_STEP;
+    box(lx, y_out, z_bot, lx + LAMELL_W, y_in, z_top, matWood, group);
+  }
+}
+function fillLamellerY(y1, y2, x_out, x_in, z_bot, z_top, group) {
+  // Lameller vertikalt, bredd i y-led, tjocklek i x-led (för gavel-insidor)
+  const n = Math.floor((y2 - y1 + LAMELL_GAP) / LAMELL_STEP);
+  const fillW = n * LAMELL_STEP - LAMELL_GAP;
+  const startY = y1 + ((y2 - y1) - fillW) / 2;
+  for (let i = 0; i < n; i++) {
+    const ly = startY + i * LAMELL_STEP;
+    box(x_out, ly, z_bot, x_in, ly + LAMELL_W, z_top, matWood, group);
   }
 }
 
-// === FIXED LAMELLFASAD-PANEL (ingen dörr, bara ribbor) vid x=1676..1905 ===
-// Höger del av skåpet där det inte finns någon lucka (för att luckor 3+4 är kortare)
-// Bara ribbor som täcker hela höjden — dödt utrymme bakom (no access)
-const fixed_panel_x1 = 1727;  // ZCL right edge
-const fixed_panel_x2 = 1905;
-const fixed_panel_top = LUCKA_TOP_FULL;  // full height z=30..770
-const fixed_panel_margin = 10;
-const fixed_panel_inner_w = (fixed_panel_x2 - fixed_panel_x1) - 2 * fixed_panel_margin - LAMELL_GAP;
-const fixed_panel_n = Math.floor(fixed_panel_inner_w / LAMELL_STEP);
-const fixed_panel_start_x = fixed_panel_x1 + fixed_panel_margin + ((fixed_panel_x2 - fixed_panel_x1 - 2 * fixed_panel_margin) - (fixed_panel_n * LAMELL_STEP - LAMELL_GAP)) / 2;
-// Backing (steel mounting plate)
-box(fixed_panel_x1 + fixed_panel_margin, LUCKA_Y_OFFSET - 3, LUCKA_BOT, fixed_panel_x2 - fixed_panel_margin, LUCKA_Y_OFFSET, fixed_panel_top, matSteel, groupLuckor);
-// Ribbor (lamellfasad strips, full height — no door, just decoration)
-for (let i = 0; i < fixed_panel_n; i++) {
-  const lx1 = fixed_panel_start_x + i * LAMELL_STEP;
-  box(lx1, LUCKA_Y_OFFSET - LAMELL_T, LUCKA_BOT, lx1 + LAMELL_W, LUCKA_Y_OFFSET, fixed_panel_top, matWood, groupLuckor);
-}
+// FRAMSIDA skåp (x=0..1905), lamellfront vid y=-17.5
+fillLamellerX(0, SKAP_L, -LAMELL_OUTSIDE, -LAMELL_OUTSIDE + LAMELL_T, 0, STOMME_H, groupLuckor);
+
+// BAKSIDA skåp (x=0..1905), lamellfront vid y=DEPTH+17.5
+fillLamellerX(0, SKAP_L, DEPTH + LAMELL_OUTSIDE - LAMELL_T, DEPTH + LAMELL_OUTSIDE, 0, STOMME_H, groupLuckor);
+
+// INSIDA svävande vänster vägg = skåp-end gavel vid x=1905, vetter mot svävande
+// Lamellerna sticker ut i +x mot svävande (lamell-yta vid x=1905+17.5)
+fillLamellerY(0, DEPTH, SKAP_L + LAMELL_OUTSIDE - LAMELL_T, SKAP_L + LAMELL_OUTSIDE, 0, STOMME_H, groupLuckor);
 
 // === GRILL BIG32 — FAKTISKA MÅTT (uppmätt på plats 2026-06) ===
 // Fläns (vilar på bänk): 805 bred × 510 djup
