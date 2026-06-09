@@ -255,8 +255,12 @@ box(0, 0, 0, 12.5, DEPTH, STOMME_H + BANK_H, matCementskiva, groupCementskiva);
 box(-MC_OUTSIDE, 0, 0, 0, DEPTH, STOMME_H + BANK_H, matMicrocement, groupCementskiva);
 // Höger gavel utsida + insida (på gavel-stolpen vid x=3242..3282)
 box(GAVEL_X, 0, 0, GAVEL_X + GAVEL_W, DEPTH, STOMME_H + BANK_H, matMicrocement, groupCementskiva);
-// Svävande del-undersida (microcement, 17.5 mm tjock)
-box(SKAP_L, 0, STOMME_H - MC_OUTSIDE, GAVEL_X, DEPTH, STOMME_H, matMicrocement, groupCementskiva);
+// Svävande del-undersida — cementskiva + microcement HÄNGER UNDER topp-ramen
+// (topp-ramen vid z=760..800 är inne i sandwichen, döljs underifrån av cementskiva-microcement)
+// Cementskiva 12.5 mm vid z=747.5..760
+box(SKAP_L, 0, STOMME_H - PROFILE - 12.5, GAVEL_X, DEPTH, STOMME_H - PROFILE, matCementskiva, groupCementskiva);
+// Microcement 5 mm vid z=742.5..747.5 (synlig undersida)
+box(SKAP_L, 0, STOMME_H - PROFILE - MC_OUTSIDE, GAVEL_X, DEPTH, STOMME_H - PROFILE - 12.5, matMicrocement, groupCementskiva);
 
 // === BÄNKSKIVA (with cutouts) ===
 // Grill cutout: U-formad, OPEN at front (extends from y=0 = bänk-front to y=502)
