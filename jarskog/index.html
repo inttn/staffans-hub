@@ -51,6 +51,7 @@
   <label><input type="checkbox" id="show-gasol"> Gasolflaskor (2× P11)</label>
   <label><input type="checkbox" id="show-husvagg"> Husvägg (vänster sida)</label>
   <label><input type="checkbox" id="show-zcl" checked> ZCL — Napoleon BI-3623-ZCL (installeras av Jarskog)</label>
+  <label><input type="checkbox" id="show-led"> LED-belysning (dold under bänkskiva)</label>
   <div class="section">
     <h3>Mått (visa/dölj)</h3>
     <label><input type="checkbox" id="dim-total"> Total mått (LxDxH)</label>
@@ -151,6 +152,8 @@ const matGasol = new THREE.MeshStandardMaterial({color: 0xa83a2c, roughness: 0.5
 const matGasolValve = new THREE.MeshStandardMaterial({color: 0xa8a8a8, roughness: 0.4, metalness: 0.7});
 const matHusvagg = new THREE.MeshStandardMaterial({color: 0xe8dec8, roughness: 0.9, metalness: 0.0});
 const matZCL = new THREE.MeshStandardMaterial({color: 0xa8a8b2, roughness: 0.2, metalness: 0.85, side: THREE.DoubleSide});
+const matLEDprofil = new THREE.MeshStandardMaterial({color: 0xb8b8c0, roughness: 0.35, metalness: 0.85});
+const matLEDstrip = new THREE.MeshStandardMaterial({color: 0xfff5c8, emissive: 0xffd870, emissiveIntensity: 1.2, roughness: 0.9});
 
 const root = new THREE.Group();
 scene.add(root);
@@ -200,7 +203,8 @@ const groupTrall = new THREE.Group();
 const groupGasol = new THREE.Group();
 const groupHusvagg = new THREE.Group();
 const groupZCL = new THREE.Group();
-root.add(groupStomme, groupCementskiva, groupBank, groupLuckor, groupGrill, groupSizzler, groupTrall, groupGasol, groupHusvagg, groupZCL);
+const groupLED = new THREE.Group();
+root.add(groupStomme, groupCementskiva, groupBank, groupLuckor, groupGrill, groupSizzler, groupTrall, groupGasol, groupHusvagg, groupZCL, groupLED);
 
 // === STOMME ===
 const stolpareXR = [40, 483, 1905];  // x=914 replaced by ZCL stolpar at 823..863 and 1727..1767
@@ -272,6 +276,35 @@ box(483, 0, STOMME_H, 914, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
 // NO front strip for grill — cutout extends to bänk-front edge (y=0)
 box(863, 543, STOMME_H, 1727, 700, STOMME_H + BANK_H, matMicrocement, groupBank);  // ZCL back strip y=543..700
 box(1676, 0, STOMME_H, GAVEL_X, DEPTH, STOMME_H + BANK_H, matMicrocement, groupBank);
+
+// === LED-BELYSNING (dold under bänkskivans läpp) ===
+// Alu LED-profil 20×12 mm monterad under läpparna, LED-strip inuti riktad nedåt
+// Belyser lamellerna på fram + bak + insida svävande + under svävande delen
+const LED_PROF_W = 20;       // alu-profil bredd (i y-led för fram/bak, i x-led för höger)
+const LED_PROF_H = 12;       // alu-profil höjd (i z-led)
+const LED_PROF_TOP = STOMME_H - 2;   // sticker ner 2mm under bänkens undersida
+const LED_PROF_BOT = LED_PROF_TOP - LED_PROF_H;
+const LED_STRIP_H = 3;
+const LED_STRIP_W = 10;
+
+// Profil framsida skåp — under läppen, vänster om grill
+box(20, -16, LED_PROF_BOT, 863-10, -16 + LED_PROF_W, LED_PROF_TOP, matLEDprofil, groupLED);
+box(20+5, -16+5, LED_PROF_BOT + 2, 863-10-5, -16+5 + LED_STRIP_W, LED_PROF_BOT + 2 + LED_STRIP_H, matLEDstrip, groupLED);
+// Profil framsida skåp — höger om grill
+box(1727+10, -16, LED_PROF_BOT, SKAP_L-20, -16 + LED_PROF_W, LED_PROF_TOP, matLEDprofil, groupLED);
+box(1727+10+5, -16+5, LED_PROF_BOT + 2, SKAP_L-20-5, -16+5 + LED_STRIP_W, LED_PROF_BOT + 2 + LED_STRIP_H, matLEDstrip, groupLED);
+// Profil baksida skåp
+box(20, DEPTH + 16 - LED_PROF_W, LED_PROF_BOT, SKAP_L-20, DEPTH + 16, LED_PROF_TOP, matLEDprofil, groupLED);
+box(20+5, DEPTH + 16 - LED_PROF_W + 2, LED_PROF_BOT + 2, SKAP_L-20-5, DEPTH + 16 - LED_PROF_W + 2 + LED_STRIP_W, LED_PROF_BOT + 2 + LED_STRIP_H, matLEDstrip, groupLED);
+// Profil höger sida skåp-end-gavel (mot svävande, lyser ner mot trallen under svävande)
+box(SKAP_L + 16 - LED_PROF_W, 20, LED_PROF_BOT, SKAP_L + 16, DEPTH-20, LED_PROF_TOP, matLEDprofil, groupLED);
+box(SKAP_L + 16 - LED_PROF_W + 2, 20+5, LED_PROF_BOT + 2, SKAP_L + 16 - LED_PROF_W + 2 + LED_STRIP_W, DEPTH-20-5, LED_PROF_BOT + 2 + LED_STRIP_H, matLEDstrip, groupLED);
+// Profil under svävande delen — framsida (lyser ner på trallen, "svävande" effekt)
+box(SKAP_L + 20, -1, LED_PROF_BOT, GAVEL_X - 20, -1 + LED_PROF_W, LED_PROF_TOP, matLEDprofil, groupLED);
+box(SKAP_L + 20 + 5, -1 + 5, LED_PROF_BOT + 2, GAVEL_X - 20 - 5, -1 + 5 + LED_STRIP_W, LED_PROF_BOT + 2 + LED_STRIP_H, matLEDstrip, groupLED);
+// Profil under svävande delen — baksida
+box(SKAP_L + 20, DEPTH + 1 - LED_PROF_W, LED_PROF_BOT, GAVEL_X - 20, DEPTH + 1, LED_PROF_TOP, matLEDprofil, groupLED);
+box(SKAP_L + 20 + 5, DEPTH + 1 - LED_PROF_W + 2, LED_PROF_BOT + 2, GAVEL_X - 20 - 5, DEPTH + 1 - LED_PROF_W + 2 + LED_STRIP_W, LED_PROF_BOT + 2 + LED_STRIP_H, matLEDstrip, groupLED);
 
 // === BÄNKSKIVA-LÄPP över lamellerna på skåp-delen (täcker lamellernas topp så det blir flush) ===
 // Framsida — bara där det inte är grill-cutout (cutout öppnar bänk-front mellan x=863..1727)
@@ -606,6 +639,7 @@ const checkboxes = {
   'show-gasol': groupGasol,
   'show-husvagg': groupHusvagg,
   'show-zcl': groupZCL,
+  'show-led': groupLED,
   'dim-total': dimGroupTotal,
   'dim-layout': dimGroupLayout,
   'dim-luckor': dimGroupLuckor,
