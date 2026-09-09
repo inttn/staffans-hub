@@ -2,535 +2,121 @@
 <html lang="sv">
 <head>
 <meta charset="utf-8">
-<title>Staffans Hub</title>
+<title>Staffans Hub — Palma</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  :root {
+  :root{
     --bg:#0a0e14; --panel:#11161f; --panel2:#1a2130; --border:#222a3a;
-    --text:#e6edf3; --mute:#8b949e; --accent:#58a6ff; --warn:#f0883e;
-    --good:#3fb950; --bad:#f85149; --swim:#58a6ff; --bike:#bc8cff; --run:#3fb950;
-    --strength:#f0883e; --gold:#ffd700; --train:#bc8cff; --net:#ffa657;
+    --text:#e6edf3; --mute:#8b949e; --accent:#e0512a; --sea:#2aa8a6;
+    --good:#3fb950; --warn:#f0883e; --run:#e0512a;
   }
-  * { box-sizing:border-box; }
-  html,body { margin:0; padding:0; background:var(--bg); color:var(--text);
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
-    font-size:14px; line-height:1.45; }
-  .wrap { max-width:1500px; margin:0 auto; padding:20px; }
-  header { display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:20px; flex-wrap:wrap; gap:12px; }
-  h1 { font-size:22px; margin:0; font-weight:700; }
-  h1 .mute { color:var(--mute); font-weight:400; font-size:13px; margin-left:10px;}
-  .countdown { color:var(--warn); font-size:13px; font-weight:600; }
-  .tabs { display:flex; gap:0; margin-bottom:20px; border-bottom:2px solid var(--border); }
-  .tab { padding:10px 24px; cursor:pointer; color:var(--mute); font-weight:600;
-    font-size:13px; text-transform:uppercase; letter-spacing:.8px; border-bottom:2px solid transparent;
-    margin-bottom:-2px; transition:all .2s; }
-  .tab:hover { color:var(--text); }
-  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
-  .tab-content { display:none; }
-  .tab-content.active { display:block; }
-  .grid { display:grid; gap:16px; }
-  .g-3 { grid-template-columns: 2fr 1fr 1fr; }
-  .g-2 { grid-template-columns: 1fr 1fr; }
-  .g-top { grid-template-columns: 2fr 1fr 1fr; }
-  .g-mid { grid-template-columns: 3fr 2fr; }
-  .g-bot { grid-template-columns: 1fr 1fr 1fr; }
-  @media (max-width:1100px){ .g-3,.g-top,.g-mid,.g-bot{ grid-template-columns: 1fr 1fr; } }
-  @media (max-width:720px){ .g-3,.g-2,.g-top,.g-mid,.g-bot{ grid-template-columns: 1fr; } }
-  .panel { background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:18px; }
-  .panel h2 { font-size:11px; text-transform:uppercase; letter-spacing:1px;
-    color:var(--mute); margin:0 0 14px 0; font-weight:700; }
-  .row { display:flex; gap:10px; padding:8px 0; border-bottom:1px solid var(--panel2); align-items:flex-start;}
-  .row:last-child { border-bottom:none; }
-  .time { color:var(--mute); min-width:90px; font-variant-numeric:tabular-nums; font-size:13px;}
-  .what { flex:1; }
-  .tag { display:inline-block; padding:2px 7px; border-radius:4px; font-size:10px;
-    font-weight:600; text-transform:uppercase; letter-spacing:.4px; margin-right:5px; }
-  .t-work { background:#1f6feb33; color:#79c0ff; }
-  .t-train { background:#bc8cff33; color:var(--train); }
-  .t-net { background:#ffa65733; color:var(--net); }
-  .t-admin { background:#8b949e33; color:var(--mute); }
-  .t-done { background:#3fb95033; color:var(--good); }
-  .t-warn { background:#f0883e33; color:var(--warn); }
-  .train-box { background:#bc8cff11; border:1px solid #bc8cff44; border-radius:6px; padding:10px 12px; margin-bottom:10px; }
-  .train-box .lbl { color:var(--train); font-size:11px; text-transform:uppercase; letter-spacing:.6px; font-weight:600; }
-  .train-box .pass { font-size:14px; margin-top:2px; }
-  .train-box .detail { color:var(--mute); font-size:12px; margin-top:2px; }
-  .train-box.done { background:#3fb95011; border-color:#3fb95044; }
-  .train-box.done .lbl { color:var(--good); }
-  .train-box.alert { background:#f0883e11; border-color:#f0883e44; }
-  .train-box.alert .lbl { color:var(--warn); }
-  .hero { background:linear-gradient(135deg,#1a2130 0%,#0d1320 100%);
-    border:1px solid var(--border); border-radius:10px; padding:24px;
-    display:grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap:24px; margin-bottom:16px; }
-  .hero .metric { text-align:center; }
-  .hero .metric .num { font-size:42px; font-weight:700; letter-spacing:-1px; line-height:1; }
-  .hero .metric .lbl { color:var(--mute); font-size:11px; text-transform:uppercase; letter-spacing:1px; margin-top:6px; }
-  .hero .metric.goal .num { color:var(--gold); }
-  .hero .metric.days .num { color:var(--accent); }
-  @media (max-width:780px){ .hero{ grid-template-columns:1fr 1fr; } }
-  .stats { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
-  .stat { background:var(--panel2); border-radius:6px; padding:12px; }
-  .stat .v { font-size:20px; font-weight:700; line-height:1; }
-  .stat .l { color:var(--mute); font-size:11px; text-transform:uppercase; letter-spacing:.5px; margin-top:6px; }
-  .stat .delta { color:var(--good); font-size:11px; margin-top:3px; }
-  .prog { margin-bottom:14px; }
-  .prog-label { display:flex; justify-content:space-between; font-size:12px; margin-bottom:4px; }
-  .prog-label .name { color:var(--text); font-weight:600; }
-  .prog-label .vals { color:var(--mute); font-variant-numeric:tabular-nums; }
-  .prog-bar { height:10px; background:var(--panel2); border-radius:5px; overflow:hidden; }
-  .prog-fill { height:100%; border-radius:5px; }
-  .prog-fill.swim { background:var(--swim); }
-  .prog-fill.bike { background:var(--bike); }
-  .prog-fill.run { background:var(--run); }
-  .prog-fill.warn { background:var(--warn); }
-  .split-table { width:100%; border-collapse:collapse; font-size:13px; }
-  .split-table th { text-align:left; color:var(--mute); font-weight:600;
-    padding:8px 4px; border-bottom:1px solid var(--border); font-size:11px; text-transform:uppercase; letter-spacing:.5px; }
-  .split-table td { padding:8px 4px; border-bottom:1px solid var(--panel2); }
-  .split-table .disc { font-weight:600; }
-  .split-table .swim { color:var(--swim); }
-  .split-table .bike { color:var(--bike); }
-  .split-table .run { color:var(--run); }
-  .split-table .total td { border-top:2px solid var(--border); padding-top:12px;
-    font-size:15px; font-weight:700; color:var(--gold); }
-  .chart-wrap { position:relative; height:260px; }
-  .chart-wrap.tall { height:300px; }
-  .week-table { width:100%; border-collapse:collapse; font-size:12px; }
-  .week-table td { padding:6px 4px; border-bottom:1px solid var(--panel2); vertical-align:top; }
-  .week-table .day { color:var(--mute); width:55px; }
-  .zones { font-size:12px; }
-  .zones table { width:100%; border-collapse:collapse; }
-  .zones td { padding:4px 6px; border-bottom:1px solid var(--panel2); }
-  .zones td:first-child { color:var(--mute); width:40px; }
-  .zones .h3 { color:var(--mute); font-size:10px; text-transform:uppercase; letter-spacing:.6px; margin:10px 0 4px 0; }
-  .note { background:#f088391a; border-left:3px solid var(--warn); padding:10px 12px; border-radius:4px; font-size:12px; margin-top:10px;}
-  .note.good { background:#3fb9501a; border-left-color:var(--good); }
-  .note.alert { background:#f851491a; border-left-color:var(--bad); }
-  ul { margin:6px 0 0 0; padding-left:18px; }
-  li { margin:4px 0; }
-  .warning { color:var(--warn); }
-  .alert { color:var(--bad); }
-  .good { color:var(--good); }
-  .foot { text-align:center; color:var(--mute); font-size:11px; margin-top:20px; }
-  .weeksum { font-size:11px; color:var(--mute); }
-  .weeksum strong { color:var(--text); }
-  .session-card { background:var(--panel2); border-radius:6px; padding:12px; margin-bottom:10px; border-left:3px solid var(--bike); }
-  .session-card.run { border-left-color:var(--run); }
-  .session-card.bike { border-left-color:var(--bike); }
-  .session-card.str { border-left-color:var(--strength); }
-  .session-card .top { display:flex; justify-content:space-between; font-size:13px; font-weight:600; margin-bottom:4px; }
-  .session-card .meta { color:var(--mute); font-size:12px; }
-  .session-card .verdict { margin-top:6px; font-size:12px; }
-  .v-good { color:var(--good); }
-  .v-warn { color:var(--warn); }
-  .v-alert { color:var(--bad); }
-  .hm-table { width:100%; border-collapse:collapse; font-size:12px; }
-  .hm-table th { text-align:left; color:var(--mute); padding:6px 4px; font-size:10px; text-transform:uppercase; letter-spacing:.5px; border-bottom:1px solid var(--border); }
-  .hm-table td { padding:6px 4px; border-bottom:1px solid var(--panel2); }
-  .hm-table .fast { color:var(--gold); font-weight:700; }
+    font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:24px 18px 60px}
+  header{border-bottom:2px solid var(--border);padding-bottom:18px;margin-bottom:20px}
+  .eyebrow{color:var(--accent);font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px;font-variant-numeric:tabular-nums}
+  h1{font-size:30px;margin:0;font-weight:800;letter-spacing:-.02em}
+  h1 .m{color:var(--mute);font-weight:400;font-size:14px;display:block;margin-top:6px}
+  h2{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute);font-weight:700;margin:30px 0 12px}
+  .banner{background:linear-gradient(90deg,#3fb95018,#3fb95005);border:1px solid #3fb95044;border-radius:10px;padding:13px 16px;margin-bottom:8px;font-size:13.5px}
+  .banner b{color:var(--good)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px}
+  .stat .v{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+  .stat .l{color:var(--mute);font-size:11px;text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+  .stat.accent .v{color:var(--accent)} .stat.sea .v{color:var(--sea)}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:6px 16px}
+  .row{display:grid;grid-template-columns:64px 1fr auto;gap:12px;padding:10px 0;border-bottom:1px solid var(--panel2);align-items:baseline}
+  .row:last-child{border-bottom:none}
+  .row .day{color:var(--mute);font-size:12px;font-variant-numeric:tabular-nums}
+  .row .pass{font-size:13.5px}
+  .row .meta{color:var(--mute);font-size:12px;font-variant-numeric:tabular-nums;text-align:right}
+  .tag{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:1px 6px;border-radius:4px;margin-right:6px}
+  .tag.q{background:#e0512a22;color:var(--accent)} .tag.long{background:#2aa8a622;color:var(--sea)}
+  .tag.str{background:#8b949e22;color:var(--mute)} .tag.done{background:#3fb95022;color:var(--good)}
+  .tag.rest{background:#8b949e18;color:var(--mute)}
+  .bars{display:flex;align-items:flex-end;gap:10px;height:120px;padding:6px 4px 0}
+  .bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+  .bar .fill{width:100%;background:var(--run);border-radius:4px 4px 0 0;min-height:3px}
+  .bar.dip .fill{background:var(--warn)} .bar.now .fill{background:var(--sea)}
+  .bar .n{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
+  .bar .lab{font-size:10px;color:var(--mute);font-variant-numeric:tabular-nums}
+  .note{color:var(--mute);font-size:12.5px;margin-top:10px}
+  .ladder{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+  .step{background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12.5px;font-variant-numeric:tabular-nums}
+  .step.done{border-color:#3fb95055;color:var(--good)} .step.next{border-color:var(--accent);color:var(--accent);font-weight:700}
+  footer{margin-top:34px;padding-top:14px;border-top:1px solid var(--border);color:var(--mute);font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  @media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
 <div class="wrap">
 
-<header>
-  <div>
-    <h1>Staffans Hub <span class="mute">Söndag 26 juli 2026 · v30</span></h1>
-  </div>
-  <div class="countdown">Ironman: 20 dagar · 2 veckor + 6 dagar kvar</div>
-</header>
+  <header>
+    <p class="eyebrow">TUI Palma Marathon · 18 oktober 2026</p>
+    <h1>Vägen till Palma<span class="m">Onsdag 9 september 2026 · A-mål sub-3:50 (5:27/km)</span></h1>
+  </header>
 
-<div class="tabs">
-  <div class="tab active" onclick="switchTab('dag')">Min dag</div>
-  <div class="tab" onclick="switchTab('traning')">Träning</div>
-</div>
-
-<div id="tab-dag" class="tab-content active">
-
-<div class="grid g-3">
-
-  <div class="panel">
-    <h2>Idag · ons 1 juli</h2>
-    <div class="row">
-      <div class="time">18:00</div>
-      <div class="what"><span class="tag t-train">Träning</span>Sim pool 2 km — teknik
-        <div style="color:var(--mute);font-size:12px;margin-top:2px;font-weight:600;">Tinnerbäcksbadet · 400 + 8×100m + 400 · pass 1 av 2 sim</div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="time">EM</div>
-      <div class="what"><span class="tag t-admin">Coach-uppdatering</span>Ny veckoplan v38 finaliserad från live Garmin-data — fokus löp-långpass + sim</div>
-    </div>
-    <div class="row">
-      <div class="time">Imorgon</div>
-      <div class="what"><span class="tag t-train">Tröskel</span>Löp 10 km · 3×2 km @ 5:20 (tors 2/7)</div>
-    </div>
+  <div class="banner">
+    ✅ <b>Tillbaka på banan.</b> Efter ett 9-dagars sjukdomsuppehåll svarade kroppen perfekt — återkomstlöp 14 km @ HR 148, och första kvalitetspasset 4×1 km i <b>5:05 på bara HR 155</b> (tröskel 172). Fullt återställd, kvalitetsträningen igång igen. <b>Sub-3:50 lever.</b>
   </div>
 
-  <div class="panel">
-    <h2>Träning · denna vecka</h2>
-
-    <div class="train-box alert">
-      <div class="lbl">⚠ HÖGSTA PRIORITET</div>
-      <div class="pass">Bygg löp-långpasset + sim x2</div>
-      <div class="detail">Längsta löp 6,5v = bara 12 km. Trappa mot 27–28 km v41. Sim bara 2 pass/6,5v.</div>
-    </div>
-
-    <div class="train-box">
-      <div class="lbl">🏃 Söndag 5/7 — NYCKELPASS</div>
-      <div class="pass">LÅNGLÖP 16 km Z2</div>
-      <div class="detail">HR ≤151 · dagen efter långcykel = IM-trötthet · återstart efter semester</div>
-    </div>
-
-    <div class="train-box done">
-      <div class="lbl">Tis 30/6 — KLART ✓</div>
-      <div class="pass">Tröskelcykel 51 km / 205 W</div>
-      <div class="detail">HR 143 · bekräftar FTP klart över 219 · starka ben</div>
-    </div>
-
-    <div class="weeksum" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
-      Snitt 6,5v: <strong>4,6 pass/v</strong> (30 pass, ~5,5 h/v inkl. semestervecka)<br>
-      Cykel före plan · löp + sim är fokus · Mål v38: <strong>~10 h</strong>
-    </div>
-  </div>
-
-  <div class="panel">
-    <h2>Denna vecka — viktigast</h2>
-    <ul>
-      <li class="alert"><strong>Löp-långpasset är luckan</strong> — max 12 km senaste 6,5v. Trappa 16→19→23→27 km fram till peak v41.</li>
-      <li class="alert"><strong>Simfrekvens</strong> — bara 2 pass på 6,5v. Upp till 2/vecka: pool ons + Roxen fre.</li>
-      <li class="warning"><strong>Knäkänning (pes anserinus)</strong> — hög kadens + backa distans om det pratar. Tål nuvarande nivå.</li>
-      <li class="good">🚴 Cykel före plan — FTP klart över 219 (237W/56min 13/6), 141 km i benen.</li>
-      <li class="good">Lör 4/7 långcykel 90–110 km tidig start (Stilio 14:00) → brick-helg med långlöp sön.</li>
-      <li>Peak v41 (~3v ut): löp 27–28 km · cykel 150 km · sim 3,8 km. Sedan taper.</li>
-    </ul>
-
-    <h2 style="margin-top:18px;">Aktiva klienter</h2>
-    <ul style="font-size:13px;">
-      <li>Link 22</li>
-      <li>Camfil</li>
-      <li>ADON</li>
-      <li>Vreta Kluster</li>
-      <li>Medtechbyrån</li>
-      <li>Jullan</li>
-      <li>SA Skåne (Livestudion)</li>
-      <li>Wandt (Handymen)</li>
-      <li>Jarskog (Microbruket)</li>
-    </ul>
-  </div>
-
-</div>
-
-<div class="grid g-2" style="margin-top:16px;">
-
-  <div class="panel">
-    <h2>Veckoplan v38 · 29 juni–5 juli (referensplan v38)</h2>
-    <div class="row">
-      <div class="time">Mån 29/6</div>
-      <div class="what"><span class="tag t-train">Träning</span><span class="tag t-done">Klar</span>Löp 4,7 km easy (Kungälv)</div>
-    </div>
-    <div class="row">
-      <div class="time">Tis 30/6</div>
-      <div class="what"><span class="tag t-train">Träning</span><span class="tag t-done">Klar</span>Tröskelcykel 51 km / 205 W · HR 143</div>
-    </div>
-    <div class="row">
-      <div class="time">Ons 1/7</div>
-      <div class="what"><span class="tag t-train">Sim 18:00</span>Sim pool 2 km teknik (Tinnerbäcksbadet)</div>
-    </div>
-    <div class="row">
-      <div class="time">Tors 2/7</div>
-      <div class="what"><span class="tag t-train">Tröskel</span>Löp 10 km · 3×2 km @ 5:20 (2 min mellan)</div>
-    </div>
-    <div class="row">
-      <div class="time">Fre 3/7</div>
-      <div class="what"><span class="tag t-train">Sim 18:00</span>Öppet vatten Roxen 2,5 km · sikteövning</div>
-    </div>
-    <div class="row">
-      <div class="time">Lör 4/7</div>
-      <div class="what"><span class="tag t-train">🚴 NYCKELPASS</span><strong style="color:var(--bike);">Långcykel 90–110 km</strong> · start 07:00 (Stilio 14:00)</div>
-    </div>
-    <div class="row">
-      <div class="time">Sön 5/7</div>
-      <div class="what"><span class="tag t-train">🏃 NYCKELPASS</span><strong>Långlöp 16 km Z2</strong> · HR ≤151 (brick efter cykel)</div>
-    </div>
-  </div>
-
-  <div class="panel">
-    <h2>v39 (6–12/7) — trappa uppåt</h2>
-    <div class="row">
-      <div class="time">Fokus</div>
-      <div class="what"><span class="tag t-train">Långlöp</span>19 km Z2 (+15 % från v38)</div>
-    </div>
-    <div class="row">
-      <div class="time">Cykel</div>
-      <div class="what"><span class="tag t-train">Långcykel</span>120 km lör + sweet spot 3×12 min @ ny FTP ons</div>
-    </div>
-    <div class="row">
-      <div class="time">Sim</div>
-      <div class="what"><span class="tag t-train">Sim x2</span>Pool + Roxen 3,0 km öppet vatten</div>
-    </div>
-    <div class="row">
-      <div class="time">v40</div>
-      <div class="what"><span class="tag t-admin">Preview</span>Löp 23 km · cykel 140 km · brick 2 · sim 3,4 km</div>
-    </div>
-    <div class="row">
-      <div class="time">v41 ⭐</div>
-      <div class="what"><span class="tag t-admin">PEAK</span>Löp 27–28 km · cykel 150 km · sim 3,8 km — sista stora veckan</div>
-    </div>
-    <div class="row">
-      <div class="time">v42→</div>
-      <div class="what"><span class="tag t-admin">Taper</span>Nedtrappning mot race 15/8</div>
-    </div>
-  </div>
-
-</div>
-</div>
-
-<div id="tab-traning" class="tab-content">
-
-<div class="hero">
-  <div class="metric days"><div class="num">20</div><div class="lbl">Dagar kvar</div></div>
-  <div class="metric"><div class="num">2+6d</div><div class="lbl">Veckor kvar</div></div>
-  <div class="metric goal"><div class="num">11:00</div><div class="lbl">Mål · total tid</div></div>
-  <div class="metric"><div class="num">4,6 p/v</div><div class="lbl">Passsnitt (6,5v)</div></div>
-</div>
-
-<div class="panel" style="margin-bottom:16px;border:1px solid var(--bike);">
-  <h2>🏁 Race-pacing · nyckeltal (sub-11)</h2>
   <div class="stats">
-    <div class="stat"><div class="v">1:30–1:38</div><div class="l">🏊 Sim 3,8 km</div><div class="delta">RPE 5–6, styr på känsla</div></div>
-    <div class="stat" style="border:1px solid var(--bike);"><div class="v">170 W</div><div class="l">🚴 Cykel snitt-mål</div><div class="delta">165–175 · tak 210 W</div></div>
-    <div class="stat"><div class="v">HR 130–140</div><div class="l">🚴 Cykel puls</div><div class="delta">tak 148</div></div>
-    <div class="stat"><div class="v">6:00/km</div><div class="l">🏃 Löp första 21 km</div><div class="delta">HR ≤152, håll igen</div></div>
-    <div class="stat"><div class="v">5:40–5:50</div><div class="l">🏃 Löp andra halvan</div><div class="delta">om benen finns</div></div>
-    <div class="stat"><div class="v">~11:05–11:15</div><div class="l">Projekterad totaltid</div><div class="delta">sub-11 i överkant</div></div>
+    <div class="stat accent"><div class="v">39</div><div class="l">Dagar till Palma</div></div>
+    <div class="stat"><div class="v">3:50</div><div class="l">Mål · 5:27/km</div></div>
+    <div class="stat sea"><div class="v">14,2</div><div class="l">Längsta löp (block)</div></div>
+    <div class="stat"><div class="v">5:05</div><div class="l">Senaste km-reps · HR 155</div></div>
   </div>
-  <div class="note">Överordnad regel: <strong>simma kontrollerat · cykla för lätt · låt löpningen komma till dig.</strong> Full plan i Drive: <em>ironman-raceplan.md</em> (levande dok).</div>
-</div>
 
-<div class="grid g-2" style="margin-bottom:16px;">
-
+  <h2>Denna vecka</h2>
   <div class="panel">
-    <h2>Senaste 3 pass — analys</h2>
+    <div class="row"><span class="day">Tis 8/9</span><span class="pass"><span class="tag done">Klar</span><span class="tag q">Kvalitet</span>4×1 km @ 5:10 → utfört 5:05, jämnt</span><span class="meta">8,7 km</span></div>
+    <div class="row"><span class="day">Ons 9/9</span><span class="pass"><span class="tag str">Cirkel</span>Ekängen (idag)</span><span class="meta">kväll</span></div>
+    <div class="row"><span class="day">Tor 10/9</span><span class="pass">Easy löp</span><span class="meta">6–8 km</span></div>
+    <div class="row"><span class="day">Fre 11/9</span><span class="pass"><span class="tag str">Cirkel</span>Ekängen</span><span class="meta">kväll</span></div>
+    <div class="row"><span class="day">Lör 12/9</span><span class="pass"><span class="tag long">Långpass</span>Lugnt Z2</span><span class="meta">16–18 km</span></div>
+    <div class="row"><span class="day">Sön 13/9</span><span class="pass">Easy recovery</span><span class="meta">6 km</span></div>
+  </div>
 
-    <div class="session-card bike">
-      <div class="top"><span>Tis 30/6 · Tröskelcykel Linköping</span><span class="v-good" style="font-weight:700;">51,3 km · 116 min</span></div>
-      <div class="meta">205 W snitt · HR 143/164 · TE 4,3 (aerob)</div>
-      <div class="verdict v-good">✓ Stark tröskel i ~2 h. Bekräftar FTP klart över gamla 219.</div>
+  <h2>Senaste passen</h2>
+  <div class="panel">
+    <div class="row"><span class="day">8/9</span><span class="pass">🏃 Kvalitet 4×1 km @ 5:05</span><span class="meta">8,7 km · HR 148</span></div>
+    <div class="row"><span class="day">5/9</span><span class="pass">🏃 Återkomstlöp (efter sjukdom)</span><span class="meta">14,2 km · HR 148</span></div>
+    <div class="row"><span class="day">27/8</span><span class="pass">🏃 Lugnt löp</span><span class="meta">6,1 km · HR 142</span></div>
+    <div class="row"><span class="day">26/8</span><span class="pass">💪 HIIT / cirkel</span><span class="meta">63 min</span></div>
+    <div class="row"><span class="day">24/8</span><span class="pass">💪 Styrka + HIIT</span><span class="meta">103 min</span></div>
+  </div>
+
+  <h2>Löp-km per vecka</h2>
+  <div class="panel" style="padding:16px">
+    <div class="bars">
+      <div class="bar"><span class="n">20</span><div class="fill" style="height:80%"></div><span class="lab">3/8</span></div>
+      <div class="bar"><span class="n">18</span><div class="fill" style="height:72%"></div><span class="lab">17/8</span></div>
+      <div class="bar dip"><span class="n">6</span><div class="fill" style="height:24%"></div><span class="lab">24/8</span></div>
+      <div class="bar"><span class="n">14</span><div class="fill" style="height:56%"></div><span class="lab">31/8</span></div>
+      <div class="bar now"><span class="n">9+</span><div class="fill" style="height:36%"></div><span class="lab">7/9</span></div>
     </div>
-
-    <div class="session-card bike">
-      <div class="top"><span>Lör 13/6 · Cykel Linköping</span><span class="v-good" style="font-weight:700;">35,3 km · 56 min</span></div>
-      <div class="meta">237 W snitt · HR 149/167 · nästan en timme över tröskel</div>
-      <div class="verdict v-good">🔑 Nyckeldata: 237 W/56 min omöjligt om FTP=219 → riktig FTP ~245–255 W.</div>
-    </div>
-
-    <div class="session-card swim">
-      <div class="top"><span>Ons 17/6 · Sim pool</span><span style="color:var(--mute);">3,0 km · 75 min</span></div>
-      <div class="meta">HR 122/137 · längsta simpass säsongen (IM = 3,8 km)</div>
-      <div class="verdict v-warn">✓ Uthålligheten finns — men bara 2 simpass på 6,5v. Frekvensen är luckan.</div>
-    </div>
+    <p class="note">Gul stapel (v.24/8) = sjukdomsdippen. Blå = pågående vecka. Trenden vänder upp igen — målet är ~45–50 km/v i toppen av blocket.</p>
   </div>
 
-  <div class="panel">
-    <h2>Coach-analys denna vecka</h2>
-    <ul>
-      <li class="good"><strong>Cykel bär sub-11.</strong> FTP klart underskattad — 237 W/56 min (13/6) → riktig FTP ~250 W. Långpass-vana finns (141 km Sommen, 77 km x2). Starkaste grenen, ligger före plan.</li>
-      <li class="alert"><strong>Löp-långpasset är luckan.</strong> Max 12 km senaste 6,5v. Med maraton (42 km) i IM måste vi trappa: 16→19→23→27 km fram till peak v41.</li>
-      <li class="alert"><strong>Simfrekvens för låg.</strong> Bara 2 pass/6,5v — men 3 km-passet 17/6 visar att motorn finns. Upp till 2/vecka (pool + Roxen öppet vatten).</li>
-      <li class="warning"><strong>Knäkänning (pes anserinus)</strong> — hög kadens på cykel + löp, backa distans om det pratar. Inga skadesignaler i datan.</li>
-      <li>Förra veckan semester i Kungälv (2 korta joggar) — <strong>inga ikapp-pass</strong>, vi rampar bara tillbaka.</li>
-      <li>VO2max löp <strong>50</strong> stabil, cykel <strong>49</strong>. Sub-11 fortsatt på bordet.</li>
-    </ul>
-
-    <div class="note alert">
-      <strong>Fokus 6,5v kvar:</strong> Cykeln är i hamn — löp-långpass + simfrekvens avgör sub-11. Brick-helger (cykel lör → löp sön) ger IM-specifik trötthetsträning. Peak v41, sedan 2–3 veckors taper.
-    </div>
+  <h2>Långpass-trappan mot Palma</h2>
+  <div class="ladder">
+    <span class="step done">14 km ✓</span>
+    <span class="step next">16–18</span>
+    <span class="step">20–22</span>
+    <span class="step">24–26 (peak)</span>
+    <span class="step">taper</span>
+    <span class="step" style="border-color:var(--sea);color:var(--sea)">🏁 Palma 42,2</span>
   </div>
+  <p class="note">Peak-långpasset (~24–26 km, sista bit i maratonfart) ~2–3 veckor före race blir facit. Går det → sub-3:50 bekräftat.</p>
+
+  <footer>
+    <span>Bakgrund: Ironman Kalmar 15/8 · 11:56:03</span>
+    <span>Uppdaterad 2026-09-09 · live Garmin-data</span>
+  </footer>
 
 </div>
-
-<div class="grid g-top" style="margin-bottom:16px;">
-
-  <div class="panel">
-    <h2>Veckovolym · senaste 13 veckorna</h2>
-    <div class="chart-wrap"><canvas id="volumeChart"></canvas></div>
-    <div class="note">Snitt 6,5v: <strong>~5,5 h</strong> (30 pass, dragen av semestervecka v37). Bra veckor låg på 9–10 h. <strong>v38 mål: ~10 h</strong> med brick-helg.</div>
-  </div>
-
-  <div class="panel">
-    <h2>Halvmaratider 2026</h2>
-    <table class="hm-table">
-      <tr><th>Datum</th><th>Tid</th><th>Pace</th><th>Kontext</th></tr>
-      <tr><td>12/4</td><td>1:56:24</td><td>5:30/km</td><td>Kontrollerad första</td></tr>
-      <tr><td>26/4</td><td class="fast">~1:46:00</td><td class="fast">5:01/km</td><td>Snabbast (träningslopp)</td></tr>
-      <tr><td>3/5</td><td>1:48:55</td><td>5:08/km</td><td><strong>Kanallöpet officiell PR</strong></td></tr>
-    </table>
-    <div class="note good">
-      Tre halvmaror på 22 dagar = bekräftar VO2max 50 + att <strong>sub-3:50 marathon</strong> är realistiskt (B-mål TUI Palma 18/10). För IM-löpsplit Z2 5:30–5:45/km efter 180 km cykel = sub-4h marathon = sub-11 totalt.
-    </div>
-  </div>
-
-  <div class="panel">
-    <h2>Aktuella stats</h2>
-    <div class="stats">
-      <div class="stat"><div class="v">~250 W</div><div class="l">FTP cykel</div><div class="delta">↑ från 219 (237W/56min 13/6)</div></div>
-      <div class="stat"><div class="v">172</div><div class="l">LTHR löp</div></div>
-      <div class="stat"><div class="v">50</div><div class="l">VO2max löp</div><div class="delta">stabil</div></div>
-      <div class="stat"><div class="v">49</div><div class="l">VO2max cykel</div><div class="delta">+1 från maj</div></div>
-      <div class="stat"><div class="v">5:01</div><div class="l">Bästa pace 21 km</div><div class="delta">−7 sek/km</div></div>
-      <div class="stat"><div class="v">21,2</div><div class="l">Längsta löp (km)</div><div class="delta">PR 1:48:55</div></div>
-      <div class="stat"><div class="v">141,6</div><div class="l">Längsta cykel ute (km)</div><div class="delta">Sommen 30/5</div></div>
-      <div class="stat"><div class="v">3,0</div><div class="l">Längsta sim (km)</div><div class="delta">17/6</div></div>
-    </div>
-  </div>
-
-</div>
-
-<div class="grid g-mid" style="margin-bottom:16px;">
-
-  <div class="panel">
-    <h2>Långpass-progression mot race-distans</h2>
-    <div class="chart-wrap tall"><canvas id="longPassChart"></canvas></div>
-  </div>
-
-  <div class="panel">
-    <h2>Avstånd till målet</h2>
-    <div class="prog"><div class="prog-label"><span class="name">Längsta cykel</span><span class="vals">141,6 / 180 km</span></div><div class="prog-bar"><div class="prog-fill bike" style="width:79%"></div></div></div>
-    <div class="prog"><div class="prog-label"><span class="name">Längsta löp</span><span class="vals">21,2 / 42,2 km</span></div><div class="prog-bar"><div class="prog-fill run" style="width:50%"></div></div></div>
-    <div class="prog"><div class="prog-label"><span class="name">Sim längst</span><span class="vals">3,0 / 3,8 km</span></div><div class="prog-bar"><div class="prog-fill swim" style="width:79%"></div></div></div>
-    <div class="prog"><div class="prog-label"><span class="name">Veckovolym</span><span class="vals">~5,5 / 10 h</span></div><div class="prog-bar"><div class="prog-fill warn" style="width:55%"></div></div></div>
-    <div class="prog"><div class="prog-label"><span class="name">Löppace mål 5:48</span><span class="vals">5:01 bäst</span></div><div class="prog-bar"><div class="prog-fill run" style="width:100%"></div></div></div>
-    <div class="prog"><div class="prog-label"><span class="name">Cykelpower mål 185 W snitt</span><span class="vals">FTP ~250 W</span></div><div class="prog-bar"><div class="prog-fill bike" style="width:100%"></div></div></div>
-
-    <div class="note">
-      <strong>Kvarvarande luckor:</strong> Löp-långpass (max 12 km senaste 6,5v → mål 27–28 km v41) och simfrekvens. Cykeln i hamn (141 km + FTP ~250). Brick-helger är nu heliga.
-    </div>
-  </div>
-
-</div>
-
-<div class="grid g-bot">
-
-  <div class="panel">
-    <h2>Vecka 21 (18–24 maj)</h2>
-    <table class="week-table">
-      <tr><td class="day">Mån</td><td style="color:var(--mute);">vila</td></tr>
-      <tr><td class="day">Tis</td><td style="color:var(--mute);">vila</td></tr>
-      <tr><td class="day">Ons</td><td><span class="good">✓ Styrka 61 min</span></td></tr>
-      <tr><td class="day">Tors</td><td><span class="good">🏅 Blodomloppet 10 km · pace 5:30 (med Tarvi)</span></td></tr>
-      <tr><td class="day">Fre</td><td><span class="good">✓ Styrka 42 min</span></td></tr>
-      <tr><td class="day">Lör</td><td><span class="warning">⚠ Cykel 37 km (för kort — konfirmation)</span></td></tr>
-      <tr><td class="day">Sön</td><td style="color:var(--good);font-weight:600;">✓ Löp 9,9 km Z2 (idag)</td></tr>
-    </table>
-    <div class="weeksum" style="margin-top:8px;">Tot: <strong>4:42 h</strong> · 5 pass · sim 0</div>
-  </div>
-
-  <div class="panel">
-    <h2>Disciplinfördelning (snitt 6v)</h2>
-    <div class="chart-wrap"><canvas id="splitChart"></canvas></div>
-  </div>
-
-  <div class="panel zones">
-    <h2>Zoner</h2>
-    <div class="h3">Löpning (LTHR 172)</div>
-    <table>
-      <tr><td>Z1</td><td>≤112</td></tr>
-      <tr><td>Z2</td><td>137–151</td></tr>
-      <tr><td>Z3</td><td>152–161</td></tr>
-      <tr><td>Z4</td><td>162–171</td></tr>
-      <tr><td>Z5</td><td>≥172</td></tr>
-    </table>
-    <div class="h3">Cykel power (FTP 219 W)</div>
-    <table>
-      <tr><td>Z2</td><td>120–163</td></tr>
-      <tr><td>Z3</td><td>164–196</td></tr>
-      <tr><td>Z4</td><td>197–229</td></tr>
-      <tr><td>Z5</td><td>230–262</td></tr>
-      <tr><td>Z6</td><td>263–328</td></tr>
-    </table>
-  </div>
-
-</div>
-</div>
-
-<div class="foot">
-  staffans-hub.html · uppdaterad 2026-07-01 · Garmin live-data + veckoplan v38
-</div>
-
-</div>
-
-<script>
-function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelector(`#tab-${name}`).classList.add('active');
-  event.target.classList.add('active');
-}
-
-const weekData = [
-  {"w": "W09", "tot": 1.52, "run": 1.52, "bike": 0.0, "swim": 0.0, "str": 0.0, "ride": 0, "runKm": 15.1},
-  {"w": "W10", "tot": 5.4, "run": 1.3, "bike": 1.84, "swim": 0.61, "str": 1.65, "ride": 31.3, "runKm": 12.8},
-  {"w": "W11", "tot": 4.13, "run": 1.63, "bike": 0.84, "swim": 0.54, "str": 1.12, "ride": 26.8, "runKm": 8.7},
-  {"w": "W12", "tot": 8.91, "run": 3.38, "bike": 2.67, "swim": 1.21, "str": 1.65, "ride": 51.8, "runKm": 14.3},
-  {"w": "W13", "tot": 6.18, "run": 3.44, "bike": 0.95, "swim": 0.59, "str": 1.2, "ride": 32.6, "runKm": 16.5},
-  {"w": "W14", "tot": 4.22, "run": 1.69, "bike": 1.7, "swim": 0.0, "str": 0.83, "ride": 52.7, "runKm": 16.9},
-  {"w": "W15", "tot": 4.05, "run": 2.72, "bike": 0.0, "swim": 0.0, "str": 1.33, "ride": 0, "runKm": 21.1},
-  {"w": "W16", "tot": 6.86, "run": 1.07, "bike": 3.11, "swim": 0.93, "str": 1.75, "ride": 90.3, "runKm": 10.8},
-  {"w": "W17", "tot": 2.96, "run": 2.27, "bike": 0.69, "swim": 0.0, "str": 0.0, "ride": 18.5, "runKm": 21.1},
-  {"w": "W18", "tot": 5.52, "run": 2.81, "bike": 1.02, "swim": 0.0, "str": 1.69, "ride": 35.3, "runKm": 21.2},
-  {"w": "W19", "tot": 3.78, "run": 0.0, "bike": 2.23, "swim": 0.0, "str": 1.55, "ride": 66.0, "runKm": 0},
-  {"w": "W20", "tot": 5.23, "run": 1.0, "bike": 2.32, "swim": 0.0, "str": 1.92, "ride": 76.2, "runKm": 10.0},
-  {"w": "W21", "tot": 4.72, "run": 1.93, "bike": 1.07, "swim": 0.0, "str": 1.72, "ride": 36.8, "runKm": 10.2}
-];
-const labels = weekData.map(d=>d.w);
-const gridColor = '#222a3a';
-const tickColor = '#8b949e';
-
-new Chart(document.getElementById('volumeChart'), {
-  type:'bar',
-  data:{labels,datasets:[
-    {label:'Sim',data:weekData.map(d=>d.swim),backgroundColor:'#58a6ff'},
-    {label:'Cykel',data:weekData.map(d=>d.bike),backgroundColor:'#bc8cff'},
-    {label:'Löp',data:weekData.map(d=>d.run),backgroundColor:'#3fb950'},
-    {label:'Styrka',data:weekData.map(d=>d.str),backgroundColor:'#f0883e'}
-  ]},
-  options:{responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{labels:{color:'#e6edf3',font:{size:11}}}},
-    scales:{x:{stacked:true,grid:{color:gridColor},ticks:{color:tickColor}},
-             y:{stacked:true,grid:{color:gridColor},ticks:{color:tickColor,callback:v=>v+' h'}}}}
-});
-
-new Chart(document.getElementById('longPassChart'), {
-  type:'line',
-  data:{labels,datasets:[
-    {label:'Längsta cykel (km)',data:weekData.map(d=>d.ride),borderColor:'#bc8cff',backgroundColor:'#bc8cff33',tension:.3,fill:true,pointRadius:3},
-    {label:'Längsta löp (km)',data:weekData.map(d=>d.runKm),borderColor:'#3fb950',backgroundColor:'#3fb95033',tension:.3,fill:true,pointRadius:3},
-    {label:'Sommen 144 km (v22)',data:[...Array(labels.length-1).fill(null),144],borderColor:'#ffd700',backgroundColor:'#ffd70066',pointRadius:6,pointBackgroundColor:'#ffd700',showLine:false},
-    {label:'Ironman cykel (180)',data:Array(labels.length).fill(180),borderColor:'#bc8cff',borderDash:[6,4],borderWidth:1,pointRadius:0,fill:false},
-    {label:'Ironman löp (42,2)',data:Array(labels.length).fill(42.2),borderColor:'#3fb950',borderDash:[6,4],borderWidth:1,pointRadius:0,fill:false}
-  ]},
-  options:{responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{labels:{color:'#e6edf3',font:{size:11}}}},
-    scales:{x:{grid:{color:gridColor},ticks:{color:tickColor}},
-             y:{grid:{color:gridColor},ticks:{color:tickColor,callback:v=>v+' km'},suggestedMax:200}}}
-});
-
-const recent = weekData.slice(-6);
-const sum = k => recent.reduce((a,d)=>a+d[k],0);
-new Chart(document.getElementById('splitChart'), {
-  type:'doughnut',
-  data:{labels:['Löp','Cykel','Sim','Styrka'],datasets:[{
-    data:[sum('run'),sum('bike'),sum('swim'),sum('str')],
-    backgroundColor:['#3fb950','#bc8cff','#58a6ff','#f0883e'],
-    borderColor:'#11161f',borderWidth:2
-  }]},
-  options:{responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{position:'bottom',labels:{color:'#e6edf3',font:{size:11},padding:10}}}}
-});
-</script>
-
 </body>
 </html>
